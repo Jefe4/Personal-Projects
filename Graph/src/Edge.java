@@ -10,7 +10,7 @@ class Edge<L> {
     int liters;
 
     public Edge(L v, int liters) {
-        this.connectedVetex = v;
+        this.connectedVertex = v;
         this.liters = liters;
     }
 
