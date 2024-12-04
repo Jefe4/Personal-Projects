@@ -1,16 +1,18 @@
 import java.util.ArrayList;
 
 public class ShoppingCart {
-	private ArrayList<Item> itemOrders;
+	private ArrayList<ItemOrder> itemOrders;
 
 	public ShoppingCart() {
-		itemOrders = new ArrayList<Item>();
+		itemOrders = new ArrayList<ItemOrder>();
 	}
 	
-	public void add(Item order) {
-//		wdym remove the previous order?
-		if(itemOrders.contains(order)) {
-			itemOrders.remove(order); 
+	public void add(ItemOrder order) {
+		for (int i = 0; i < itemOrders.size(); i++) {
+			if (itemOrders.get(i).getItem().equals(order.getItem())) {
+				itemOrders.set(i, order);
+				return;
+			}
 		}
 		itemOrders.add(order);
 	}
@@ -20,9 +22,9 @@ public class ShoppingCart {
 	}
 	
 	public double getTotal() {
-		int total = 0;
-		for(Item item : itemOrders) {
-//			total += item.price; add each item's price to the total variable
+		double total = 0;
+		for(ItemOrder order : itemOrders) {
+			total += order.getPrice();
 		}
 		return total;
 	}

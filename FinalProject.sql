@@ -20,7 +20,7 @@ USE `mydb` ;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Library`
+-- Table to store information about game libraries
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`Library` (
   `idLibrary` INT NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Library` (
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `mydb`.`User`
+-- Table to store user information
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`User` (
   `idUser` INT NOT NULL,
@@ -38,21 +38,25 @@ CREATE TABLE IF NOT EXISTS `mydb`.`User` (
   `Last_name` VARCHAR(45) NOT NULL,
   `Username` VARCHAR(45) NOT NULL,
   `Email` VARCHAR(45) NOT NULL,
-  `Phone_number` INT NOT NULL,
-  `DOB` DATETIME NOT NULL,
+  `Phone_number` VARCHAR(15) NOT NULL, -- Changed to VARCHAR to accommodate phone number format
+  `DOB` DATE NOT NULL, -- Changed to DATE for better date handling
   `Password` VARCHAR(45) NOT NULL,
   `Address` VARCHAR(45) NULL,
   `Country` VARCHAR(45) NULL,
-  `idLibrary` VARCHAR(45) NOT NULL,
+  `idLibrary` INT NOT NULL, -- Changed to INT to match the Library table
   PRIMARY KEY (`Username`),
   UNIQUE INDEX `Email_UNIQUE` (`Email` ASC),
   UNIQUE INDEX `Username_UNIQUE` (`Username` ASC),
-  UNIQUE INDEX `idLibrary_UNIQUE` (`idLibrary` ASC))
+  UNIQUE INDEX `idLibrary_UNIQUE` (`idLibrary` ASC),
+  CONSTRAINT `fk_User_Library`
+    FOREIGN KEY (`idLibrary`)
+    REFERENCES `mydb`.`Library` (`idLibrary`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
 -- -----------------------------------------------------
--- Table `mydb`.`Genre`
+-- Table to store game genres
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`Genre` (
   `idGenre` INT NOT NULL,
@@ -62,7 +66,7 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Game`
+-- Table to store game information
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`Game` (
   `idGame` INT NOT NULL,
@@ -88,22 +92,17 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Publisher`
+-- Table to store publisher information
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`Publisher` (
   `idPublisher` INT NOT NULL,
   `Publisher_name` VARCHAR(45) NULL,
-  PRIMARY KEY (`idPublisher`),
-  CONSTRAINT `Publisher_name`
-    FOREIGN KEY (`idPublisher`)
-    REFERENCES `mydb`.`Game` (`idGame`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`idPublisher`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Region`
+-- Table to store region information
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`Region` (
   `idRegion` INT NOT NULL,
@@ -113,7 +112,7 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Region_Sale`
+-- Table to store sales information by region
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`Region_Sale` (
   `idRegion_Sale` INT NOT NULL,
@@ -124,14 +123,14 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Store`
+-- Table to store store information
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`Store` (
   `idStore` INT NOT NULL,
-  `Games_N_sold` TINYINT NULL,
-  `Games_owned` TINYINT NULL,
-  `Games_price` INT NULL,
-  `Game_release` DATETIME NULL,
+  `Games_N_sold` INT NULL, -- Changed to INT for consistency
+  `Games_owned` INT NULL,
+  `Games_price` DECIMAL(10, 2) NULL, -- Changed to DECIMAL for price
+  `Game_release` DATE NULL, -- Changed to DATE for better date handling
   `Game_id` INT NOT NULL,
   PRIMARY KEY (`idStore`, `Game_id`),
   UNIQUE INDEX `Game_id_UNIQUE` (`Game_id` ASC))
@@ -269,15 +268,15 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `mydb`;
-INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (1, 30,923, 37,128, $60, '01/07/2007', 2);
-INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (2, 9,847, 10,843, $70, '09/23/2022', 16);
-INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (3, 18,281, 21,382, $60, '08/19/2016', 4);
-INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (4, 9,273, 11,394, $70, '06/28/2020', 17);
-INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (5, 8,347, 9,482, $60, '09/18/2019', 8);
-INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (6, 8,473, 10,384, $60, '01/07/2007', 2);
-INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (7, 8,238, 8,508, $60, '05/23/2013', 1);
-INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (8, 21,478, 21,478, $70, '09/23/2022', 16);
-INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (9, 20,238, 23,387, $60, '11/10/2013', 10);
+INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (1, 30,923, 37,128, 60.00, '01/07/2007', 2);
+INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (2, 9,847, 10,843, 70.00, '09/23/2022', 16);
+INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (3, 18,281, 21,382, 60.00, '08/19/2016', 4);
+INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (4, 9,273, 11,394, 70.00, '06/28/2020', 17);
+INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (5, 8,347, 9,482, 60.00, '09/18/2019', 8);
+INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (6, 8,473, 10,384, 60.00, '01/07/2007', 2);
+INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (7, 8,238, 8,508, 60.00, '05/23/2013', 1);
+INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (8, 21,478, 21,478, 70.00, '09/23/2022', 16);
+INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (9, 20,238, 23,387, 60.00, '11/10/2013', 10);
 
 COMMIT;
 

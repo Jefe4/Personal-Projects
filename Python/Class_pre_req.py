@@ -1,43 +1,29 @@
-# write a program that checks if the student taken a certain class 
-# to enroll in another class
+# Program to check if a student has taken and passed a prerequisite class to enroll in another class
 
+# Define the prerequisite and required class
 pre_req = "COSC 130"
 class_req = "ITEC 315"
 
-std_pre_req = input("Have you taken COSC 130: Yes or No? ")
+# Prompt the student to check if they have taken the prerequisite class
+std_pre_req = input("Have you taken COSC 130: Yes or No? ").casefold()
 
+# Validate the input for prerequisite class
+if std_pre_req not in ["yes", "no"]:
+    print("Invalid input for prerequisite class. Please enter 'Yes' or 'No'.")
+else:
+    # Prompt the student to check if they passed the prerequisite class
+    grade = input("Did you pass COSC 130: Yes or No? ").casefold()
     
-grade = input ("Did you pass COSC 130: Yes or No? ")
-
-
-if std_pre_req.casefold() == "yes" and grade.casefold() == "yes":
-
-    print ("You can enroll in ITEC 315")
-
-elif std_pre_req.casefold() == "no" :
-    print("Take COSC 130 in order to take ITEC 315")
-
-elif std_pre_req.casefold() == "yes" and grade.casefold() == "no":
-    print("You have to pass COSC 130 before enrolling in ITEC 315")
-
- 
-
-# another program
-
-
-std_pre_req = input("Have you taken COSC 130: Yes or No? ")
-
-
-if std_pre_req.casefold() == "yes":
-    print("Did you pass COSC 130: Yes or No? ")
-
-grade = input("Yes or No")
-
-if grade == "yes":
-    print("You can take ITEC 315")
-
-elif grade == "no":
-    print("Retake COSC first")
-
-else std_pre_req.casefold() == "no" :
-    print("Take Cosc")
+    # Validate the input for grade
+    if grade not in ["yes", "no"]:
+        print("Invalid input for grade. Please enter 'Yes' or 'No'.")
+    else:
+        # Check if the student has taken and passed the prerequisite class
+        if std_pre_req == "yes" and grade == "yes":
+            print("You can enroll in ITEC 315")
+        elif std_pre_req == "no":
+            print("Take COSC 130 in order to take ITEC 315")
+        elif std_pre_req == "yes" and grade == "no":
+            print("You have to pass COSC 130 before enrolling in ITEC 315")
+        else:
+            print("Invalid input")

@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 
-public class QuestionTwo {
+public class printNames {
 
 	public static void main(String[] args) {
 		try {
-			File file = new File("C:\\Users\\gerdi\\Personal Projects\\Lab6\\src\\names.txt" );
+			File file = new File("C:\\Users\\Jefe\\Documents\\GitHub\\Personal-Projects\\Java\\ArrayList\\src\\names.txt");
 			Scanner fileReader = new Scanner(file);
 
 			ArrayList<String> names = new ArrayList<>();

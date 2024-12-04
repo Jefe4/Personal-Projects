@@ -19,7 +19,8 @@ public class Driver {
 		int totalYards = 4633; //Passing Yards
 		int totalTackles = 0;
 		int totalTouchdowns = 40;
-		FootballPlayer footballPlayer = new FootballPlayer(name, jerseyNumber, salary, totalYards, totalTackles, totalTouchdowns);
+		String team = "Tampa Bay Buccaneers"; // New property
+		FootballPlayer footballPlayer = new FootballPlayer(name, jerseyNumber, salary, totalYards, totalTackles, totalTouchdowns, team);
 
 //		Baseball player
 		String name2 = "Mike Trout";

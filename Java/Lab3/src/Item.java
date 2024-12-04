@@ -24,14 +24,16 @@ public class Item {
 		this.bulkQuantity = bulkQuantity;
 	}
 	
-//	Incomplete Need the price in bulk too (make an if statement)
 	public double priceFor(int quantity) {
 		if(quantity < 0 ) {
-			throw new IllegalArgumentException("Price can't be negative!");
+			throw new IllegalArgumentException("Quantity can't be negative!");
 		}
-		return price;
+		if (bulkQuantity > 0 && quantity >= bulkQuantity) {
+			return (quantity / bulkQuantity) * bulkPrice + (quantity % bulkQuantity) * price;
+		} else {
+			return quantity * price;
+		}
 	}
-	
 
 	@Override
 	public String toString() {

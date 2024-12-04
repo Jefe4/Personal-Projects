@@ -2,7 +2,8 @@ package work;
 
 import java.util.HashSet;
 //demonstrates the usages of various of methods that can be used by the HashSet class
-public class FirstFourQuestions implements Cloneable{
+
+public class HashSetMethods {
 
 	public static void main(String[] args) {
 //		Creating hash set
@@ -38,10 +39,7 @@ public class FirstFourQuestions implements Cloneable{
 		System.out.println("Size: " + set1.size());
 
 //		Cloning a hash set
-		HashSet<Integer> copy = new HashSet<>();
-		for(Integer element : set2) {
-			copy.add(element);
-		}
+		HashSet<Integer> copy = (HashSet<Integer>) set2.clone();
 		System.out.println("Set 2: " + set2);
 		System.out.println("Copy: " + copy);
 	}

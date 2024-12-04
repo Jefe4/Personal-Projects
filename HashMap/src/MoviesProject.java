@@ -5,48 +5,40 @@ public interface MoviesProject {
      * Shows the title
      * and the information that goes with the movie
      */
-String find(String movie);
-// add a new entry. The values are passed as a string.
-    // List is added to hash table
-boolean add(String movie, String[] entry);
+    String find(String movie);
 
     /**
-     *
+     * Add a new entry. The values are passed as a string.
+     * List is added to hash table
      * @param movie name will be the table key
-     * @para entry the values that will be inserted
+     * @param entry the values that will be inserted
      * @return true if insertion was successful
+     */
+    boolean add(String movie, String entry);
+
+    /**
+     * Remove an entry
+     * @param movie is the key for the entry to remove
+     * @return true if this entry was deleted.
      */
     boolean delete(String movie);
 
     /**
-     * remove an entry
-     * @para movie is the key for the entry to remove
-     * @return true if this entry was deleted.
+     * Print the entire table in the format below
+     * Index : Key : Entry
      */
     void printHash_M();
-
-    /**
-     * print the entire table in the format below
-     * Index : Key : Entry
-     * @return
-     */
-
-
-double getLoadFactor();
 
     /**
      * How full is this table?
      * Count the amount of entries you have and divide by the size of the table
      * @return count / size
      */
-    double getMaxLoadFactor();
+    double getLoadFactor();
 
     /**
      * How full can this table be?
      * @return maximum load factor
      */
-
-
-
-
+    double getMaxLoadFactor();
 }

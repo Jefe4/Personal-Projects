@@ -1,7 +1,6 @@
-
-public class dd {
+public class Traverse {
 	int num;
-	dd next= null;
+	Traverse next = null;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -12,51 +11,44 @@ public class dd {
 	public static void transverse(int a) {
 		int d = 0;
 	
-		dd node1 =new dd();
+		Traverse node1 = new Traverse();
 		node1.num = 4;
 		
-		dd node2 =new dd();
+		Traverse node2 = new Traverse();
 		node2.num = 1;
-		node1.next=node2;
+		node1.next = node2;
 		
-		dd node3 =new dd();
+		Traverse node3 = new Traverse();
 		node3.num = 7;
-		node2.next=node3;
+		node2.next = node3;
 		
-		dd node4 =new dd();
+		Traverse node4 = new Traverse();
 		node4.num = 5;
-		node3.next=node4;
+		node3.next = node4;
 		
-		dd node5 =new dd();
+		Traverse node5 = new Traverse();
 		node5.num = 9;
-		node4.next=node5;
+		node4.next = node5;
 		
-		dd node6 =new dd();
+		Traverse node6 = new Traverse();
 		node6.num = 2;
-		node5.next=node6;
+		node5.next = node6;
 		
-		dd head= node1;
+		Traverse head = node1;
 		
-		dd temp = head;
+		Traverse temp = head;
 		
-		while(temp != null && d == 0) {
+		while (temp != null) {
 			if (temp.num == a) {
-				d=1;
+				d = 1;
+				break;
 			}
-			else {
-				d=0;
-			}
-			temp =temp.next;
-			
+			temp = temp.next;
 		}
-		if (d==1) {
+		if (d == 1) {
 			System.out.println("True");
-		}
-		else if (d==0) {
+		} else {
 			System.out.println("False");
 		}
-		
-		
 	}
-
 }

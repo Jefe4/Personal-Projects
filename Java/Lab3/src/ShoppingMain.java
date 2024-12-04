@@ -14,6 +14,7 @@ public class ShoppingMain {
         list.add(new Item("Computer Science Barbie", 19.99));
         list.add(new Item("'Java Rules!' button", 0.99, 10, 5.0));
         list.add(new Item("'Java Rules!' bumper sticker", 0.99, 20, 8.95));
+        list.add(new Item("CS Notebook", 5.99));
 
         ShoppingFrame f = new ShoppingFrame(list);
         f.setVisible(true);

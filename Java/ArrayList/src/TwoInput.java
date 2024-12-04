@@ -3,12 +3,12 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class QuestionOne {
+public class TwoInput {
 
 	public static void main(String[] args) {
 		
 		try {
-			File file = new File("C:\\Users\\gerdi\\Personal Projects\\Lab6\\src\\word.txt" );
+			File file = new File("C:\\Users\\Jefe\\Documents\\GitHub\\Personal-Projects\\Java\\ArrayList\\src\\word.txt" );
 			Scanner fileReader = new Scanner(file);
 			Scanner input = new Scanner(System.in);
 			String data = fileReader.nextLine();

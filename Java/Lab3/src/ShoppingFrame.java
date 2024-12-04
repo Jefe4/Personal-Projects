@@ -1,5 +1,3 @@
-
-
 // Class ShoppingFrame provides the user interface for a simple shopping
 // program.
 
@@ -37,7 +35,9 @@ public class ShoppingFrame extends JFrame {
         add(p, BorderLayout.CENTER);
 
         p = new JPanel();
-       add(makeCheckBoxPanel(), BorderLayout.SOUTH);
+        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+        p.add(makeCheckBoxPanel());
+        add(p, BorderLayout.SOUTH);
 
         // adjust size to just fit
         pack();
