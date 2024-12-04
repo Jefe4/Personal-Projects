@@ -2,8 +2,7 @@ public interface MoviesProject {
 
     /**
      * Search for a movie title
-     * Shows the title
-     * and the information that goes with the movie
+     * Shows the title and the information that goes with the movie
      */
     String find(String movie);
 
@@ -41,4 +40,25 @@ public interface MoviesProject {
      * @return maximum load factor
      */
     double getMaxLoadFactor();
+
+    /**
+     * Count the number of entries in the table
+     * @return the number of entries
+     */
+    int count();
+
+    /**
+     * Print the author's name
+     */
+    void who();
+
+    /**
+     * Print the help message with available commands
+     */
+    void help();
+
+    /**
+     * Exit the program
+     */
+    void exit();
 }

@@ -1,7 +1,7 @@
-package edu.frostburg.cosc310.projects.hashmap;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.util.Map;
 
 public class Main_class implements MoviesProject {
 
@@ -21,22 +21,35 @@ public class Main_class implements MoviesProject {
 
     @Override
     public String find(String movie) {
-        System.out.println("Which movie would you like to view?");
-        Scanner find = new Scanner(System.in);
-        String movieName = find.nextLine();
-        return movieName;
+        if (movie == null || movie.isEmpty()) {
+            System.out.println("Which movie would you like to view?");
+            Scanner find = new Scanner(System.in);
+            movie = find.nextLine();
+        }
+        return movie;
     }
 
     public void go() {
         try {
             File myHashTable = new File("/Users/jefe/Downloads/HashMap/src/movies");
             Scanner myReader = new Scanner(myHashTable);
+            Hash_M<String, String> hashMap = new Hash_M<>();
 
             while (myReader.hasNextLine()) {
                 String data = myReader.nextLine();
-                System.out.println(data);
+                String[] parts = data.split(",", 2); // Assuming CSV format
+                if (parts.length >= 2) {
+                    String movie = parts[0];
+                    String entry = parts[1];
+                    add(movie, entry); // Use the add method
+                }
             }
             myReader.close();
+
+            // Print the hash table
+            for (Map.Entry<String, String> entry : hashMap.entrySet()) {
+                System.out.println(entry.getKey() + ": " + entry.getValue());
+            }
         } catch (FileNotFoundException e) {
             System.err.println("There is an error.");
             e.printStackTrace();

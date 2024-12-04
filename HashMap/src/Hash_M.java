@@ -1,9 +1,8 @@
-package edu.frostburg.cosc310.projects.hashmap;
-
 import java.util.Map;
 import java.util.AbstractMap;
 import java.util.Set;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -13,12 +12,21 @@ public class Hash_M<K, V> extends AbstractHashMap<K, V> {
 
     @Override
     public V get(Object key) {
-        return bucketGet(hashValue((K) key), (K) key);
+        @SuppressWarnings("unchecked")
+        K k = (K) key;
+        return bucketGet(hashValue(k), k);
     }
 
     @Override
     public V remove(Object key) {
-        return bucketRemove(hashValue((K) key), (K) key);
+        @SuppressWarnings("unchecked")
+        K k = (K) key;
+        return bucketRemove(hashValue(k), k);
+    }
+
+    @Override
+    protected void resize(int newCapacity) {
+        // Implement the resize logic here
     }
 
     private Map.Entry<K, V>[] table;
@@ -79,7 +87,7 @@ public class Hash_M<K, V> extends AbstractHashMap<K, V> {
     }
 
     public Set<Map.Entry<K, V>> entrySet() {
-        ArrayList<Map.Entry<K, V>> buffer = new ArrayList<>();
+        Set<Map.Entry<K, V>> buffer = new HashSet<>();
         for (int h = 0; h < capacity; h++)
             if (!isAvailable(h)) buffer.add(table[h]);
         return buffer;
