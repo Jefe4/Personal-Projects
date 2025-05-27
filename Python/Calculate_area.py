@@ -1,3 +1,18 @@
+# AI/ML Context for Geometric Calculations:
+# While this script performs basic geometric calculations (area and circumference),
+# such computations can be vital in the feature engineering stage of an ML pipeline,
+# especially in domains like:
+#   - Computer Vision: Extracting geometric properties of objects detected in images
+#     (e.g., area of a detected tumor, aspect ratio of a bounding box for an item)
+#     can provide crucial features for image classification, object detection, or segmentation models.
+#   - Spatial Data Analysis: Analyzing geographic data often involves calculating areas of regions,
+#     distances between points, or other geometric features that can be used as input for
+#     predictive models (e.g., predicting housing prices based on lot area).
+#   - Robotics and Autonomous Systems: Calculating distances, areas, and volumes is essential
+#     for navigation, path planning, and object manipulation.
+# These fundamental calculations help transform raw data into a more informative
+# representation for ML algorithms.
+
 # Calculate the area and circumference of a circle
 
 import math
