@@ -262,8 +262,8 @@ int main(int argc, char* argv[])
 	}
 	
 	log_message(INFO, "Preparing to send HTTP request.");
-	// Define a more complex JSON string payload
-	std::string jsonData = "{\"name\": \"TCP Client\", \"version\": \"1.0\", \"action\": \"send_data\", \"payload\": {\"value1\": 123, \"value2\": \"test\" } }";
+	// Define a new JSON string payload representing a feature vector
+	std::string jsonData = "{\"id\": \"user123\", \"features\": [0.1, 0.5, 0.2, 0.8], \"context\": \"predict_churn\"}";
 
 	// Call the sendHttpRequest function
 	std::string httpResponse = sendHttpRequest(s0, peerHost, peerPort, jsonData);

@@ -1,3 +1,15 @@
+# AI/ML Context for String Manipulation:
+# String manipulation is a fundamental aspect of Natural Language Processing (NLP),
+# a subfield of AI. Before text data can be used to train ML models or for
+# AI applications, it often needs extensive preprocessing.
+# Techniques demonstrated in this script, such as slicing, replacing, finding,
+# and case conversion, are building blocks for more complex NLP tasks like:
+#   - Tokenization: Splitting text into individual words or sub-word units.
+#   - Normalization: Converting text to a consistent form (e.g., lowercase).
+#   - Stemming/Lemmatization: Reducing words to their root or dictionary form.
+#   - Feature Extraction: Creating numerical representations of text (e.g., Bag-of-Words, TF-IDF)
+#     where word counts, presence, or positions (found via string searching) are crucial.
+
 # String slicing and manipulation examples
 
 str1 = "Monty Python"
