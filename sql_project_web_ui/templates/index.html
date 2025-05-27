@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SQL Project UI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
+    <style>
+        body { padding: 20px; }
+        .container { width: 80%; margin: auto; }
+        nav ul { list-style-type: none; padding: 0; }
+        nav ul li { display: inline; margin-right: 10px; }
+        .reports-section { margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SQL Project Database Interface</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+            </ul>
+        </nav>
+        
+        <h2>View Tables</h2>
+        <ul>
+            <li><a href="{{ url_for('view_table', table_name='User') }}">View Users</a></li>
+            <li><a href="{{ url_for('view_table', table_name='Game') }}">View Games</a></li>
+            <li><a href="{{ url_for('view_table', table_name='Publisher') }}">View Publishers</a></li>
+            <li><a href="{{ url_for('view_table', table_name='Genre') }}">View Genres</a></li>
+            <li><a href="{{ url_for('view_table', table_name='Store') }}">View Store Data</a></li>
+            <li><a href="{{ url_for('view_table', table_name='Library') }}">View Libraries</a></li>
+            <li><a href="{{ url_for('view_table', table_name='Region') }}">View Regions</a></li>
+            <li><a href="{{ url_for('view_table', table_name='Game_Genre') }}">View Game Genres (Junction)</a></li>
+            <li><a href="{{ url_for('view_table', table_name='Game_Region') }}">View Game Regions (Junction)</a></li>
+            <li><a href="{{ url_for('view_table', table_name='Region_Sale') }}">View Region Sales</a></li>
+        </ul>
+
+        <div class="reports-section">
+            <h2>Reports / SQL Features</h2>
+            <ul>
+                <li><a href="{{ url_for('reports_game_details') }}">Game Details (View)</a></li>
+                <li><a href="{{ url_for('reports_user_library_summary') }}">User Library Summary (View)</a></li>
+                <li><a href="{{ url_for('reports_sales_by_genre_region') }}">Sales by Genre and Region (Query)</a></li>
+            </ul>
+        </div>
+        
+        <hr>
+        <p>Welcome to the SQL Project UI. Use the navigation to view table data or reports.</p>
+        <!-- Content will be dynamically inserted here -->
+    </div>
+</body>
+</html>
