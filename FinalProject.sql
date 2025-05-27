@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`User` (
   `Last_name` VARCHAR(45) NOT NULL,
   `Username` VARCHAR(45) NOT NULL,
   `Email` VARCHAR(45) NOT NULL,
-  `Phone_number` VARCHAR(15) NOT NULL, -- Changed to VARCHAR to accommodate phone number format
+  `Phone_number` VARCHAR(20) NOT NULL, -- Changed to VARCHAR to accommodate phone number format
   `DOB` DATE NOT NULL, -- Changed to DATE for better date handling
   `Password` VARCHAR(45) NOT NULL,
   `Address` VARCHAR(45) NULL,
@@ -70,19 +70,11 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`Game` (
   `idGame` INT NOT NULL,
-  `Genre_id` INT NULL,
   `Title` VARCHAR(45) NULL,
   `idPublisher` INT NULL,
-  `idRegion` INT NULL,
   `Release_year` INT NULL,
   PRIMARY KEY (`idGame`),
-  INDEX `Genre_id_idx` (`Genre_id` ASC),
   INDEX `Publisher_idx` (`idPublisher` ASC),
-  CONSTRAINT `Genre_id`
-    FOREIGN KEY (`Genre_id`)
-    REFERENCES `mydb`.`Genre` (`idGenre`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
   CONSTRAINT `Publisher`
     FOREIGN KEY (`idPublisher`)
     REFERENCES `mydb`.`Publisher` (`idPublisher`)
@@ -118,7 +110,20 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Region_Sale` (
   `idRegion_Sale` INT NOT NULL,
   `Genre_id` INT NULL,
   `Num_Sales` INT NULL,
-  PRIMARY KEY (`idRegion_Sale`))
+  `idRegion` INT NULL,
+  PRIMARY KEY (`idRegion_Sale`),
+  INDEX `idx_RegionSale_Genre` (`Genre_id` ASC),
+  INDEX `idx_RegionSale_Region` (`idRegion` ASC),
+  CONSTRAINT `fk_RegionSale_Genre`
+    FOREIGN KEY (`Genre_id`)
+    REFERENCES `mydb`.`Genre` (`idGenre`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_RegionSale_Region`
+    FOREIGN KEY (`idRegion`)
+    REFERENCES `mydb`.`Region` (`idRegion`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -127,13 +132,62 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`Store` (
   `idStore` INT NOT NULL,
-  `Games_N_sold` INT NULL, -- Changed to INT for consistency
-  `Games_owned` INT NULL,
-  `Games_price` DECIMAL(10, 2) NULL, -- Changed to DECIMAL for price
-  `Game_release` DATE NULL, -- Changed to DATE for better date handling
+  `Games_N_sold` INT NOT NULL, -- Changed to INT for consistency
+  `Games_owned` INT NOT NULL,
+  `Games_price` DECIMAL(10, 2) NOT NULL, -- Changed to DECIMAL for price
+  `Game_release` DATE NOT NULL, -- Changed to DATE for better date handling
   `Game_id` INT NOT NULL,
   PRIMARY KEY (`idStore`, `Game_id`),
-  UNIQUE INDEX `Game_id_UNIQUE` (`Game_id` ASC))
+  UNIQUE INDEX `Game_id_UNIQUE` (`Game_id` ASC),
+  CONSTRAINT `fk_Store_Game`
+    FOREIGN KEY (`Game_id`)
+    REFERENCES `mydb`.`Game` (`idGame`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Game_Genre`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Game_Genre` (
+  `idGameGenre` INT NOT NULL AUTO_INCREMENT,
+  `idGame` INT NOT NULL,
+  `idGenre` INT NOT NULL,
+  PRIMARY KEY (`idGameGenre`),
+  UNIQUE INDEX `idx_Game_Genre_Pair` (`idGame` ASC, `idGenre` ASC),
+  CONSTRAINT `fk_GameGenre_Game`
+    FOREIGN KEY (`idGame`)
+    REFERENCES `mydb`.`Game` (`idGame`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_GameGenre_Genre`
+    FOREIGN KEY (`idGenre`)
+    REFERENCES `mydb`.`Genre` (`idGenre`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Game_Region`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Game_Region` (
+  `idGameRegion` INT NOT NULL AUTO_INCREMENT,
+  `idGame` INT NOT NULL,
+  `idRegion` INT NOT NULL,
+  PRIMARY KEY (`idGameRegion`),
+  UNIQUE INDEX `idx_Game_Region_Pair` (`idGame` ASC, `idRegion` ASC),
+  CONSTRAINT `fk_GameRegion_Game`
+    FOREIGN KEY (`idGame`)
+    REFERENCES `mydb`.`Game` (`idGame`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_GameRegion_Region`
+    FOREIGN KEY (`idRegion`)
+    REFERENCES `mydb`.`Region` (`idRegion`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -164,15 +218,15 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `mydb`;
-INSERT INTO `mydb`.`User` (`idUser`, `First_name`, `M_I`, `Last_name`, `Username`, `Email`, `Phone_number`, `DOB`, `Password`, `Address`, `Country`, `idLibrary`) VALUES (1, 'Jessica', 'A', 'William', 'LadyBug', 'JAWilliam@goojoo.com', 302-343-9638, '08/12/98', '********', '2718 Park Place Dr. ', 'USA', '6');
-INSERT INTO `mydb`.`User` (`idUser`, `First_name`, `M_I`, `Last_name`, `Username`, `Email`, `Phone_number`, `DOB`, `Password`, `Address`, `Country`, `idLibrary`) VALUES (7, 'Elijah', 'S', 'Davis', 'ThunderCat', 'Catman@yahoop.com', 804-456-7891, '03/12/89', '********', '6469 East Lavender Rd.', 'China', '9');
-INSERT INTO `mydb`.`User` (`idUser`, `First_name`, `M_I`, `Last_name`, `Username`, `Email`, `Phone_number`, `DOB`, `Password`, `Address`, `Country`, `idLibrary`) VALUES (3, 'Lewis', 'P', 'Suh', 'Suh321', 'SuhLewis@google.com', 302-649, '08/04/93', '********', '8425 Northpoint CT', 'Japan', '5');
-INSERT INTO `mydb`.`User` (`idUser`, `First_name`, `M_I`, `Last_name`, `Username`, `Email`, `Phone_number`, `DOB`, `Password`, `Address`, `Country`, `idLibrary`) VALUES (4, 'Ennis', 'J', 'Jenkins', 'EnnisMan', 'EJenkins@yelp.com', 240-234-1938, '12/22/00', '********', '4525 Running Dr.', 'USA', '7');
-INSERT INTO `mydb`.`User` (`idUser`, `First_name`, `M_I`, `Last_name`, `Username`, `Email`, `Phone_number`, `DOB`, `Password`, `Address`, `Country`, `idLibrary`) VALUES (5, 'Oliva', 'T', 'Lawrence', 'PrincessLiv', 'OTLawrence@google.com', 571, '10/19/95', '********', '6254 Mexico Pl. ', 'Mexico', '8');
-INSERT INTO `mydb`.`User` (`idUser`, `First_name`, `M_I`, `Last_name`, `Username`, `Email`, `Phone_number`, `DOB`, `Password`, `Address`, `Country`, `idLibrary`) VALUES (6, 'Sharmane', 'K', 'Taylor', 'SharkFin', 'SharShark83@bing.com', 443-183-1938 , '08/06/82', '********', '5425 Playstation Ct', 'Japan', '1');
-INSERT INTO `mydb`.`User` (`idUser`, `First_name`, `M_I`, `Last_name`, `Username`, `Email`, `Phone_number`, `DOB`, `Password`, `Address`, `Country`, `idLibrary`) VALUES (2, 'Alex', 'S', 'Jefferson', 'Squadboy', 'JeffAlex@bing.com', 301-564-3241, '02/29/73', '********', '4627 Landover Mills St.', 'Brazil', '2');
-INSERT INTO `mydb`.`User` (`idUser`, `First_name`, `M_I`, `Last_name`, `Username`, `Email`, `Phone_number`, `DOB`, `Password`, `Address`, `Country`, `idLibrary`) VALUES (8, 'Jolie', 'R', 'Denson', 'MyHeadItch', 'JD210@hotmail.com', 804-854-284, '01/24/79', '********', '4259 South Boston Ln.', 'Peru', '3');
-INSERT INTO `mydb`.`User` (`idUser`, `First_name`, `M_I`, `Last_name`, `Username`, `Email`, `Phone_number`, `DOB`, `Password`, `Address`, `Country`, `idLibrary`) VALUES (9, 'Caleb', 'G', 'Scott', 'YoungJefeHolmes4', 'Poopla@google.com', 240-897-652, '09/10/92', '********', '8829 North France Dr.', 'France', '4');
+INSERT INTO `mydb`.`User` (`idUser`, `First_name`, `M_I`, `Last_name`, `Username`, `Email`, `Phone_number`, `DOB`, `Password`, `Address`, `Country`, `idLibrary`) VALUES (1, 'Jessica', 'A', 'William', 'LadyBug', 'JAWilliam@goojoo.com', '302-343-9638', '1998-08-12', '********', '2718 Park Place Dr. ', 'USA', '6');
+INSERT INTO `mydb`.`User` (`idUser`, `First_name`, `M_I`, `Last_name`, `Username`, `Email`, `Phone_number`, `DOB`, `Password`, `Address`, `Country`, `idLibrary`) VALUES (7, 'Elijah', 'S', 'Davis', 'ThunderCat', 'Catman@yahoop.com', '804-456-7891', '1989-03-12', '********', '6469 East Lavender Rd.', 'China', '9');
+INSERT INTO `mydb`.`User` (`idUser`, `First_name`, `M_I`, `Last_name`, `Username`, `Email`, `Phone_number`, `DOB`, `Password`, `Address`, `Country`, `idLibrary`) VALUES (3, 'Lewis', 'P', 'Suh', 'Suh321', 'SuhLewis@google.com', '302-649-0000', '1993-08-04', '********', '8425 Northpoint CT', 'Japan', '5');
+INSERT INTO `mydb`.`User` (`idUser`, `First_name`, `M_I`, `Last_name`, `Username`, `Email`, `Phone_number`, `DOB`, `Password`, `Address`, `Country`, `idLibrary`) VALUES (4, 'Ennis', 'J', 'Jenkins', 'EnnisMan', 'EJenkins@yelp.com', '240-234-1938', '2000-12-22', '********', '4525 Running Dr.', 'USA', '7');
+INSERT INTO `mydb`.`User` (`idUser`, `First_name`, `M_I`, `Last_name`, `Username`, `Email`, `Phone_number`, `DOB`, `Password`, `Address`, `Country`, `idLibrary`) VALUES (5, 'Oliva', 'T', 'Lawrence', 'PrincessLiv', 'OTLawrence@google.com', '571-000-0000', '1995-10-19', '********', '6254 Mexico Pl. ', 'Mexico', '8');
+INSERT INTO `mydb`.`User` (`idUser`, `First_name`, `M_I`, `Last_name`, `Username`, `Email`, `Phone_number`, `DOB`, `Password`, `Address`, `Country`, `idLibrary`) VALUES (6, 'Sharmane', 'K', 'Taylor', 'SharkFin', 'SharShark83@bing.com', '443-183-1938', '1982-08-06', '********', '5425 Playstation Ct', 'Japan', '1');
+INSERT INTO `mydb`.`User` (`idUser`, `First_name`, `M_I`, `Last_name`, `Username`, `Email`, `Phone_number`, `DOB`, `Password`, `Address`, `Country`, `idLibrary`) VALUES (2, 'Alex', 'S', 'Jefferson', 'Squadboy', 'JeffAlex@bing.com', '301-564-3241', '1973-02-28', '********', '4627 Landover Mills St.', 'Brazil', '2'); -- Note: 02/29/73 is invalid, changed to 02/28/73
+INSERT INTO `mydb`.`User` (`idUser`, `First_name`, `M_I`, `Last_name`, `Username`, `Email`, `Phone_number`, `DOB`, `Password`, `Address`, `Country`, `idLibrary`) VALUES (8, 'Jolie', 'R', 'Denson', 'MyHeadItch', 'JD210@hotmail.com', '804-854-0284', '1979-01-24', '********', '4259 South Boston Ln.', 'Peru', '3');
+INSERT INTO `mydb`.`User` (`idUser`, `First_name`, `M_I`, `Last_name`, `Username`, `Email`, `Phone_number`, `DOB`, `Password`, `Address`, `Country`, `idLibrary`) VALUES (9, 'Caleb', 'G', 'Scott', 'YoungJefeHolmes4', 'Poopla@google.com', '240-897-0652', '1992-09-10', '********', '8829 North France Dr.', 'France', '4');
 
 COMMIT;
 
@@ -202,7 +256,181 @@ INSERT INTO `mydb`.`Genre` (`idGenre`, `Genre_name`) VALUES (14, 'Fighting');
 COMMIT;
 
 
+-- -----------------------------------------------------
+-- Data for table `mydb`.`Game_Genre`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `mydb`;
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (1, 4);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (2, 4);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (3, 4);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (4, 4);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (5, 5);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (6, 2);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (7, 7);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (8, 9);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (9, 2);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (10, 8);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (11, 9);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (12, 9);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (13, 1);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (13, 3);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (13, 9);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (14, 10);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (15, 10);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (16, 7);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (17, 7);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (18, 11);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (19, 3);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (20, 11);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (21, 12);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (22, 4);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (23, 4);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (24, 4);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (25, 4);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (26, 3);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (27, 3);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (28, 11);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (29, 7);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (30, 11);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (31, 2);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (32, 2);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (33, 11);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (34, 12);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (35, 9);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (36, 3);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (37, 4);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (38, 8);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (39, 4);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (40, 4);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (41, 4);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (42, 11);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (43, 9);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (43, 3);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (44, 1);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (44, 2);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (45, 3);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (45, 7);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (45, 9);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (46, 2);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (46, 11);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (47, 4);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (48, 4);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (49, 13);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (50, 11);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (51, 4);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (52, 1);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (52, 3);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (53, 1);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (53, 3);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (54, 4);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (55, 1);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (55, 3);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (55, 5);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (56, 14);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (57, 7);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (58, 7);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (59, 14);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (60, 14);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (61, 14);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (62, 14);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (63, 14);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (64, 14);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (65, 1);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (65, 14);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (66, 11);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (67, 7);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (68, 1);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (68, 3);
+INSERT INTO `mydb`.`Game_Genre` (`idGame`, `idGenre`) VALUES (68, 11);
+COMMIT;
 
+-- -----------------------------------------------------
+-- Data for table `mydb`.`Game_Region`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `mydb`;
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (1, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (2, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (3, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (4, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (5, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (6, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (7, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (8, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (9, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (10, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (11, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (12, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (13, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (14, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (15, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (16, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (17, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (18, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (19, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (20, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (21, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (22, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (23, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (24, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (25, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (26, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (27, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (28, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (29, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (30, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (31, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (32, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (33, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (34, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (35, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (36, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (37, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (38, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (39, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (40, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (41, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (42, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (43, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (44, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (45, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (46, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (47, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (48, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (49, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (50, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (51, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (52, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (53, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (54, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (55, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (56, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (57, 2);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (57, 3);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (57, 5);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (57, 6);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (57, 7);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (58, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (59, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (60, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (61, 6);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (62, 6);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (63, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (64, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (65, 1);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (66, 2);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (66, 3);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (66, 4);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (66, 6);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (66, 7);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (67, 2);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (67, 4);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (67, 5);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (67, 6);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (67, 7);
+INSERT INTO `mydb`.`Game_Region` (`idGame`, `idRegion`) VALUES (68, 1);
+COMMIT;
 -- -----------------------------------------------------
 -- Data for table `mydb`.`Publisher`
 -- -----------------------------------------------------
@@ -222,7 +450,7 @@ INSERT INTO `mydb`.`Publisher` (`idPublisher`, `Publisher_name`) VALUES (11, 'CD
 INSERT INTO `mydb`.`Publisher` (`idPublisher`, `Publisher_name`) VALUES (12, 'Focus Home Interactive');
 INSERT INTO `mydb`.`Publisher` (`idPublisher`, `Publisher_name`) VALUES (13, 'WB Games');
 INSERT INTO `mydb`.`Publisher` (`idPublisher`, `Publisher_name`) VALUES (14, 'Krafton');
-INSERT INTO `mydb`.`Publisher` (`idPublisher`, `Publisher_name`) VALUES (10, 'Konami');
+INSERT INTO `mydb`.`Publisher` (`idPublisher`, `Publisher_name`) VALUES (15, 'Konami');
 
 
 COMMIT;
@@ -249,16 +477,16 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `mydb`;
-INSERT INTO `mydb`.`Region_Sale` (`idRegion_Sale`, `Genre_id`, `Num_Sales`) VALUES (12, 2, 534,984);
-INSERT INTO `mydb`.`Region_Sale` (`idRegion_Sale`, `Genre_id`, `Num_Sales`) VALUES (110, 10, 837,132);
-INSERT INTO `mydb`.`Region_Sale` (`idRegion_Sale`, `Genre_id`, `Num_Sales`) VALUES (29, 9, 129,483);
-INSERT INTO `mydb`.`Region_Sale` (`idRegion_Sale`, `Genre_id`, `Num_Sales`) VALUES (25, 5, 373,948);
-INSERT INTO `mydb`.`Region_Sale` (`idRegion_Sale`, `Genre_id`, `Num_Sales`) VALUES (34, 4, 493,582);
-INSERT INTO `mydb`.`Region_Sale` (`idRegion_Sale`, `Genre_id`, `Num_Sales`) VALUES (37, 7, 234,958);
-INSERT INTO `mydb`.`Region_Sale` (`idRegion_Sale`, `Genre_id`, `Num_Sales`) VALUES (41, 1, 145,483);
-INSERT INTO `mydb`.`Region_Sale` (`idRegion_Sale`, `Genre_id`, `Num_Sales`) VALUES (49, 9, 589,583);
-INSERT INTO `mydb`.`Region_Sale` (`idRegion_Sale`, `Genre_id`, `Num_Sales`) VALUES (510, 10, 638,284);
-INSERT INTO `mydb`.`Region_Sale` (`idRegion_Sale`, `Genre_id`, `Num_Sales`) VALUES (52, 2, 283,204);
+INSERT INTO `mydb`.`Region_Sale` (`idRegion_Sale`, `Genre_id`, `Num_Sales`, `idRegion`) VALUES (12, 2, 534984, 1);
+INSERT INTO `mydb`.`Region_Sale` (`idRegion_Sale`, `Genre_id`, `Num_Sales`, `idRegion`) VALUES (110, 10, 837132, 1);
+INSERT INTO `mydb`.`Region_Sale` (`idRegion_Sale`, `Genre_id`, `Num_Sales`, `idRegion`) VALUES (29, 9, 129483, 1);
+INSERT INTO `mydb`.`Region_Sale` (`idRegion_Sale`, `Genre_id`, `Num_Sales`, `idRegion`) VALUES (25, 5, 373948, 1);
+INSERT INTO `mydb`.`Region_Sale` (`idRegion_Sale`, `Genre_id`, `Num_Sales`, `idRegion`) VALUES (34, 4, 493582, 1);
+INSERT INTO `mydb`.`Region_Sale` (`idRegion_Sale`, `Genre_id`, `Num_Sales`, `idRegion`) VALUES (37, 7, 234958, 1);
+INSERT INTO `mydb`.`Region_Sale` (`idRegion_Sale`, `Genre_id`, `Num_Sales`, `idRegion`) VALUES (41, 1, 145483, 1);
+INSERT INTO `mydb`.`Region_Sale` (`idRegion_Sale`, `Genre_id`, `Num_Sales`, `idRegion`) VALUES (49, 9, 589583, 1);
+INSERT INTO `mydb`.`Region_Sale` (`idRegion_Sale`, `Genre_id`, `Num_Sales`, `idRegion`) VALUES (510, 10, 638284, 1);
+INSERT INTO `mydb`.`Region_Sale` (`idRegion_Sale`, `Genre_id`, `Num_Sales`, `idRegion`) VALUES (52, 2, 283204, 1);
 
 COMMIT;
 
@@ -268,15 +496,14 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `mydb`;
-INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (1, 30,923, 37,128, 60.00, '01/07/2007', 2);
-INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (2, 9,847, 10,843, 70.00, '09/23/2022', 16);
-INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (3, 18,281, 21,382, 60.00, '08/19/2016', 4);
-INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (4, 9,273, 11,394, 70.00, '06/28/2020', 17);
-INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (5, 8,347, 9,482, 60.00, '09/18/2019', 8);
-INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (6, 8,473, 10,384, 60.00, '01/07/2007', 2);
-INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (7, 8,238, 8,508, 60.00, '05/23/2013', 1);
-INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (8, 21,478, 21,478, 70.00, '09/23/2022', 16);
-INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (9, 20,238, 23,387, 60.00, '11/10/2013', 10);
+INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (1, 30923, 37128, 60.00, '2007-01-07', 2);
+INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (2, 9847, 10843, 70.00, '2022-09-23', 16);
+INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (3, 18281, 21382, 60.00, '2016-08-19', 4);
+INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (4, 9273, 11394, 70.00, '2020-06-28', 17);
+INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (5, 8347, 9482, 60.00, '2019-09-18', 8);
+INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (7, 8238, 8508, 60.00, '2013-05-23', 1);
+INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (8, 21478, 21478, 70.00, '2022-09-23', 16);
+INSERT INTO `mydb`.`Store` (`idStore`, `Games_N_sold`, `Games_owned`, `Games_price`, `Game_release`, `Game_id`) VALUES (9, 20238, 23387, 60.00, '2013-11-10', 10);
 
 COMMIT;
 
@@ -285,74 +512,74 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `mydb`;
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (1, 4, 'Madden 25', 7, 1, 2013);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (2, 4, 'Madden 20', 7, 1, 2019);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (3, 4, '2k16', 1, 1, 2015);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (4, 4, '2k17', 1, 1, 2016);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (5, 5, 'Rayman Legends', 4, 1, 2014);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (6, 2, 'Far Cry 3', 4, 1, 2012);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (7, 7, 'Assassin\'s Creed: Black Flag', 4, 1, 2013);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (8, 9, 'Sekiro: Shadows Die Twice', 2, 1, 2019);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (9, 2, 'Call of Duty 4: Modern Warfare ', 2, 1, 2007);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (10, 8, 'Final Fantasy XIV', 6, 1, 2013);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (11, 9, 'NieR: Automata ', 6, 1, 2017);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (12, 9, 'Dragon Quest XI S: Echoes Of An Elusive Age', 6, 1, 2017);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (13, 1+3+9, 'Grand Theft Auto IV', 1, 1, 2008);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (14, 10, 'Fall Guys', 3, 1, 2020);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (15, 10, 'Fortnite Battle Royale', 3, 1, 2017);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (16, 7, 'God of War Ragnork', 5, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (17, 7, 'Spiderman Miles Morales', 5, 1, 2020);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (18, 11, 'The Last of Us Part Two', 5, 1, 2020);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (19, 3, 'Horizon Forbidden West', 5, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (20, 11, 'The Last of Us Part One', 5, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (21, 12, 'Gran Turismo 7', 5, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (22, 4, '2k20', 1, 1, 2019);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (23, 4, '2k21', 1, 1, 2020);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (24, 4, '2k22', 1, 1, 2021);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (25, 4, '2k23', 1, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (26, 3, 'UNCHARTED: Legacy of Thieves Collection', 5, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (27, 3, 'Ratchet & Clank: Rift Apart', 5, 1, 2021);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (28, 11, 'Returnal', 5, 1, 2021);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (29, 7, 'Ghost of Tsushima: Director\'s Cut', 5, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (30, 11, 'Death Stranding: Director\'s Cut', 5, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (31, 2, 'Call of Duty: Modern Warfare 2', 2, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (32, 2, 'Call of Duty: Warzone 2', 2, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (33, 11, 'The Callisto Protocol', 14, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (34, 12, 'Need for Speed Unbound', 7, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (35, 9, 'Gotham Knights', 13, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (36, 3, 'Stray', 5, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (37, 4, 'MLB The Show 22', 7, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (38, 8, 'Elden Ring', 10, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (39, 4, 'Madden NFL 23', 7, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (40, 4, 'EA SPORTS FIFA 23', 7, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (41, 4, 'EA SPORTS NHL 23', 7, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (42, 11, 'A Plague Tale: Requiem', 12, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (43, 9+3, 'Cyberpunk 2077', 11, 1, 2015);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (44, 1+2, 'Rainbow Six Siege', 4, 1, 2015);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (45, 3+7+9, 'LEGO Star Wars: The Skywalker Saga', 13, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (46, 2+11, 'Resident Evil Village', 8, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (47, 4, 'Minecraft', 1, 1, 2009);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (48, 4, '', 1, 1, 2015);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (49, 13, 'Marvel\'s Midnight Suns', 1, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (50, 11, 'Silent Hill 2', 15, 1, 2023);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (51, 4, 'Skull and Bones', 4, 1, 2023);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (52, 1+3, 'Star Wars Jedi: Fallen Order', 7, 1, 2018);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (53, 1+3, 'Star Wars Jedi: Survivor', 7, 1, 2023);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (54, 4, 'Suicide Squad: Kill the Justice League', 13, 1, 2023);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (55, 1+3+5, 'Spiderman 2', 1, 1, 2023);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (56, 14, 'Sifu', 1, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (57, 7, 'Assassin\'s Creed: Valhalla', 4, 2+3+5+6+7, 2020);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (58, 7, 'Assassin\'s Creed: Odyessy ', 4, 1, 2018);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (59, 14, 'MultiVersus', 13, 1, 2022);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (60, 14, 'Rumbleverse', 13, 1, 2021);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (61, 14, 'Tekken 8', 10, 6, 2023);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (62, 14, 'Mortal Kombat 11', 13, 6, 2021);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (63, 14, 'SOULCALIBUR VI', 4, 1, 20);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (64, 14, 'DRAGON BALL FighterZ', 10, 1, 2013);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (65, 1+14, 'EA SPORTS UFC 4', 7, 1, 2013);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (66, 11, 'Outlast 2', 4, 2+3+4+6+7, 2017);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (67, 7, 'The Witcher 3: Wild Hunt', 11, 2+4+5+6+7, 2013);
-INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegion`, `Release_year`) VALUES (68, 1+3+11, 'Days Gone', 5, 1, 2019);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (1, 'Madden 25', 7, 2013);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (2, 'Madden 20', 7, 2019);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (3, '2k16', 1, 2015);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (4, '2k17', 1, 2016);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (5, 'Rayman Legends', 4, 2014);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (6, 'Far Cry 3', 4, 2012);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (7, 'Assassin\'s Creed: Black Flag', 4, 2013);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (8, 'Sekiro: Shadows Die Twice', 2, 2019);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (9, 'Call of Duty 4: Modern Warfare ', 2, 2007);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (10, 'Final Fantasy XIV', 6, 2013);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (11, 'NieR: Automata ', 6, 2017);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (12, 'Dragon Quest XI S: Echoes Of An Elusive Age', 6, 2017);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (13, 'Grand Theft Auto IV', 1, 2008);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (14, 'Fall Guys', 3, 2020);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (15, 'Fortnite Battle Royale', 3, 2017);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (16, 'God of War Ragnork', 5, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (17, 'Spiderman Miles Morales', 5, 2020);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (18, 'The Last of Us Part Two', 5, 2020);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (19, 'Horizon Forbidden West', 5, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (20, 'The Last of Us Part One', 5, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (21, 'Gran Turismo 7', 5, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (22, '2k20', 1, 2019);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (23, '2k21', 1, 2020);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (24, '2k22', 1, 2021);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (25, '2k23', 1, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (26, 'UNCHARTED: Legacy of Thieves Collection', 5, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (27, 'Ratchet & Clank: Rift Apart', 5, 2021);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (28, 'Returnal', 5, 2021);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (29, 'Ghost of Tsushima: Director\'s Cut', 5, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (30, 'Death Stranding: Director\'s Cut', 5, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (31, 'Call of Duty: Modern Warfare 2', 2, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (32, 'Call of Duty: Warzone 2', 2, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (33, 'The Callisto Protocol', 14, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (34, 'Need for Speed Unbound', 7, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (35, 'Gotham Knights', 13, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (36, 'Stray', 5, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (37, 'MLB The Show 22', 7, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (38, 'Elden Ring', 10, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (39, 'Madden NFL 23', 7, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (40, 'EA SPORTS FIFA 23', 7, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (41, 'EA SPORTS NHL 23', 7, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (42, 'A Plague Tale: Requiem', 12, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (43, 'Cyberpunk 2077', 11, 2015);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (44, 'Rainbow Six Siege', 4, 2015);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (45, 'LEGO Star Wars: The Skywalker Saga', 13, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (46, 'Resident Evil Village', 8, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (47, 'Minecraft', 1, 2009);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (48, 'WWE 2K16', 1, 2015);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (49, 'Marvel\'s Midnight Suns', 1, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (50, 'Silent Hill 2', 15, 2023);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (51, 'Skull and Bones', 4, 2023);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (52, 'Star Wars Jedi: Fallen Order', 7, 2018);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (53, 'Star Wars Jedi: Survivor', 7, 2023);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (54, 'Suicide Squad: Kill the Justice League', 13, 2023);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (55, 'Spiderman 2', 1, 2023);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (56, 'Sifu', 1, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (57, 'Assassin\'s Creed: Valhalla', 4, 2020);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (58, 'Assassin\'s Creed: Odyessy ', 4, 2018);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (59, 'MultiVersus', 13, 2022);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (60, 'Rumbleverse', 13, 2021);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (61, 'Tekken 8', 10, 2023);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (62, 'Mortal Kombat 11', 13, 2021);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (63, 'SOULCALIBUR VI', 4, 2018);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (64, 'DRAGON BALL FighterZ', 10, 2013);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (65, 'EA SPORTS UFC 4', 7, 2013);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (66, 'Outlast 2', 4, 2017);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (67, 'The Witcher 3: Wild Hunt', 11, 2013);
+INSERT INTO `mydb`.`Game` (`idGame`, `Title`, `idPublisher`, `Release_year`) VALUES (68, 'Days Gone', 5, 2019);
 
 
 
@@ -360,3 +587,37 @@ INSERT INTO `mydb`.`Game` (`idGame`, `Genre_id`, `Title`, `idPublisher`, `idRegi
 COMMIT;
 
 
+-- -----------------------------------------------------
+-- View: GameDetailsView
+-- Description: Lists games with their publisher and a comma-separated list of genres.
+-- -----------------------------------------------------
+DROP VIEW IF EXISTS `mydb`.`GameDetailsView`;
+CREATE VIEW `mydb`.`GameDetailsView` AS
+SELECT
+    g.idGame,
+    g.Title,
+    g.Release_year,
+    p.Publisher_name,
+    (SELECT GROUP_CONCAT(gn.Genre_name SEPARATOR ', ')
+     FROM `mydb`.`Game_Genre` gg
+     JOIN `mydb`.`Genre` gn ON gg.idGenre = gn.idGenre
+     WHERE gg.idGame = g.idGame) AS Genres
+FROM `mydb`.`Game` g
+JOIN `mydb`.`Publisher` p ON g.idPublisher = p.idPublisher;
+
+-- -----------------------------------------------------
+-- View: UserLibrarySummaryView
+-- Description: Shows user information along with the number of games in their library.
+-- -----------------------------------------------------
+DROP VIEW IF EXISTS `mydb`.`UserLibrarySummaryView`;
+CREATE VIEW `mydb`.`UserLibrarySummaryView` AS
+SELECT
+    u.idUser,
+    u.Username,
+    u.First_name,
+    u.M_I,
+    u.Last_name,
+    u.Email,
+    l.Number_Games
+FROM `mydb`.`User` u
+JOIN `mydb`.`Library` l ON u.idLibrary = l.idLibrary;
