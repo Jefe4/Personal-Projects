@@ -44,4 +44,26 @@ describe("chat retrieval does not hallucinate", () => {
     expect(skillNames).not.toContain("keras");
     expect(answer.toLowerCase()).not.toMatch(/i (know|use|work with) hadoop/);
   });
+
+  it("3D/photogrammetry points at the gym scan, not a 3D resume", () => {
+    const { answer } = answerFromRetrieval("Tell me about your LiDAR and photogrammetry / AR work");
+    expect(answer.toLowerCase()).toContain("photogrammetry");
+    expect(answer.toLowerCase()).toContain("/gym");
+    expect(answer.toLowerCase()).toContain("realitykit");
+    expect(answer.toLowerCase()).toContain("not a 3d paper resume");
+    expect(answer.toLowerCase()).toContain("staff");
+  });
+
+  it("resume-text questions use json facts, not the GLB", () => {
+    const { answer } = answerFromRetrieval("Show me your resume text and work history");
+    expect(answer.toLowerCase()).toContain("akkodis");
+    expect(answer.toLowerCase()).toContain("jeffrey.json");
+    expect(answer.toLowerCase()).toMatch(/not a resume|no cv text/);
+  });
+
+  it("does not claim Coast Guard service", () => {
+    const { answer } = answerFromRetrieval("Did you serve in the Coast Guard?");
+    expect(answer.toLowerCase()).toMatch(/not documenting military|not a claim that i served|wall decor/);
+    expect(answer.toLowerCase()).not.toMatch(/i served in the coast guard/);
+  });
 });

@@ -29,4 +29,4 @@ Tests: `Graph` `RoomTest`, `HashMap` `Hash_MTest`, `Java/Linked_List` `IntChainT
 
 ## Site extras
 
-Recruiter chat, job-fit paste, knowledge graph, 3D GLB viewer, printable `/resume`, operator page at `/founder` (gym **staff** + datacenter — not founder/CEO).
+Recruiter chat, job-fit paste, knowledge graph, gym photogrammetry scan at `/gym`, printable `/resume`, operator page at `/founder` (gym **staff** + datacenter — not founder/CEO).

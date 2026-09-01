@@ -28,11 +28,11 @@ GitHub Pages can host a static export of marketing pages only; the chat API need
 | `/projects`, `/projects/[slug]` | Repo projects + WIP labels |
 | `/fit` | Paste a JD → must / stretch / missing |
 | `/graph` | Provenance graph |
-| `/3d` | glTF viewer (`public/resume.glb` when present) |
-| `/resume` | Printable one-pager |
+| `/gym` | Photogrammetry scan of DMV Iron Gym (not a resume). `/3d` redirects here. |
+| `/resume` | Printable one-pager from jeffrey.json |
 
 Visual language toggle: Briefing vs Editorial (header).
 
-## 3D mesh
+## Gym scan mesh
 
-Place the GLB at `site/public/resume.glb`. Until then the viewer shows a lighting rig and empty slab. We do not OCR or invent resume text from the mesh.
+Place the GLB at `site/public/gym.glb` (about 19MB — Git LFS). Until then `/gym` shows a dark-gym lighting rig and schematic dollhouse (floor letters, yellow DON'T QUIT wall). The file is an interior scan of the gym Jeffrey works in, **not** a 3D paper resume and not ownership of the gym. Written CV text comes only from `content/jeffrey.json`.

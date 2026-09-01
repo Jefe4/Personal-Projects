@@ -2,17 +2,6 @@ import profile from "@/content/jeffrey.json";
 
 export type ChatTurn = { role: "user" | "assistant"; content: string };
 
-const BANNED = [
-  "umass",
-  "boston",
-  "hadoop",
-  "keras",
-  "pytorch engineer",
-  "jefeai",
-  "interview overlay",
-  "gemini overlay",
-];
-
 function norm(s: string) {
   return s.toLowerCase();
 }
@@ -80,9 +69,22 @@ export function retrieveFacts(query: string): string[] {
     }
   }
 
-  if (mentions(q, ["wip", "gymmaster", "digital twin", "trading", "polymarket", "event tracker", "lidar"])) {
+  if (mentions(q, ["wip", "gymmaster", "digital twin", "trading", "polymarket", "event tracker"])) {
     for (const p of profile.projects.filter((p) => p.wip)) {
       facts.push(`${p.name} (WIP): ${p.summary}`);
+    }
+  }
+
+  if (mentions(q, ["lidar", "photogrammetry", "realitykit", "arkit", "digital twin", "gym scan", "glb", "spatial", "3d scan", "3d gym", "3d resume"])) {
+    facts.push("The 3D file is a photogrammetry scan of DMV Iron Gym (Falls Church floor I work on), not a 3D paper resume. Zero readable CV text on the mesh. Interactive viewer: /gym. File: site/public/gym.glb (Git LFS).");
+    facts.push("On the mesh only: floor letters DMV IRON GYM; yellow DON'T QUIT mural with strike-throughs so it also reads DO IT; pink DMV IRON GYM wall graphic; red EXIT signs; US flag, Thin Blue Line, Thin Red Line, and a US Coast Guard seal as wall decor — not a claim that I served.");
+    facts.push("Open-ceiling dollhouse of connected gym bays: racks, dumbbells, benches, vending, brick walls. I captured it toward QR/AR gym software (Swift + RealityKit/ARKit + Firestore, GymMasterPro, WIP). I am staff at the gym, not the owner.");
+  }
+
+  if (mentions(q, ["resume", "cv", "one-pager", "pdf"]) && !mentions(q, ["scan", "glb", "photogrammetry"])) {
+    facts.push("Written resume facts are from the Aug 27 2026 resume in jeffrey.json and the /resume page. gym.glb is not a resume and has no CV text.");
+    for (const job of profile.experience.filter((e) => e.hero)) {
+      facts.push(`${job.title} at ${job.org}, ${job.location}, ${job.start} – ${job.end}.`);
     }
   }
 
@@ -121,15 +123,25 @@ function stitch(query: string, facts: string[]): string {
     lines.push("I'm a Computer Science student at Frostburg State University, expected June 2027 — still enrolled, not a conferred bachelor's on this resume.");
   }
 
-  if (mentions(q, ["umass", "boston", "jeffrey g. gomez"])) {
-    lines.push("That's a different person. I'm Jeffrey Gomez — Arlington / DC metro, Frostburg CS, Akkodis datacenter assignment, DMV Iron Gym staff. LinkedIn: " + id.linkedin);
+  if (mentions(q, ["3d resume", "resume.glb"]) || (mentions(q, ["resume"]) && mentions(q, ["3d", "glb", "mesh"]))) {
+    lines.push("The GLB is not a 3D paper resume — it's a photogrammetry scan of DMV Iron Gym. Orbit it on /gym. Written CV facts are on /resume from jeffrey.json.");
+  }
+
+  if (mentions(q, ["coast guard", "served", "veteran"]) && !mentions(q, ["gym is veteran", "veteran-owned"])) {
+    lines.push("I am not documenting military or Coast Guard service. A US Coast Guard seal appears as wall decor in the gym scan. The gym is veteran-owned; I am staff.");
   }
 
   if (!lines.length) {
     lines.push(`I'm ${id.name}, ${id.headline}, ${id.location}.`);
   }
 
-  const extra = facts.filter((f) => !f.startsWith("Never claim")).slice(0, 10);
+  const extra = facts.filter((f) => {
+    if (f.startsWith("Never claim")) return false;
+    if (f.startsWith(id.name + " —")) return false;
+    if (f.startsWith("Contact:")) return false;
+    if (f.startsWith("Languages:")) return false;
+    return true;
+  }).slice(0, 8);
   for (const f of extra) {
     if (!lines.some((l) => l.includes(f.slice(0, 40)))) {
       lines.push(f);
@@ -151,17 +163,20 @@ export function answerFromRetrieval(query: string): { answer: string; facts: str
   const facts = retrieveFacts(query);
   const answer = stitch(query, facts);
   const highlights: string[] = [];
-  const n = norm(query + " " + answer);
-  if (n.includes("akkodis") || n.includes("datacenter")) highlights.push("org:akkodis");
-  if (n.includes("iron gym")) highlights.push("org:dmv-iron-gym-inc");
-  if (n.includes("frostburg")) highlights.push("edu:frostburg-state-university");
-  if (n.includes("graph") || n.includes("friend-bot")) highlights.push("proj:graph");
-  if (n.includes("hash")) highlights.push("proj:hashmap");
-  if (n.includes("tcp")) highlights.push("proj:tcp");
-  for (const b of BANNED) {
-    if (norm(answer).includes(b) && !mentions(query, ["umass", "boston"])) {
-      // keep UMass only as a denial
-    }
+  if (mentions(query, ["akkodis", "google", "datacenter", "data center", "leesburg", "fiber", "rack"])) {
+    highlights.push("org:akkodis");
+  }
+  if (mentions(query, ["gym", "iron", "dmv", "falls church", "leo", "owner", "founder"])) {
+    highlights.push("org:dmv-iron-gym-inc");
+  }
+  if (mentions(query, ["frostburg", "school", "college", "degree", "graduat", "education"])) {
+    highlights.push("edu:frostburg-state-university");
+  }
+  if (mentions(query, ["graph", "friend-bot", "friend bot", "labyrinth"])) highlights.push("proj:graph");
+  if (mentions(query, ["hash", "movie"])) highlights.push("proj:hashmap");
+  if (mentions(query, ["lidar", "photogrammetry", "gym scan", "realitykit", "digital twin", "3d"])) {
+    highlights.push("proj:gym-scan");
+    highlights.push("org:dmv-iron-gym-inc");
   }
   return { answer, facts, highlights };
 }
@@ -173,7 +188,9 @@ export function systemPrompt(facts: string[]) {
     "You are NOT the owner/founder/CEO of DMV Iron Gym. You are Team Member & Systems Administrator. Owner is Leo Torres Williams.",
     "You are NOT a Google FTE. Akkodis contractor on assignment at a Google data center, Leesburg VA.",
     "You have NOT graduated. CS at Frostburg, expected June 2027.",
-    "Location on the latest resume: Arlington, Virginia / DC metro.",
+    "The 3D GLB is a photogrammetry scan of DMV Iron Gym, not a resume. No CV text on the mesh. Written resume is jeffrey.json / /resume.",
+    "US Coast Guard seal in the gym scan is wall decor, not a claim of service. You did not serve in the Coast Guard on this record.",
+    "3D/LiDAR/photogrammetry/AR questions: gym scan on /gym plus Swift/RealityKit gym app WIP. You work at the gym as staff, not owner.",
     "Never mention interview overlays, screen/audio capture, JefeAi, tax/medical files, or the other Jeffrey G. Gomez (UMass/Boston).",
     "Never invent employers, dates, degrees, or skills.",
     "Facts:",

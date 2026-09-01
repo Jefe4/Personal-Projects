@@ -21,7 +21,9 @@
     "personal military or veteran service",
     "production PyTorch/TensorFlow/Hadoop/Keras engineer",
     "hedge fund or live trading performance",
-    "jeffgomez.dev@gmail.com as primary email"
+    "jeffgomez.dev@gmail.com as primary email",
+    "that gym.glb is a 3D paper resume or contains CV text",
+    "US Coast Guard or other military service (gym wall decor only)"
   ],
   "voice": {
     "person": "first",
@@ -274,6 +276,19 @@
       "summary": "Public GitHub repo for gym-related app work. At inspection it is an early README-only repository — treat as a pointer, not a shipped product."
     },
     {
+      "slug": "gym-scan",
+      "name": "DMV Iron Gym photogrammetry scan",
+      "path": "site/public/gym.glb",
+      "github": null,
+      "sitePath": "/gym",
+      "stack": ["photogrammetry", "glTF", "Three.js"],
+      "visibility": "public",
+      "flagship": true,
+      "wip": true,
+      "provenance": "photogrammetry-scan",
+      "summary": "Walkable 3D scan of the Falls Church gym I work in (staff, not owner), toward QR/AR gym software. Open-ceiling dollhouse of connected bays: racks, dumbbells, benches, vending, brick. Floor letters DMV IRON GYM; yellow DON'T QUIT mural that also reads DO IT; pink wall graphic; EXIT signs and flag/service-seal decor (not a service claim). Mesh: site/public/gym.glb (Git LFS). Zero resume text on the mesh — CV facts are jeffrey.json / /resume."
+    },
+    {
       "slug": "gym-master",
       "name": "GymMasterPro / gym digital twin",
       "path": null,
@@ -283,7 +298,7 @@
       "flagship": false,
       "wip": true,
       "provenance": "resume-2026-08-27",
-      "summary": "Work in progress: SwiftUI + RealityKit/ARKit + Firestore. 3D gym, QR equipment tutorials, member and manager apps. I am the developer; the gym is the client. No public live URL."
+      "summary": "Work in progress: SwiftUI + RealityKit/ARKit + Firestore. 3D gym, QR equipment tutorials, member and manager apps. I am the developer; the gym is the client. The public photogrammetry capture of the floor is the /gym scan. No public live App Store URL."
     },
     {
       "slug": "cardio",
@@ -331,7 +346,7 @@
       "flagship": false,
       "wip": true,
       "provenance": "resume-2026-08-27",
-      "summary": "Work in progress: custom PCBs, LiDAR / photogrammetry. Not a production hardware product page."
+      "summary": "Work in progress: custom PCBs, LiDAR / photogrammetry. The public spatial artifact is the DMV Iron Gym interior scan on /gym (photogrammetry, not a resume mesh). Not a production hardware product page."
     }
   ],
   "skills": [
@@ -354,7 +369,7 @@
     { "name": "Gym membership software", "evidence": "DMV Iron Gym" },
     { "name": "Data structures", "evidence": "Graph, HashMap, Linked_List" },
     { "name": "TCP", "evidence": "TCP/Chat" },
-    { "name": "3D / AR (WIP)", "evidence": "RealityKit / photogrammetry listed as in progress, not production" },
+    { "name": "3D / AR (WIP)", "evidence": "Gym photogrammetry scan on /gym; RealityKit/ARKit gym app listed as in progress" },
     { "name": "English", "evidence": "native/bilingual" },
     { "name": "Spanish", "evidence": "native/bilingual" }
   ],
@@ -362,7 +377,7 @@
     "datacenter_it": "Current Datacenter Technician via Akkodis at a Google data center in Leesburg: racks, fiber/ethernet, GCP, cleanliness, physical plant. Pair with CS coursework and the TCP + SQL projects for junior IT / datacenter / networking conversations.",
     "junior_software": "Public Java/Python/SQL/C++ in Personal-Projects (graph, hashmap, chat, Flask UI, flashcards). Still enrolled, expected June 2027 — if a JD requires a degree in hand, say that clearly.",
     "systems_networking": "Datacenter cabling + C++ TCP chat (framing, select, multiple clients) is the honest systems story. Do not invent embedded-firmware employment.",
-    "gym_product": "Team Member & Systems Administrator at DMV Iron Gym: membership software, Excel/DBs, plus WIP Swift/Firestore iOS and 3D gym tooling. Applied product work for a gym client, not founder equity claims.",
+    "gym_product": "Team Member & Systems Administrator at DMV Iron Gym: membership software, Excel/DBs, photogrammetry scan of the floor I work on (/gym), plus WIP Swift/Firestore iOS and RealityKit tooling. Applied product work for a gym client, not founder equity claims.",
     "trading_ai": "Local personal research tooling with paper-trading default. Not a trading job and not performance to quote."
   },
   "jobFitHints": {
@@ -379,9 +394,10 @@
       "swift": ["gym iOS WIP"],
       "data center": ["Akkodis Leesburg assignment"],
       "fiber": ["Akkodis"],
-      "spanish": ["bilingual"]
+      "photogrammetry": ["gym photogrammetry scan /gym"],
+      "lidar": ["spatial mapping WIP; gym scan is photogrammetry"]
     },
-    "stretch": ["TypeScript", "React", "SwiftUI", "RealityKit", "Firestore", "3D", "AR"],
+    "stretch": ["TypeScript", "React", "SwiftUI", "RealityKit", "Firestore", "3D", "AR", "LiDAR"],
     "neverInvent": ["Kubernetes", "PyTorch", "TensorFlow", "Hadoop", "Keras", "AWS certified", "veteran", "founder", "CEO", "Google FTE"]
   }
 }

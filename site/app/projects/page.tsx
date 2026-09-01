@@ -22,6 +22,11 @@ export default function ProjectsPage() {
               {(p.stack || []).join(" · ")}
               {p.path ? " · " + p.path : ""}
             </p>
+            {"sitePath" in p && p.sitePath ? (
+              <p>
+                <Link href={p.sitePath}>Open interactive scan</Link>
+              </p>
+            ) : null}
             {p.github ? (
               <p>
                 <a href={p.github}>GitHub</a>

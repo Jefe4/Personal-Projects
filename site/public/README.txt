@@ -1,1 +1,3 @@
-# Place resume.glb here (glTF 2.0). Until then /3d shows the empty lighting rig.
+# Place gym.glb here (photogrammetry scan of DMV Iron Gym, ~19MB, Git LFS).
+# It is not a 3D paper resume. /gym shows a placeholder rig until this file exists.
+

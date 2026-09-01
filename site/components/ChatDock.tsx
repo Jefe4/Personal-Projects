@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const CHIPS = ["Fit for this role", "Projects", "Skills", "Experience", "Education"];
+const CHIPS = ["Fit for this role", "Projects", "Skills", "Experience", "Education", "Gym scan"];
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -14,7 +14,7 @@ export function ChatDock() {
     {
       role: "assistant",
       content:
-        "I'm Jeffrey. Ask about the datacenter assignment, Frostburg CS (expected 2027), gym systems work, or code in this repo. I won't invent employers or a degree I don't have yet.",
+        "I'm Jeffrey. Ask about the datacenter assignment, Frostburg CS (expected 2027), gym systems work, the gym photogrammetry scan, or code in this repo. I won't invent employers or a degree I don't have yet.",
     },
   ]);
   const log = useRef<HTMLDivElement>(null);

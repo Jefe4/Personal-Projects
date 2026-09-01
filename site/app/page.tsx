@@ -17,8 +17,8 @@ export default function HomePage() {
           <Link className="ghost" href="/projects">
             View projects
           </Link>
-          <Link className="ghost" href="/3d">
-            3D resume
+          <Link className="ghost" href="/gym">
+            Gym scan
           </Link>
           <Link className="ghost" href="/fit">
             Paste a JD
@@ -84,6 +84,11 @@ export default function HomePage() {
                 {proj.path ? " · " + proj.path : ""}
               </p>
               {proj.excerptFile ? <CodeExhibit slug={proj.slug} /> : null}
+              {"sitePath" in proj && proj.sitePath ? (
+                <p>
+                  <Link href={proj.sitePath}>Open interactive scan</Link>
+                </p>
+              ) : null}
             </article>
           ))}
         </div>

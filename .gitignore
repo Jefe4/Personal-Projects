@@ -27,6 +27,7 @@ TCP/Chat/Chat/Client
 TCP/Chat/Chat/chat_server
 TCP/Chat/Chat/chat_client
 
-# Optional large resume mesh (add locally as site/public/resume.glb)
+# Optional large gym photogrammetry mesh (Git LFS)
+site/public/gym.glb
 site/public/resume.glb
 Flashcard_App/data/progress.json

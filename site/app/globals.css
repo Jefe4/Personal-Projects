@@ -104,6 +104,7 @@ pre {
 .chat-form textarea { flex: 1; background: #0b0c0e; color: var(--ink); border: 1px solid var(--line); font: inherit; min-height: 2.6rem; resize: vertical; }
 .chat-form button { font-family: var(--mono); background: var(--accent); border: 0; color: #111; padding: 0 0.7rem; cursor: pointer; }
 .canvas-wrap { height: min(72vh, 640px); border: 1px solid var(--line); background: #050607; }
+.gym-canvas { height: min(82vh, 760px); background: #070708; }
 .fit-box textarea { width: 100%; min-height: 10rem; background: #08090b; color: var(--ink); border: 1px solid var(--line); font-family: var(--mono); padding: 0.7rem; }
 .tag-must { color: var(--ok); }
 .tag-stretch { color: var(--accent); }

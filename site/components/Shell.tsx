@@ -11,7 +11,7 @@ const links = [
   ["/projects", "Projects"],
   ["/fit", "Job-fit"],
   ["/graph", "Graph"],
-  ["/3d", "3D resume"],
+  ["/gym", "Gym scan"],
   ["/resume", "One-pager"],
 ];
 

@@ -26,9 +26,19 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               <a href={githubBlob(p.excerptFile)}>blob</a>
             </>
           ) : null}
+          {"sitePath" in p && p.sitePath ? (
+            <>
+              {" · "}
+              <a href={p.sitePath}>{p.sitePath}</a>
+            </>
+          ) : null}
         </p>
       </header>
-      {p.flagship && p.excerptFile ? (
+      {p.slug === "gym-scan" ? (
+        <p>
+          <a href="/gym">Open the orbit viewer</a>. Written CV is on /resume — this mesh has no resume text.
+        </p>
+      ) : p.flagship && p.excerptFile ? (
         <section>
           <h2>Live excerpt from this repo</h2>
           <CodeExhibit slug={p.slug} label={p.excerptFile} />
