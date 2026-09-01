@@ -1,34 +1,32 @@
-# Personal Projects Showcase
+# Personal Projects — Jeffrey Gomez
 
-This repository contains a collection of personal projects, primarily in Java, Python, and C++. Recently, several projects have been enhanced to incorporate elements of Artificial Intelligence (AI) and Machine Learning (ML), or to demonstrate concepts relevant to these fields.
+Java, Python, C++, and SQL work, plus a recruiter site in `site/`.
 
-The goal of these enhancements is to:
-*   Illustrate how AI/ML techniques can be applied even in smaller, foundational projects.
-*   Provide practical examples of AI/ML-related code and documentation.
-*   Improve the overall structure, documentation, and usability of these projects.
+**Site:** from `site/` run `npm install && npm run dev`. Production: Vercel, root directory `site`.
 
-## Enhanced Projects
+I am a datacenter technician (Akkodis, Google data center assignment in Leesburg) and a CS student at Frostburg State University (expected June 2027), based in Arlington / DC metro. Public proof of code is this repository.
 
-Below is a list of projects that have received recent AI/ML-focused updates. Each project has its own detailed `README.md` with specific information on the enhancements, setup, and usage.
+## Flagship
 
-*   **C++ TCP Client/Server (`TCP/Chat/Chat/`)**:
-    *   Simulates a basic ML prediction service where the client sends a feature vector and the server returns a mock prediction.
-    *   See `TCP/Chat/Chat/README.md` for more details.
+| Folder | Language | What | Run |
+| --- | --- | --- | --- |
+| [`Graph/`](Graph/) | Java | Room labyrinth, FRIEND-BOT expensive-first DFS, cheapest-fuel path | `cd Graph && javac -d out src/*.java && java -cp out Room` |
+| [`HashMap/`](HashMap/) | Java | Linear-probing movie catalog + collision stats | `cd HashMap && javac -d out src/*.java && java -cp out Main_class` |
+| [`TCP/Chat/Chat/`](TCP/Chat/Chat/) | C++ | Multi-client newline-framed chat | `cd TCP/Chat/Chat && make && ./chat_server` |
+| [`Flashcard_App/`](Flashcard_App/) | JS | Study deck for this repo, spaced boxes | `cd Flashcard_App && npm start` |
+| [`FinalProject.sql`](FinalProject.sql) + [`sql_project_web_ui/`](sql_project_web_ui/) | SQL / Flask | Game library schema + table UI | see `sql_project_web_ui/README.md` |
+| [`Library_Books/`](Library_Books/) | Java | File-backed book list | `cd Library_Books && javac -d out src/work/*.java && java -cp out work.BookManagementSystem` |
+| [`Java/Linked_List/`](Java/Linked_List/) | Java | Integer chain: contains / swap / insert | `cd Java/Linked_List && javac -d out *.java && java -ea -cp out IntChainTest` |
+| [`KnowledgeGraph/`](KnowledgeGraph/) | Python | Provenance graph | `python3 KnowledgeGraph/graph.py` |
 
-*   **Python ML Math Toolkit (`Python/ml_math_toolkit.py`)**:
-    *   Formerly a simple calculator, this script now provides basic vector and matrix operations using NumPy, commonly used in ML.
-    *   See `Python/README.md` for usage and examples.
+Tests: `Graph` `RoomTest`, `HashMap` `Hash_MTest`, `Java/Linked_List` `IntChainTest`, `Library_Books` `BookTest`, `Flashcard_App` `npm test`, `site` `npm test`.
 
-*   **Java k-Nearest Neighbors (k-NN) Classifier (`Java/ArrayList/`)**:
-    *   The `printNames.java` (now potentially `SimpleKNNClassifier.java`) has been refactored to implement a basic k-NN algorithm using sample data.
-    *   See `Java/ArrayList/README.md` for an explanation of the k-NN implementation.
+## Also in the tree
 
-*   **Other Python Scripts (`Python/`)**:
-    *   `string_slicing.py` and `Calculate_area.py` now include comments on their relevance to NLP and ML feature engineering, respectively.
+- `Java/Lab2`, `Lab3`, `Lab5`, `ArrayList` — class labs. Kept, not headlined.
+- `Python/` — small utilities (`pass_gen.py` and friends).
+- `Java/ArrayList/SimpleKNNClassifier.java` — later overlay; the original `TwoInput` word-distance program is the personal one.
 
-## General Guidelines
-*   **Dependencies**: Specific dependencies (like NumPy for Python) are listed in the respective project READMEs.
-*   **Running the Code**: Instructions for compiling and running each project are provided in their specific READMEs.
-*   **Licensing**: This collection of personal projects is provided as-is. You are free to use, modify, and distribute the code. If you adapt any of this code for your own projects, an acknowledgment is appreciated but not required. For any specific third-party libraries used within these projects, please refer to their respective licenses. Consider adding a standard open-source license (e.g., MIT, Apache 2.0) to your own repository if you build upon this work and intend to share it more broadly.
+## Site extras
 
-We encourage you to explore these projects and their AI/ML enhancements!
+Recruiter chat, job-fit paste, knowledge graph, 3D GLB viewer, printable `/resume`, operator page at `/founder` (gym **staff** + datacenter — not founder/CEO).

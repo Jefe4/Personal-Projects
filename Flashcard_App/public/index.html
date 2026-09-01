@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jefe flashcards</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <main>
+    <p class="kicker">Flashcard_App · Personal-Projects</p>
+    <h1>Study the code you already wrote</h1>
+    <p class="lede">Cards are about this repo: rooms, hashing, TCP chat, SQL, lists. Due cards first. Misses drop back to box 1.</p>
+    <div id="meta"></div>
+    <article id="card" hidden>
+      <p id="deck"></p>
+      <h2 id="prompt"></h2>
+      <p id="answer" hidden></p>
+      <div class="row">
+        <button type="button" id="flip">Flip</button>
+        <button type="button" id="miss" hidden>Miss</button>
+        <button type="button" id="got" hidden>Got it</button>
+      </div>
+    </article>
+    <p id="empty" hidden>Caught up. Add more cards in data/cards.json or wait until due dates hit.</p>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,387 @@
+{
+  "identity": {
+    "name": "Jeffrey Gomez",
+    "also": ["Jeff"],
+    "byline": "Jefe",
+    "location": "Arlington, Virginia / DC metro",
+    "phone": "240-274-9983",
+    "email": "jeffgomez4010@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/jeffrey-gomez-961520169/",
+    "github": "https://github.com/Jefe4",
+    "repo": "https://github.com/Jefe4/Personal-Projects",
+    "languages": ["English", "Spanish"],
+    "languageNote": "Native / bilingual English and Spanish",
+    "headline": "Datacenter technician and computer science student",
+    "summary": "I work as a datacenter technician on assignment at a Google data center through Akkodis, and I study computer science at Frostburg State University (expected June 2027). I also handle gym-floor systems work at DMV Iron Gym in Falls Church. I build Java, Python, SQL, and C++ projects in public on GitHub."
+  },
+  "doNotClaim": [
+    "owner, founder, or CEO of DMV Iron Gym",
+    "Google employee / Google FTE (assignment is via Akkodis)",
+    "completed bachelor's degree (expected June 2027; still enrolled)",
+    "personal military or veteran service",
+    "production PyTorch/TensorFlow/Hadoop/Keras engineer",
+    "hedge fund or live trading performance",
+    "jeffgomez.dev@gmail.com as primary email"
+  ],
+  "voice": {
+    "person": "first",
+    "tone": "professional, direct, no hype",
+    "asJeffrey": true
+  },
+  "experience": [
+    {
+      "org": "Akkodis",
+      "title": "Datacenter Technician",
+      "assignment": "On assignment at a Google data center (contractor via Akkodis, not a Google FTE)",
+      "location": "Leesburg, VA",
+      "start": "Sep 2025",
+      "end": "Present",
+      "current": true,
+      "hero": true,
+      "provenance": "resume-2026-08-27",
+      "bullets": [
+        "Assemble, disassemble, and populate equipment racks",
+        "Move tools, parts, and materials up to 50 lbs",
+        "Install ethernet and fiber",
+        "Follow cleanliness standards on the data center floor"
+      ],
+      "skills": ["GCP", "networking", "data center operations", "fiber", "ethernet", "hardware installation"]
+    },
+    {
+      "org": "DMV Iron Gym Inc",
+      "title": "Team Member & Systems Administrator",
+      "titleNote": "LinkedIn lists Team Member; latest resume also says Systems Administrator. Not owner, founder, or CEO.",
+      "owner": "Leo Torres Williams (founder/CEO, former Marine). Co-owner Don Cederlund. The gym is a veteran-owned chain; Jeffrey is staff, not a documented veteran.",
+      "location": "Falls Church, VA",
+      "address": "6763-R Wilson Blvd, Falls Church, VA 22044 (back of Eden Center)",
+      "start": "Jul 2024",
+      "end": "Present",
+      "current": true,
+      "hero": true,
+      "provenance": "resume-2026-08-27",
+      "bullets": [
+        "Member account setup, payment processing, membership-software troubleshooting",
+        "Excel and gym-management databases",
+        "Equipment-usage and maintenance reports",
+        "Building a modular iOS app (Swift + Firestore) for real-time gym management (work in progress)"
+      ],
+      "skills": ["Excel", "gym membership software", "Swift", "Firestore"]
+    },
+    {
+      "org": "Westat",
+      "title": "Technical Data Entry Clerk",
+      "location": "Rockville, MD",
+      "start": "Jun 2023",
+      "end": "Oct 2023",
+      "current": false,
+      "hero": true,
+      "provenance": "resume-2026-08-27",
+      "bullets": [
+        "Technical data entry in Rockville, MD"
+      ],
+      "skills": ["data entry", "Excel"]
+    },
+    {
+      "org": "Under Armour",
+      "title": "Team Member",
+      "location": "Bethesda, MD",
+      "start": "Jun 2022",
+      "end": "Aug 2023",
+      "current": false,
+      "hero": false,
+      "provenance": "linkedin-export",
+      "bullets": []
+    },
+    {
+      "org": "Advance Auto Parts",
+      "title": "Salesperson",
+      "location": "Silver Spring, MD",
+      "start": "May 2022",
+      "end": "Sep 2022",
+      "current": false,
+      "hero": false,
+      "provenance": "linkedin-export",
+      "dateNote": "About May/Jun–Sep 2022",
+      "bullets": []
+    },
+    {
+      "org": "UPS",
+      "title": "Package Handler",
+      "location": "Gaithersburg, MD",
+      "start": "Dec 2020",
+      "end": "Jan 2021",
+      "current": false,
+      "hero": false,
+      "provenance": "linkedin-export",
+      "bullets": []
+    },
+    {
+      "org": "Chick-fil-A",
+      "title": "Team Member",
+      "location": "Bethesda, MD",
+      "start": "Nov 2018",
+      "end": "Aug 2019",
+      "current": false,
+      "hero": false,
+      "provenance": "linkedin-export",
+      "bullets": []
+    }
+  ],
+  "education": [
+    {
+      "school": "Frostburg State University",
+      "focus": "Computer Science",
+      "line": "B.S. Computer Science, Frostburg State University (expected June 2027)",
+      "status": "enrolled",
+      "expected": "Jun 2027",
+      "provenance": "resume-2026-08-27",
+      "notes": [
+        "LinkedIn export still says Student at Frostburg",
+        "Do not print a completed degree",
+        "Older files that claim May 2024 or Jun 2023 graduation are wrong for the site"
+      ],
+      "athletics": {
+        "use": "lightly",
+        "detail": "Frostburg football 2019–2022 (OL/DL; appeared in two games in 2021; 2022 no action)"
+      }
+    },
+    {
+      "school": "Rockville High School",
+      "location": "Rockville, MD",
+      "credential": "Diploma",
+      "attended": "Aug 2015–Jun 2019",
+      "graduated": "Jun 2019",
+      "provenance": "resume-2026-08-27",
+      "notes": [
+        "3-sport athlete 4 years (football, basketball, lacrosse)",
+        "12+ AP classes",
+        "Project Lead the Way recipient"
+      ]
+    }
+  ],
+  "familyOptional": {
+    "parents": ["Luis Gomez", "Francia Rojas"],
+    "source": "public Frostburg athletics bio",
+    "homepage": false
+  },
+  "projects": [
+    {
+      "slug": "graph",
+      "name": "FRIEND-BOT room graph",
+      "path": "Graph/",
+      "github": "https://github.com/Jefe4/Personal-Projects/tree/main/Graph",
+      "stack": ["Java"],
+      "visibility": "public",
+      "flagship": true,
+      "provenance": "repo:Graph",
+      "excerptFile": "Graph/src/Room.java",
+      "summary": "Directed labyrinth as an adjacency matrix. Door weight is liters of fuel. FRIEND-BOT DFS opens the most expensive unused door first; backtracking is free. A cheapest-fuel path sits next to it so you can see the difference."
+    },
+    {
+      "slug": "hashmap",
+      "name": "Movie Hash_M",
+      "path": "HashMap/",
+      "github": "https://github.com/Jefe4/Personal-Projects/tree/main/HashMap",
+      "stack": ["Java"],
+      "visibility": "public",
+      "flagship": true,
+      "provenance": "repo:HashMap",
+      "excerptFile": "HashMap/src/Hash_M.java",
+      "summary": "Open-addressing hash table with linear probing, tombstones, load-factor resize, and collision/probe stats, loaded from a movie CSV."
+    },
+    {
+      "slug": "tcp",
+      "name": "TCP chat",
+      "path": "TCP/Chat/Chat/",
+      "github": "https://github.com/Jefe4/Personal-Projects/tree/main/TCP/Chat/Chat",
+      "stack": ["C++"],
+      "visibility": "public",
+      "flagship": true,
+      "provenance": "repo:TCP",
+      "excerptFile": "TCP/Chat/Chat/Server.cpp",
+      "summary": "POSIX TCP chat: newline-framed messages, select() for several clients, /nick /who /quit, connect retries on the client."
+    },
+    {
+      "slug": "flashcards",
+      "name": "Flashcard app",
+      "path": "Flashcard_App/",
+      "github": "https://github.com/Jefe4/Personal-Projects/tree/main/Flashcard_App",
+      "stack": ["JavaScript", "Node.js", "HTML", "CSS"],
+      "visibility": "public",
+      "flagship": true,
+      "provenance": "repo:Flashcard_App",
+      "excerptFile": "Flashcard_App/server.js",
+      "summary": "Local study deck about this repo. Box-style spaced repetition; progress saved as JSON."
+    },
+    {
+      "slug": "sql",
+      "name": "Game library SQL + Flask UI",
+      "path": "FinalProject.sql",
+      "github": "https://github.com/Jefe4/Personal-Projects/blob/main/FinalProject.sql",
+      "stack": ["SQL", "Python", "Flask", "HTML"],
+      "visibility": "public",
+      "flagship": true,
+      "provenance": "repo:SQL",
+      "excerptFile": "FinalProject.sql",
+      "summary": "MySQL game-library schema (users, games, publishers, genres, regions, stores) plus a Flask allow-listed table viewer."
+    },
+    {
+      "slug": "library",
+      "name": "Library book list",
+      "path": "Library_Books/",
+      "github": "https://github.com/Jefe4/Personal-Projects/tree/main/Library_Books",
+      "stack": ["Java"],
+      "visibility": "public",
+      "flagship": false,
+      "provenance": "repo:Library_Books",
+      "excerptFile": "Library_Books/src/work/BookManagement.java",
+      "summary": "File-backed book shelf: add, search, edit, delete, persist titles."
+    },
+    {
+      "slug": "linked-list",
+      "name": "Integer linked list",
+      "path": "Java/Linked_List/",
+      "github": "https://github.com/Jefe4/Personal-Projects/tree/main/Java/Linked_List",
+      "stack": ["Java"],
+      "visibility": "public",
+      "flagship": false,
+      "provenance": "repo:Linked_List",
+      "excerptFile": "Java/Linked_List/IntChain.java",
+      "summary": "Singly linked integer chain: contains, swap, sorted insert. Same node shape as the original Traverse drill."
+    },
+    {
+      "slug": "knowledge-graph",
+      "name": "Provenance knowledge graph",
+      "path": "KnowledgeGraph/",
+      "github": "https://github.com/Jefe4/Personal-Projects/tree/main/KnowledgeGraph",
+      "stack": ["Python"],
+      "visibility": "public",
+      "flagship": false,
+      "provenance": "repo:KnowledgeGraph",
+      "excerptFile": "KnowledgeGraph/graph.py",
+      "summary": "Nodes and edges with a source on every fact. Loads resume JSON when present; also indexes rooms, movies, and books from this repo."
+    },
+    {
+      "slug": "gymapp-github",
+      "name": "GymApp (public repo)",
+      "path": null,
+      "github": "https://github.com/Jefe4/GymApp",
+      "stack": ["Swift"],
+      "visibility": "public",
+      "flagship": false,
+      "wip": true,
+      "provenance": "github:Jefe4/GymApp",
+      "summary": "Public GitHub repo for gym-related app work. At inspection it is an early README-only repository — treat as a pointer, not a shipped product."
+    },
+    {
+      "slug": "gym-master",
+      "name": "GymMasterPro / gym digital twin",
+      "path": null,
+      "github": null,
+      "stack": ["Swift", "SwiftUI", "RealityKit", "ARKit", "Firestore"],
+      "visibility": "wip",
+      "flagship": false,
+      "wip": true,
+      "provenance": "resume-2026-08-27",
+      "summary": "Work in progress: SwiftUI + RealityKit/ARKit + Firestore. 3D gym, QR equipment tutorials, member and manager apps. I am the developer; the gym is the client. No public live URL."
+    },
+    {
+      "slug": "cardio",
+      "name": "Cardio treadmill companion",
+      "path": null,
+      "github": null,
+      "stack": ["React", "TypeScript", "Express", "Socket.io"],
+      "visibility": "wip",
+      "flagship": false,
+      "wip": true,
+      "provenance": "resume-2026-08-27",
+      "summary": "Product-for-gym treadmill companion aimed at Life Fitness equipment (React/TypeScript/Express/Socket.io). Not a claim to own that brand. Work in progress, no public live URL."
+    },
+    {
+      "slug": "trading-graph",
+      "name": "Trading / graph agent (personal research)",
+      "path": null,
+      "github": null,
+      "stack": ["Python", "Tkinter", "Flask", "SQLite"],
+      "visibility": "wip",
+      "flagship": false,
+      "wip": true,
+      "provenance": "local-wip",
+      "summary": "Local personal research tooling (not a public repo): Tkinter + Flask + SQLite, Binance testnet default, Alpaca, Polymarket listed as coming soon, paper trading default, strategy graph, kill switch. Not finance employment and not a hedge fund."
+    },
+    {
+      "slug": "event-tracker",
+      "name": "Real Time Event Tracker",
+      "path": null,
+      "github": null,
+      "stack": [],
+      "visibility": "wip",
+      "flagship": false,
+      "wip": true,
+      "provenance": "resume-2026-08-27",
+      "summary": "In development on the resume: 3D Earth + news aggregation + AI filtering. No public repo listed here."
+    },
+    {
+      "slug": "spatial",
+      "name": "AI hardware & spatial mapping",
+      "path": null,
+      "github": null,
+      "stack": ["LiDAR", "photogrammetry"],
+      "visibility": "wip",
+      "flagship": false,
+      "wip": true,
+      "provenance": "resume-2026-08-27",
+      "summary": "Work in progress: custom PCBs, LiDAR / photogrammetry. Not a production hardware product page."
+    }
+  ],
+  "skills": [
+    { "name": "Data center operations", "evidence": "Akkodis / Google data center assignment" },
+    { "name": "Fiber and ethernet cabling", "evidence": "Akkodis datacenter technician" },
+    { "name": "GCP", "evidence": "listed with datacenter role" },
+    { "name": "Networking", "evidence": "datacenter role + TCP project" },
+    { "name": "Hardware installation", "evidence": "rack assemble/populate, tools up to 50 lbs" },
+    { "name": "Java", "evidence": "Graph, HashMap, Library_Books, Linked_List" },
+    { "name": "Python", "evidence": "sql_project_web_ui, KnowledgeGraph, Python/" },
+    { "name": "SQL", "evidence": "FinalProject.sql" },
+    { "name": "C++", "evidence": "TCP/Chat" },
+    { "name": "JavaScript", "evidence": "Flashcard_App" },
+    { "name": "HTML", "evidence": "Flashcard_App, sql_project_web_ui templates" },
+    { "name": "CSS", "evidence": "Flashcard_App" },
+    { "name": "TypeScript", "evidence": "listed on gym cardio WIP (React/TS); this resume site" },
+    { "name": "Swift", "evidence": "gym iOS app WIP; GymApp repo pointer" },
+    { "name": "Firestore", "evidence": "gym iOS app WIP" },
+    { "name": "Excel", "evidence": "DMV Iron Gym, Westat" },
+    { "name": "Gym membership software", "evidence": "DMV Iron Gym" },
+    { "name": "Data structures", "evidence": "Graph, HashMap, Linked_List" },
+    { "name": "TCP", "evidence": "TCP/Chat" },
+    { "name": "3D / AR (WIP)", "evidence": "RealityKit / photogrammetry listed as in progress, not production" },
+    { "name": "English", "evidence": "native/bilingual" },
+    { "name": "Spanish", "evidence": "native/bilingual" }
+  ],
+  "roleFit": {
+    "datacenter_it": "Current Datacenter Technician via Akkodis at a Google data center in Leesburg: racks, fiber/ethernet, GCP, cleanliness, physical plant. Pair with CS coursework and the TCP + SQL projects for junior IT / datacenter / networking conversations.",
+    "junior_software": "Public Java/Python/SQL/C++ in Personal-Projects (graph, hashmap, chat, Flask UI, flashcards). Still enrolled, expected June 2027 — if a JD requires a degree in hand, say that clearly.",
+    "systems_networking": "Datacenter cabling + C++ TCP chat (framing, select, multiple clients) is the honest systems story. Do not invent embedded-firmware employment.",
+    "gym_product": "Team Member & Systems Administrator at DMV Iron Gym: membership software, Excel/DBs, plus WIP Swift/Firestore iOS and 3D gym tooling. Applied product work for a gym client, not founder equity claims.",
+    "trading_ai": "Local personal research tooling with paper-trading default. Not a trading job and not performance to quote."
+  },
+  "jobFitHints": {
+    "mustMap": {
+      "java": ["Graph/", "HashMap/", "Library_Books/"],
+      "python": ["KnowledgeGraph/", "sql_project_web_ui/", "Python/"],
+      "sql": ["FinalProject.sql"],
+      "c++": ["TCP/Chat/Chat/"],
+      "tcp": ["TCP/Chat/Chat/"],
+      "networking": ["TCP/Chat/Chat/", "Akkodis datacenter"],
+      "gcp": ["Akkodis datacenter role"],
+      "excel": ["DMV Iron Gym", "Westat"],
+      "javascript": ["Flashcard_App/"],
+      "swift": ["gym iOS WIP"],
+      "data center": ["Akkodis Leesburg assignment"],
+      "fiber": ["Akkodis"],
+      "spanish": ["bilingual"]
+    },
+    "stretch": ["TypeScript", "React", "SwiftUI", "RealityKit", "Firestore", "3D", "AR"],
+    "neverInvent": ["Kubernetes", "PyTorch", "TensorFlow", "Hadoop", "Keras", "AWS certified", "veteran", "founder", "CEO", "Google FTE"]
+  }
+}

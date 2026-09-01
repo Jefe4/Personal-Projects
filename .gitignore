@@ -1,0 +1,32 @@
+# Build / IDE
+*.class
+*.o
+*.exe
+*.out
+.DS_Store
+.idea/
+*.iml
+out/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Node / Next
+node_modules/
+.next/
+out/
+site/.next/
+site/out/
+site/node_modules/
+
+# Local TCP binaries
+TCP/Chat/Chat/Server
+TCP/Chat/Chat/Client
+TCP/Chat/Chat/chat_server
+TCP/Chat/Chat/chat_client
+
+# Optional large resume mesh (add locally as site/public/resume.glb)
+site/public/resume.glb
+Flashcard_App/data/progress.json

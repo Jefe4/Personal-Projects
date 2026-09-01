@@ -64,4 +64,9 @@ public class Book implements Comparable<Book>{
 	      return bookName.equals(currentBook.bookName);
 	   }
 
+	@Override
+	public int hashCode() {
+		return bookName == null ? 0 : bookName.hashCode();
+	}
+
 }

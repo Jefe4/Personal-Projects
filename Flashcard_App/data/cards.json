@@ -1,0 +1,50 @@
+[
+  {
+    "id": "graph-dfs",
+    "front": "In the room graph, what does FRIEND-BOT try first?",
+    "back": "The most expensive unused door (highest liters). Backtracking does not add fuel.",
+    "deck": "Graph"
+  },
+  {
+    "id": "graph-matrix",
+    "front": "How are doors stored in Room.java?",
+    "back": "An adjacency matrix. adj[i][j] is liters to walk from room i to room j, or 0 for no door.",
+    "deck": "Graph"
+  },
+  {
+    "id": "hash-probe",
+    "front": "Hash_M uses which collision strategy?",
+    "back": "Linear probing. A deleted slot is marked DEFUNCT so the probe walk can continue.",
+    "deck": "HashMap"
+  },
+  {
+    "id": "hash-load",
+    "front": "When does Hash_M resize?",
+    "back": "When n would pass capacity/2. New capacity is 2*capacity - 1.",
+    "deck": "HashMap"
+  },
+  {
+    "id": "tcp-frame",
+    "front": "How does the TCP chat know a message is complete?",
+    "back": "Newline framing. Each client has an inbuf; a line is handled only after '\\n' arrives.",
+    "deck": "TCP"
+  },
+  {
+    "id": "tcp-select",
+    "front": "How can several chat clients talk at once without threads?",
+    "back": "select() on the listen socket and every client fd. The server broadcasts lines to the others.",
+    "deck": "TCP"
+  },
+  {
+    "id": "sql-user",
+    "front": "What is the primary key on mydb.User in FinalProject.sql?",
+    "back": "Username, with unique Email and idLibrary. Library is a separate table keyed by idLibrary.",
+    "deck": "SQL"
+  },
+  {
+    "id": "list-contains",
+    "front": "How does Traverse / IntChain.contains find a value?",
+    "back": "Walk temp = temp.next until null. True if temp.num equals the target. O(n).",
+    "deck": "Lists"
+  }
+]
