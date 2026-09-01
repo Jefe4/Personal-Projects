@@ -9,7 +9,7 @@ public abstract class AbstractHashMap<K, V> extends AbstractMap<K, V> {
     //prime factor
     private int prime;
     // the shift and scaling factors
-    private long scale, shift;
+    protected long scale, shift;
 
     public AbstractHashMap(int cap, int p) {
         prime = p;
@@ -32,12 +32,16 @@ public abstract class AbstractHashMap<K, V> extends AbstractMap<K, V> {
 
     @Override
     public V get(Object key) {
-        return bucketGet(hashValue((K) key), (K) key);
+        @SuppressWarnings("unchecked")
+        K k = (K) key;
+        return bucketGet(hashValue(k), k);
     }
 
     @Override
     public V remove(Object key) {
-        return bucketRemove(hashValue((K) key), (K) key);
+        @SuppressWarnings("unchecked")
+        K k = (K) key;
+        return bucketRemove(hashValue(k), k);
     }
 
     @Override
@@ -49,10 +53,24 @@ public abstract class AbstractHashMap<K, V> extends AbstractMap<K, V> {
         return answer;
     }
 
-    // private utilities
+    public int size() {
+        return n;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public double loadFactor() {
+        if (capacity == 0) {
+            return 0;
+        }
+        return (double) n / (double) capacity;
+    }
+
     protected abstract void createTable();
 
-    private int hashValue(K key) {
+    protected int hashValue(K key) {
         return (int) ((Math.abs(key.hashCode() * scale + shift) % prime) % capacity);
     }
 

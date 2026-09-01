@@ -2,11 +2,12 @@
   "name": "flashcard_app",
   "version": "1.0.0",
   "description": "Flashcard game",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "r"
+    "start": "node server.js",
+    "test": "node test/srs.test.js"
   },
-  "author": "",
+  "author": "Jeffrey Gomez",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.6.7"
