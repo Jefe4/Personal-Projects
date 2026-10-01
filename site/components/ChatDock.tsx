@@ -48,7 +48,7 @@ export function ChatDock() {
 
   if (!open) {
     return (
-      <button className="cta" style={{ position: "fixed", right: "1rem", bottom: "1rem", zIndex: 30 }} onClick={() => setOpen(true)}>
+      <button className="chat-launcher" type="button" onClick={() => setOpen(true)}>
         Ask about Jeffrey
       </button>
     );
