@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { motion, useReducedMotion } from "framer-motion";
 import type { Profile } from "@/lib/profile";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { ContactBlock, EducationBlocks, JobPanels, SkillRow } from "./bits";
@@ -15,6 +16,7 @@ export function EditorialHome({
   projects: Profile["projects"];
 }) {
   const id = profile.identity;
+  const reduce = useReducedMotion();
   return (
     <main id="main" className="home home-editorial">
       <header className="masthead">
@@ -24,7 +26,13 @@ export function EditorialHome({
           <span>{id.location}</span>
         </div>
         <p className="kicker">Recruiter briefing</p>
-        <h1>{id.name}</h1>
+        <motion.h1
+          initial={reduce ? false : { opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {id.name}
+        </motion.h1>
         <p className="deck">{id.summary}</p>
         <div className="cta">
           <a href="#ed-work">Work</a>

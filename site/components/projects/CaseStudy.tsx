@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import type { Profile } from "@/lib/profile";
 import { studyFor } from "@/lib/case-studies";
@@ -15,6 +15,7 @@ type Project = Profile["projects"][number];
 export function CaseStudy({ project, related }: { project: Project; related: Project[] }) {
   const { ui } = useUi();
   const reduce = useReducedMotion();
+  const [active, setActive] = useState("problem");
   const study = studyFor(project.slug);
   const excerpt = "excerptFile" in project && project.excerptFile ? project.excerptFile : null;
   const wip = "wip" in project && project.wip;
@@ -117,6 +118,30 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
     ),
   });
 
+  useEffect(() => {
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>(".chapter"));
+    if (!nodes.length) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible?.target.id) setActive(visible.target.id);
+      },
+      { rootMargin: "-20% 0px -55% 0px", threshold: [0.15, 0.4, 0.7] },
+    );
+    nodes.forEach((n) => obs.observe(n));
+    return () => obs.disconnect();
+  }, [project.slug]);
+
+  const enter = reduce
+    ? false
+    : ui === "editorial"
+      ? { opacity: 0, y: 18 }
+      : ui === "spatial"
+        ? { opacity: 0, y: 28, scale: 0.985 }
+        : { opacity: 0, y: 22 };
+
   return (
     <main id="main" className={`wrap case case-${ui}`}>
       <header className="case-hero">
@@ -134,7 +159,7 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
       <div className="case-layout">
         <nav className="chapter-nav" aria-label="Chapters">
           {chapters.map((c, i) => (
-            <a key={c.id} href={`#${c.id}`}>
+            <a key={c.id} href={`#${c.id}`} aria-current={active === c.id ? "true" : undefined}>
               <span>{String(i + 1).padStart(2, "0")}</span> {c.title}
             </a>
           ))}
@@ -145,8 +170,8 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
               key={c.id}
               id={c.id}
               className="chapter"
-              initial={reduce ? false : { opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={enter}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: true, margin: "-12% 0px" }}
               transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
             >

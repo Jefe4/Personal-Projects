@@ -17,3 +17,20 @@ export const UI_LABEL: Record<UiDirection, string> = {
   spatial: "Spatial",
   editorial: "Editorial",
 };
+
+export const UI_BLURB: Record<UiDirection, string> = {
+  studio: "Large type, sticky chapters, light or dark.",
+  spatial: "Dark glass, gym-scan depth, projects on a shelf.",
+  editorial: "Magazine grid, numbered sections, long case studies.",
+};
+
+/** First visit only. A shareable ?ui=, a saved choice, or an explicit defer hides it. */
+export function shouldOfferDirectionPicker(opts: {
+  query: UiDirection | null;
+  saved: UiDirection | null;
+  legacyEditorial: boolean;
+  deferred: boolean;
+}): boolean {
+  if (opts.query || opts.saved || opts.legacyEditorial || opts.deferred) return false;
+  return true;
+}

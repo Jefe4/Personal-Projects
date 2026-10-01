@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import type { Profile } from "@/lib/profile";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { ContactBlock, EducationBlocks, JobPanels, SkillRow } from "./bits";
@@ -70,18 +70,23 @@ export function SpatialHome({
       <section className="spatial-block" id="about">
         <h2>About</h2>
         <div className="glass-grid">
-          <article className="glass">
-            <h3>Akkodis</h3>
-            <p>Datacenter Technician in Leesburg, on assignment at a Google data center. Contractor via Akkodis, not a Google FTE. Racks, fiber, ethernet, floor cleanliness.</p>
-          </article>
-          <article className="glass">
-            <h3>Frostburg</h3>
-            <p>B.S. Computer Science, expected June 2027. Still enrolled. Not a completed degree.</p>
-          </article>
-          <article className="glass">
-            <h3>DMV Iron Gym</h3>
-            <p>Team Member and Systems Administrator in Falls Church. Leo Torres Williams is founder/CEO. I am staff, not an owner, and not a documented veteran. The scan is the room I work in.</p>
-          </article>
+          {[
+            ["Akkodis", "Datacenter Technician in Leesburg, on assignment at a Google data center. Contractor via Akkodis, not a Google FTE. Racks, fiber, ethernet, floor cleanliness."],
+            ["Frostburg", "B.S. Computer Science, expected June 2027. Still enrolled. Not a completed degree."],
+            ["DMV Iron Gym", "Team Member and Systems Administrator in Falls Church. Leo Torres Williams is founder/CEO. I am staff, not an owner, and not a documented veteran. The scan is the room I work in."],
+          ].map(([title, copy], i) => (
+            <motion.article
+              key={title}
+              className="glass"
+              initial={reduce ? false : { opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-10% 0px" }}
+              transition={{ type: "spring", stiffness: 320, damping: 28, delay: reduce ? 0 : i * 0.06 }}
+            >
+              <h3>{title}</h3>
+              <p>{copy}</p>
+            </motion.article>
+          ))}
         </div>
         <SkillRow skills={profile.skills} />
       </section>

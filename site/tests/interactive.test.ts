@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { allStudyText } from "../lib/case-studies";
 import { cheapestPath, friendBot, nextInterval, ProbeTable } from "../lib/interactive";
+import { shouldOfferDirectionPicker } from "../lib/ui";
 
 describe("FRIEND-BOT matches Room.java rules", () => {
   it("hunts room 11 by the expensive door and charges 66 L", () => {
@@ -47,6 +48,16 @@ describe("linear probe keeps walking after a tombstone", () => {
     expect(found.value).toBe("two");
     expect(found.trace.probes.length).toBeGreaterThan(1);
     expect(table.table[home]).toBe("DEFUNCT");
+  });
+});
+
+describe("direction picker stays equal", () => {
+  it("offers a choice only when nothing has been chosen", () => {
+    expect(shouldOfferDirectionPicker({ query: null, saved: null, legacyEditorial: false, deferred: false })).toBe(true);
+    expect(shouldOfferDirectionPicker({ query: "spatial", saved: null, legacyEditorial: false, deferred: false })).toBe(false);
+    expect(shouldOfferDirectionPicker({ query: null, saved: "editorial", legacyEditorial: false, deferred: false })).toBe(false);
+    expect(shouldOfferDirectionPicker({ query: null, saved: null, legacyEditorial: true, deferred: false })).toBe(false);
+    expect(shouldOfferDirectionPicker({ query: null, saved: null, legacyEditorial: false, deferred: true })).toBe(false);
   });
 });
 

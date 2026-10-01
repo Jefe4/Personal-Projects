@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { motion, useReducedMotion, useScroll, useSpring } from "framer-motion";
 import { ChatDock } from "./ChatDock";
+import { DirectionPicker } from "./DirectionPicker";
 import { useUi } from "./UiProvider";
 import { UI_DIRECTIONS, UI_LABEL } from "@/lib/ui";
 
@@ -29,18 +30,20 @@ export function Shell({ children }: { children: ReactNode }) {
     <>
       <motion.div className="scroll-progress" style={{ scaleX: reduce ? scrollYProgress : scaleX }} aria-hidden="true" />
       <header className="site-header">
-        <Link className="brand" href="/">
-          Jeffrey Gomez
-        </Link>
-        <nav aria-label="Primary">
-          {links.map(([href, label]) => (
-            <Link key={href} href={href} aria-current={path === href ? "page" : undefined}>
-              {label}
-            </Link>
-          ))}
-        </nav>
-        <div className="controls">
-          <div className="ui-switch" role="group" aria-label="UI direction">
+        <div className="header-top">
+          <Link className="brand" href="/">
+            Jeffrey Gomez
+          </Link>
+          <nav aria-label="Primary">
+            {links.map(([href, label]) => (
+              <Link key={href} href={href} aria-current={path === href ? "page" : undefined}>
+                {label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+        <div className="direction-bar">
+          <div className="ui-switch directions" role="group" aria-label="UI direction">
             {UI_DIRECTIONS.map((id) => (
               <button key={id} type="button" aria-pressed={ui === id} onClick={() => setUi(id)}>
                 {UI_LABEL[id]}
@@ -60,6 +63,7 @@ export function Shell({ children }: { children: ReactNode }) {
         </div>
       </header>
       {children}
+      <DirectionPicker />
       <ChatDock />
     </>
   );
