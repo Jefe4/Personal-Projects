@@ -28,7 +28,7 @@ export function KnowledgeGraphView() {
         if (!a || !b) return null;
         return (
           <g key={i}>
-            <line x1={cx + a.x} y1={cy + a.y} x2={cx + b.x} y2={cy + b.y} stroke="#2a2e35" strokeWidth={1} />
+            <line x1={cx + a.x} y1={cy + a.y} x2={cx + b.x} y2={cy + b.y} stroke="var(--line)" strokeWidth={1.4} />
             <title>{`${e.rel} ← ${e.source}`}</title>
           </g>
         );
@@ -37,8 +37,8 @@ export function KnowledgeGraphView() {
         const on = hot.includes(n.id);
         return (
           <g key={n.id} transform={`translate(${cx + n.x}, ${cy + n.y})`}>
-            <circle r={on ? 16 : 11} fill={on ? "#c4a574" : "#14171c"} stroke="#c4a574" />
-            <text y={28} textAnchor="middle" fill="#ece8df" fontSize={11} fontFamily="IBM Plex Sans, sans-serif">
+            <circle r={on ? 16 : 11} fill={on ? "var(--accent)" : "var(--bg-elev)"} stroke="var(--accent)" />
+            <text y={28} textAnchor="middle" fill="var(--ink)" fontSize={11} fontFamily="var(--sans)">
               {n.label}
             </text>
             <title>{`${n.type} · ${n.provenance || ""}`}</title>

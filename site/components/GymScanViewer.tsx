@@ -144,7 +144,7 @@ function CameraCue({ view }: { view: "iso" | "top" }) {
   return null;
 }
 
-export function GymScanViewer() {
+export function GymScanViewer({ compact = false }: { compact?: boolean }) {
   const [url, setUrl] = useState<string | null>(null);
   const [reduce, setReduce] = useState(false);
   const [view, setView] = useState<"iso" | "top">("iso");
@@ -174,7 +174,7 @@ export function GymScanViewer() {
     return (
       <div className="card">
         <p className="mono">Reduced motion — no orbit. This file is a gym scan, not a resume.</p>
-        {captions}
+        {compact ? null : captions}
         <p>
           Written CV facts live on <a href="/resume">/resume</a> (jeffrey.json). Nothing on the mesh is resume text.
         </p>
@@ -184,6 +184,8 @@ export function GymScanViewer() {
 
   return (
     <div>
+      {compact ? <p className="mono">Orbit preview · staff scan, not a resume</p> : null}
+      {compact ? null : (
       <div className="chips" style={{ marginBottom: "0.6rem" }}>
         <button type="button" onClick={() => setView("iso")} aria-pressed={view === "iso"}>
           Isometric
@@ -193,7 +195,8 @@ export function GymScanViewer() {
         </button>
         <span className="muted">{url ? "gym.glb loaded" : "placeholder rig — add site/public/gym.glb (Git LFS)"}</span>
       </div>
-      <div className="canvas-wrap gym-canvas" role="img" aria-label="Photogrammetry scan of DMV Iron Gym interior">
+      )}
+      <div className={compact ? "canvas-wrap gym-canvas compact" : "canvas-wrap gym-canvas"} role="img" aria-label="Photogrammetry scan of DMV Iron Gym interior">
         <Canvas shadows camera={{ position: cam.pos, fov: 42, near: 0.1, far: 200 }}>
           <GymLights />
           <CameraCue view={view} />
@@ -201,10 +204,12 @@ export function GymScanViewer() {
           <OrbitControls makeDefault enablePan target={cam.target} minDistance={4} maxDistance={36} maxPolarAngle={Math.PI / 2.05} />
         </Canvas>
       </div>
+      {compact ? null : (
       <div className="card" style={{ marginTop: "0.8rem" }}>
         <p className="mono">On this mesh (nothing else invented)</p>
         {captions}
       </div>
+      )}
     </div>
   );
 }

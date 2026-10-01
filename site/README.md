@@ -31,7 +31,21 @@ GitHub Pages can host a static export of marketing pages only; the chat API need
 | `/gym` | Photogrammetry scan of DMV Iron Gym (not a resume). `/3d` redirects here. |
 | `/resume` | Printable one-pager from jeffrey.json |
 
-Visual language toggle: Briefing vs Editorial (header).
+## UI directions
+
+Three live layouts share `content/jeffrey.json`. Switch them from the header, or open a shareable URL. The choice is stored in `localStorage` (`jefe-ui`) and a `jefe-ui` cookie.
+
+| Direction | URL | What you should notice |
+| --- | --- | --- |
+| Studio (default) | `/?ui=studio` | Large type, sticky section titles, light or dark, project cards that lift on hover |
+| Spatial | `/?ui=spatial` | Dark glass, a live preview of the `/gym` scan, projects as a shelf |
+| Editorial | `/?ui=editorial` | Paper grid, numbered sections, serif headlines, long case studies |
+
+Studio and Editorial also have Light / Dark (`jefe-scheme`). Spatial stays dark. `prefers-reduced-motion` turns off the scroll progress spring, card springs, autoplay, and the gym orbit.
+
+Project pages (`/projects/[slug]`) scroll through Problem, What I built, Stack, a code excerpt from this repo when one exists, an interactive model (graph fuel, hash probe, flashcard boxes, TCP commands, library shelf, linked-list walk, SQL tables, provenance graph, or the gym scan), how to run it, and related work. WIP items stay labeled and do not grow a fake demo.
+
+For Jeffrey: open `/`, `/projects/graph`, and `/gym` in each direction before picking one. Facts are still the Aug 27 resume. The chat dock stays on every page.
 
 ## Gym scan mesh
 

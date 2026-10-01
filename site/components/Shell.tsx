@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
+import { motion, useReducedMotion, useScroll, useSpring } from "framer-motion";
 import { ChatDock } from "./ChatDock";
+import { useUi } from "./UiProvider";
+import { UI_DIRECTIONS, UI_LABEL } from "@/lib/ui";
 
 const links = [
   ["/", "Work"],
@@ -15,21 +18,16 @@ const links = [
   ["/resume", "One-pager"],
 ];
 
-export function Shell({ children }: { children: React.ReactNode }) {
+export function Shell({ children }: { children: ReactNode }) {
   const path = usePathname();
-  const [theme, setTheme] = useState<"briefing" | "editorial">("briefing");
-
-  useEffect(() => {
-    const saved = window.localStorage.getItem("jefe-theme");
-    if (saved === "editorial" || saved === "briefing") setTheme(saved);
-  }, []);
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    window.localStorage.setItem("jefe-theme", theme);
-  }, [theme]);
+  const { ui, setUi, scheme, setScheme } = useUi();
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 140, damping: 28, restDelta: 0.001 });
 
   return (
     <>
+      <motion.div className="scroll-progress" style={{ scaleX: reduce ? scrollYProgress : scaleX }} aria-hidden="true" />
       <header className="site-header">
         <Link className="brand" href="/">
           Jeffrey Gomez
@@ -41,13 +39,24 @@ export function Shell({ children }: { children: React.ReactNode }) {
             </Link>
           ))}
         </nav>
-        <div className="toggles">
-          <button type="button" aria-pressed={theme === "briefing"} onClick={() => setTheme("briefing")}>
-            Briefing
-          </button>
-          <button type="button" aria-pressed={theme === "editorial"} onClick={() => setTheme("editorial")}>
-            Editorial
-          </button>
+        <div className="controls">
+          <div className="ui-switch" role="group" aria-label="UI direction">
+            {UI_DIRECTIONS.map((id) => (
+              <button key={id} type="button" aria-pressed={ui === id} onClick={() => setUi(id)}>
+                {UI_LABEL[id]}
+              </button>
+            ))}
+          </div>
+          {ui === "spatial" ? null : (
+            <div className="ui-switch" role="group" aria-label="Color scheme">
+              <button type="button" aria-pressed={scheme === "light"} onClick={() => setScheme("light")}>
+                Light
+              </button>
+              <button type="button" aria-pressed={scheme === "dark"} onClick={() => setScheme("dark")}>
+                Dark
+              </button>
+            </div>
+          )}
         </div>
       </header>
       {children}
