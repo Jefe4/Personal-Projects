@@ -1,167 +1,180 @@
-from flask import Flask, render_template, url_for
-import mysql.connector
-import os # For environment variables later, if needed
+from flask import Flask, render_template
+import os
+import sqlite3
+
+try:
+    import mysql.connector as mysql_connector
+except ImportError:
+    mysql_connector = None
 
 app = Flask(__name__)
 
-# Database configuration (placeholders - will need actual credentials)
-# For local development, you might set these directly or use environment variables
-DB_HOST = os.environ.get('DB_HOST', 'localhost')
-DB_USER = os.environ.get('DB_USER', 'your_db_user') # Replace with your user
-DB_PASSWORD = os.environ.get('DB_PASSWORD', 'your_db_password') # Replace with your password
-DB_NAME = os.environ.get('DB_NAME', 'mydb') # The schema name from FinalProject.sql
+DB_BACKEND = os.environ.get("DB_BACKEND", "sqlite").lower()
+SQLITE_PATH = os.environ.get("SQLITE_PATH", os.path.join(os.path.dirname(__file__), "demo.db"))
+DB_HOST = os.environ.get("DB_HOST", "localhost")
+DB_USER = os.environ.get("DB_USER", "your_db_user")
+DB_PASSWORD = os.environ.get("DB_PASSWORD", "your_db_password")
+DB_NAME = os.environ.get("DB_NAME", "mydb")
+
+ALLOWED_TABLES = [
+    "User",
+    "Game",
+    "Publisher",
+    "Genre",
+    "Library",
+    "Region",
+    "Store",
+    "Game_Genre",
+    "Game_Region",
+    "Region_Sale",
+]
+
+
+class QueryError(Exception):
+    pass
+
 
 def get_db_connection():
+    if DB_BACKEND == "sqlite":
+        if not os.path.exists(SQLITE_PATH):
+            print(f"SQLite file missing at {SQLITE_PATH}. Run: python seed_sqlite.py")
+            return None
+        conn = sqlite3.connect(SQLITE_PATH)
+        conn.row_factory = sqlite3.Row
+        return conn
+    if mysql_connector is None:
+        print("mysql-connector-python is not installed.")
+        return None
     try:
-        conn = mysql.connector.connect(
+        return mysql_connector.connect(
             host=DB_HOST,
             user=DB_USER,
             password=DB_PASSWORD,
-            database=DB_NAME
+            database=DB_NAME,
         )
-        return conn
     except mysql.connector.Error as err:
         print(f"Error connecting to database: {err}")
-        return None # Or handle error appropriately
+        return None
 
-@app.route('/')
+
+def run_query(query, params=None):
+    conn = get_db_connection()
+    if not conn:
+        raise QueryError("Error connecting to database")
+    cursor = conn.cursor()
+    headers, rows = [], []
+    try:
+        cursor.execute(query, params or [])
+        if cursor.description:
+            headers = [desc[0] for desc in cursor.description]
+        fetched = cursor.fetchall()
+        rows = [tuple(row) for row in fetched]
+    except Exception as err:
+        raise QueryError(str(err)) from err
+    finally:
+        cursor.close()
+        conn.close()
+    return headers, rows
+
+
+@app.route("/")
 def index():
-    return render_template('index.html')
+    return render_template("index.html")
 
-@app.route('/view_table/<table_name>')
+
+@app.route("/view_table/<table_name>")
 def view_table(table_name):
-    conn = get_db_connection()
-    if not conn:
-        return "Error connecting to database", 500
-    
-    cursor = conn.cursor() 
-    
-    allowed_tables = ['User', 'Game', 'Publisher', 'Genre', 'Library', 'Region', 'Store', 'Game_Genre', 'Game_Region', 'Region_Sale']
-    if table_name not in allowed_tables:
-        cursor.close()
-        conn.close()
+    if table_name not in ALLOWED_TABLES:
         return "Table not found or not allowed", 404
-
-    headers = []
-    rows = []
-    error_message = None
     try:
-        query = f"SELECT * FROM `{table_name}` LIMIT 100"
-        cursor.execute(query)
-        
-        if cursor.description:
-            headers = [desc[0] for desc in cursor.description]
-        
-        rows = cursor.fetchall()
+        headers, rows = run_query(f"SELECT * FROM {table_name} LIMIT 100")
+        return render_template(
+            "table_view.html", table_name=table_name, headers=headers, rows=rows, error=None
+        )
+    except QueryError as err:
+        return render_template(
+            "table_view.html", table_name=table_name, headers=[], rows=[], error=str(err)
+        ), 500
 
-    except mysql.connector.Error as err:
-        error_message = f"Error fetching data for table {table_name}: {err}"
-        print(error_message)
-    finally:
-        cursor.close()
-        conn.close()
 
-    return render_template('table_view.html', table_name=table_name, headers=headers, rows=rows, error=error_message)
-
-@app.route('/reports/game_details')
+@app.route("/reports/game_details")
 def reports_game_details():
-    conn = get_db_connection()
-    if not conn:
-        return "Error connecting to database", 500
-    
-    cursor = conn.cursor()
-    headers = []
-    rows = []
     report_title = "Game Details (View)"
-    error_message = None
     try:
-        # This view is not yet created in DB, but we code against its expected existence
-        query = "SELECT * FROM GameDetailsView LIMIT 100;"
-        cursor.execute(query)
-        
-        if cursor.description:
-            headers = [desc[0] for desc in cursor.description]
-        
-        rows = cursor.fetchall()
+        headers, rows = run_query("SELECT * FROM GameDetailsView LIMIT 100")
+        return render_template(
+            "table_view.html", table_name=report_title, headers=headers, rows=rows, error=None
+        )
+    except QueryError as err:
+        return render_template(
+            "table_view.html",
+            table_name=report_title,
+            headers=[],
+            rows=[],
+            error=f"{err}. Create the view or run python seed_sqlite.py.",
+        )
 
-    except mysql.connector.Error as err:
-        error_message = f"Error fetching data for {report_title}: {err}. (Note: The SQL VIEW 'GameDetailsView' might not exist yet in the database.)"
-        print(error_message)
-    finally:
-        cursor.close()
-        conn.close()
 
-    return render_template('table_view.html', table_name=report_title, headers=headers, rows=rows, error=error_message)
-
-@app.route('/reports/user_library_summary')
+@app.route("/reports/user_library_summary")
 def reports_user_library_summary():
-    conn = get_db_connection()
-    if not conn:
-        return "Error connecting to database", 500
-    
-    cursor = conn.cursor()
-    headers = []
-    rows = []
     report_title = "User Library Summary (View)"
-    error_message = None
     try:
-        # This view is not yet created in DB, but we code against its expected existence
-        query = "SELECT * FROM UserLibrarySummaryView LIMIT 100;"
-        cursor.execute(query)
-        
-        if cursor.description:
-            headers = [desc[0] for desc in cursor.description]
-        
-        rows = cursor.fetchall()
+        headers, rows = run_query("SELECT * FROM UserLibrarySummaryView LIMIT 100")
+        return render_template(
+            "table_view.html", table_name=report_title, headers=headers, rows=rows, error=None
+        )
+    except QueryError as err:
+        return render_template(
+            "table_view.html",
+            table_name=report_title,
+            headers=[],
+            rows=[],
+            error=f"{err}. Create the view or run python seed_sqlite.py.",
+        )
 
-    except mysql.connector.Error as err:
-        error_message = f"Error fetching data for {report_title}: {err}. (Note: The SQL VIEW 'UserLibrarySummaryView' might not exist yet in the database.)"
-        print(error_message)
-    finally:
-        cursor.close()
-        conn.close()
 
-    return render_template('table_view.html', table_name=report_title, headers=headers, rows=rows, error=error_message)
-
-@app.route('/reports/sales_by_genre_region')
+@app.route("/reports/sales_by_genre_region")
 def reports_sales_by_genre_region():
-    conn = get_db_connection()
-    if not conn:
-        return "Error connecting to database", 500
-    
-    cursor = conn.cursor()
-    headers = []
-    rows = []
     report_title = "Sales by Genre and Region"
-    error_message = None
+    query = """
+        SELECT
+            g.Genre_name,
+            r.Region_name,
+            SUM(rs.Num_Sales) AS TotalSales
+        FROM Region_Sale rs
+        JOIN Genre g ON rs.Genre_id = g.idGenre
+        JOIN Region r ON rs.idRegion = r.idRegion
+        GROUP BY g.Genre_name, r.Region_name
+        ORDER BY TotalSales DESC
+    """
     try:
-        query = """
-            SELECT
-                g.Genre_name,
-                r.Region_name,
-                SUM(rs.Num_Sales) AS TotalSales
-            FROM Region_Sale rs
-            JOIN Genre g ON rs.Genre_id = g.idGenre
-            JOIN Region r ON rs.idRegion = r.idRegion
-            GROUP BY g.Genre_name, r.Region_name
-            ORDER BY TotalSales DESC;
-        """
-        cursor.execute(query)
-        
-        if cursor.description:
-            headers = [desc[0] for desc in cursor.description]
-        
-        rows = cursor.fetchall()
+        headers, rows = run_query(query)
+        return render_template(
+            "table_view.html", table_name=report_title, headers=headers, rows=rows, error=None
+        )
+    except QueryError as err:
+        return render_template(
+            "table_view.html", table_name=report_title, headers=[], rows=[], error=str(err)
+        )
 
-    except mysql.connector.Error as err:
-        error_message = f"Error fetching data for {report_title}: {err}."
-        print(error_message)
-    finally:
-        cursor.close()
-        conn.close()
 
-    return render_template('table_view.html', table_name=report_title, headers=headers, rows=rows, error=error_message)
+@app.route("/reports/sales_concentration")
+def reports_sales_concentration():
+    report_title = "Sales Concentration by Region"
+    try:
+        headers, rows = run_query("SELECT * FROM SalesConcentrationView ORDER BY TotalSales DESC")
+        return render_template(
+            "table_view.html", table_name=report_title, headers=headers, rows=rows, error=None
+        )
+    except QueryError as err:
+        return render_template(
+            "table_view.html", table_name=report_title, headers=[], rows=[], error=str(err)
+        )
 
-if __name__ == '__main__':
-    # Note: For development, use flask run. For production, use a proper WSGI server.
+
+if __name__ == "__main__":
+    if DB_BACKEND == "sqlite" and not os.path.exists(SQLITE_PATH):
+        from seed_sqlite import seed
+
+        seed(SQLITE_PATH)
     app.run(debug=True)

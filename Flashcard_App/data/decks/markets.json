@@ -1,0 +1,92 @@
+[
+  {
+    "id": "mkt-bidask",
+    "front": "What is the bid-ask spread?",
+    "back": "The gap between the highest price a buyer will pay (bid) and the lowest price a seller will accept (ask). You typically buy at the ask and sell at the bid, so the spread is a cost.",
+    "deck": "Markets"
+  },
+  {
+    "id": "mkt-market-order",
+    "front": "What is a market order?",
+    "back": "An instruction to fill immediately at the best available prices. Speed over price. Slippage can be large in thin books.",
+    "deck": "Markets"
+  },
+  {
+    "id": "mkt-limit-order",
+    "front": "What is a limit order?",
+    "back": "An instruction to buy or sell only at a specified price or better. Price control, but it may not fill.",
+    "deck": "Markets"
+  },
+  {
+    "id": "mkt-drawdown",
+    "front": "What is max drawdown?",
+    "back": "The largest peak-to-trough drop in an equity curve. A risk metric, not a return metric.",
+    "deck": "Markets"
+  },
+  {
+    "id": "mkt-sharpe",
+    "front": "What does Sharpe ratio compare?",
+    "back": "Average excess return per unit of volatility, often annualized. It is sensitive to sample length and does not capture crash risk well.",
+    "deck": "Markets"
+  },
+  {
+    "id": "mkt-returns",
+    "front": "Why model returns instead of raw prices?",
+    "back": "Price levels depend on scale and are usually non-stationary. Simple returns (pct change) compare relative moves.",
+    "deck": "Markets"
+  },
+  {
+    "id": "mkt-leakage",
+    "front": "What is look-ahead bias?",
+    "back": "Using information that would not have been available at the decision time (future bars, restated data, shuffled time series).",
+    "deck": "Markets"
+  },
+  {
+    "id": "mkt-costs",
+    "front": "Why include transaction costs in a paper backtest?",
+    "back": "A rule that looks profitable at 0 bps often dies after spread, fees, and slippage. Turnover is expensive.",
+    "deck": "Markets"
+  },
+  {
+    "id": "mkt-walkforward",
+    "front": "What is walk-forward testing?",
+    "back": "Train on an earlier window, test on the next unused window, then roll forward. One in-sample score is not evidence.",
+    "deck": "Markets"
+  },
+  {
+    "id": "mkt-overfit",
+    "front": "Name one sign a backtest is overfit.",
+    "back": "Many free parameters, no costs, random train/test on time, or a strategy that only works on one ticker and one window.",
+    "deck": "Markets"
+  },
+  {
+    "id": "mkt-kelly",
+    "front": "What is the Kelly fraction in this repo?",
+    "back": "An educational formula f* = p - (1-p)/b. It is a probability identity, not a live betting or position-sizing system.",
+    "deck": "Markets"
+  },
+  {
+    "id": "mkt-fomo",
+    "front": "What is FOMO as a trading bias?",
+    "back": "Entering because others seem to be winning, not because a pre-committed rule fired. Common journal miss; worth a flashcard, not a signal.",
+    "deck": "Markets"
+  },
+  {
+    "id": "mkt-disclaimer",
+    "front": "Are these cards trade recommendations?",
+    "back": "No. They are vocabulary and research hygiene. Software here does not place orders and does not claim an edge.",
+    "deck": "Markets"
+  },
+  {
+    "id": "mkt-stop",
+    "front": "A gap opens through a stop. What risk idea is that?",
+    "back": "Stops are instructions, not guarantees. Gaps and illiquid prints can fill far from the stop price.",
+    "deck": "Markets"
+  },
+  {
+    "id": "mkt-paper",
+    "front": "What belongs in a paper-trade checklist card?",
+    "back": "Horizon, max loss, cost assumption, and what would falsify the idea — reviewed before a mock session, not after.",
+    "deck": "Markets"
+  }
+]

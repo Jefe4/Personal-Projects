@@ -22,7 +22,10 @@ def big_average(n):
     my_count = 0
     for i in range(n):
         my_sum += i
-        my_count += i
+        my_count += 1
+    if my_count == 0:
+        print("n must be positive")
+        return
     avg = my_sum / my_count
     print(avg)
 # print the number and stops
@@ -37,7 +40,7 @@ def print_odd_num(n):
 # prints numbers that cant be divided
 def print_indivisble(n, divisor):
     for i in range(n):
-        if (i % divisor == 1):
+        if (i % divisor != 0):
             print(i)
 # print the message on a different line of code
 def weird_print(message):
@@ -140,12 +143,11 @@ def shippingAmount():
     else:
         print("Have a total order amount")
                         
-# finds the length between a recangle 
+# finds the area of a rectangle
 def find_length():
-    l = w*h
-    w = input(int("Enter the width: "))
-    h = input(int("Enter the height: "))
-    return w*h
+    w = float(input("Enter the width: "))
+    h = float(input("Enter the height: "))
+    return w * h
 # contains a message
 def made_a_fun():
     print("Hello, this is a function I made to let you know.")

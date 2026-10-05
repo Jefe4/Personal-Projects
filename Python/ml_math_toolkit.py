@@ -1,167 +1,230 @@
 import numpy as np
 
-# --- Vector Operations ---
+
+def _require_ndarray(*arrays):
+    for arr in arrays:
+        if not isinstance(arr, np.ndarray):
+            raise ValueError("Inputs must be NumPy arrays.")
+
+
+def _as_1d(values):
+    arr = np.asarray(values, dtype=float)
+    if arr.ndim == 0:
+        return arr.reshape(1)
+    if arr.ndim != 1:
+        raise ValueError("Expected a 1D series.")
+    return arr
+
+
 def vector_dot_product(vec1, vec2):
-    if not isinstance(vec1, np.ndarray) or not isinstance(vec2, np.ndarray):
-        print("Error: Inputs must be NumPy arrays.")
-        return None
-    if vec1.ndim != 1 or vec2.ndim != 1: # Check if they are 1D arrays
-        print(f"Error: Both inputs must be 1D vectors. vec1 dim: {vec1.ndim}, vec2 dim: {vec2.ndim}.")
-        return None
-    # Dot product doesn't require same shape for 1D vectors, but number of elements must match.
-    # vec1.shape[0] should be equal to vec2.shape[0]
+    _require_ndarray(vec1, vec2)
+    if vec1.ndim != 1 or vec2.ndim != 1:
+        raise ValueError(
+            f"Both inputs must be 1D vectors. vec1 dim: {vec1.ndim}, vec2 dim: {vec2.ndim}."
+        )
     if vec1.shape[0] != vec2.shape[0]:
-        print(f"Error: Incompatible shapes for dot product. Number of elements must be the same. vec1: {vec1.shape[0]}, vec2: {vec2.shape[0]}.")
-        return None
-    try:
-        result = np.dot(vec1, vec2)
-        return result
-    except Exception as e:
-        print(f"Error during dot product: {e}")
-        return None
+        raise ValueError(
+            f"Incompatible shapes for dot product. vec1: {vec1.shape[0]}, vec2: {vec2.shape[0]}."
+        )
+    return np.dot(vec1, vec2)
+
 
 def vector_elementwise_add(vec1, vec2):
-    if not isinstance(vec1, np.ndarray) or not isinstance(vec2, np.ndarray):
-        print("Error: Inputs must be NumPy arrays.")
-        return None
+    _require_ndarray(vec1, vec2)
     if vec1.shape != vec2.shape:
-        print(f"Error: Incompatible shapes for element-wise addition. vec1: {vec1.shape}, vec2: {vec2.shape}.")
-        return None
-    try:
-        result = vec1 + vec2
-        return result
-    except Exception as e:
-        print(f"Error during element-wise addition: {e}")
-        return None
+        raise ValueError(
+            f"Incompatible shapes for element-wise addition. vec1: {vec1.shape}, vec2: {vec2.shape}."
+        )
+    return vec1 + vec2
 
-# --- Matrix Operations ---
+
 def matrix_multiply(mat1, mat2):
-    if not isinstance(mat1, np.ndarray) or not isinstance(mat2, np.ndarray):
-        print("Error: Inputs must be NumPy arrays.")
-        return None
+    _require_ndarray(mat1, mat2)
     if mat1.ndim != 2 or mat2.ndim != 2:
-        print(f"Error: Inputs must be 2D matrices. mat1 dim: {mat1.ndim}, mat2 dim: {mat2.ndim}.")
-        return None
+        raise ValueError(
+            f"Inputs must be 2D matrices. mat1 dim: {mat1.ndim}, mat2 dim: {mat2.ndim}."
+        )
     if mat1.shape[1] != mat2.shape[0]:
-        print(f"Error: Incompatible shapes for matrix multiplication. mat1 columns ({mat1.shape[1]}) must equal mat2 rows ({mat2.shape[0]}).")
-        return None
-    try:
-        result = np.matmul(mat1, mat2)
-        return result
-    except Exception as e:
-        print(f"Error during matrix multiplication: {e}")
-        return None
+        raise ValueError(
+            f"Incompatible shapes for matrix multiplication. mat1 columns ({mat1.shape[1]}) must equal mat2 rows ({mat2.shape[0]})."
+        )
+    return np.matmul(mat1, mat2)
 
-# --- Activation Functions ---
+
 def sigmoid(x):
-    # Allow numbers (int, float), lists, and NumPy arrays
     if not isinstance(x, (np.ndarray, int, float, list)):
-        print("Error: Input must be a NumPy array, a number (int/float), or a list.")
-        return None
-    try:
-        # Convert to np.asarray to handle numbers, lists, and arrays uniformly
-        result = 1 / (1 + np.exp(-np.asarray(x, dtype=float))) # Ensure float for np.exp
-        return result
-    except Exception as e:
-        print(f"Error during sigmoid calculation: {e}")
-        return None
+        raise ValueError("Input must be a NumPy array, a number (int/float), or a list.")
+    arr = np.asarray(x, dtype=float)
+    # Numerically stable: clip the exponent argument.
+    return 1 / (1 + np.exp(-np.clip(arr, -60, 60)))
+
 
 def relu(x):
-    # Allow numbers (int, float), lists, and NumPy arrays
     if not isinstance(x, (np.ndarray, int, float, list)):
-        print("Error: Input must be a NumPy array, a number (int/float), or a list.")
-        return None
-    try:
-        # Convert to np.asarray to handle numbers, lists, and arrays uniformly
-        result = np.maximum(0, np.asarray(x, dtype=float)) # Ensure float for np.maximum
-        return result
-    except Exception as e:
-        print(f"Error during ReLU calculation: {e}")
-        return None
+        raise ValueError("Input must be a NumPy array, a number (int/float), or a list.")
+    return np.maximum(0, np.asarray(x, dtype=float))
+
+
+def pct_change(series):
+    """Simple returns: (x_t - x_{t-1}) / x_{t-1}. First value is nan."""
+    arr = _as_1d(series)
+    out = np.empty_like(arr)
+    out[0] = np.nan
+    if arr.size > 1:
+        prev = arr[:-1]
+        out[1:] = np.where(prev == 0, np.nan, (arr[1:] - prev) / prev)
+    return out
+
+
+def rolling_mean(series, window):
+    arr = _as_1d(series)
+    if window < 1:
+        raise ValueError("window must be a positive integer.")
+    out = np.full(arr.shape, np.nan)
+    if arr.size < window:
+        return out
+    csum = np.cumsum(arr)
+    out[window - 1] = csum[window - 1] / window
+    out[window:] = (csum[window:] - csum[:-window]) / window
+    return out
+
+
+def rolling_std(series, window, ddof=1):
+    arr = _as_1d(series)
+    if window < 2:
+        raise ValueError("window must be at least 2 for a sample standard deviation.")
+    out = np.full(arr.shape, np.nan)
+    for i in range(window - 1, arr.size):
+        chunk = arr[i - window + 1 : i + 1]
+        out[i] = np.std(chunk, ddof=ddof)
+    return out
+
+
+def zscore(series, window=None):
+    arr = _as_1d(series)
+    if window is None:
+        mu = np.nanmean(arr)
+        sd = np.nanstd(arr, ddof=1)
+        if sd == 0 or np.isnan(sd):
+            return np.full(arr.shape, np.nan)
+        return (arr - mu) / sd
+    mean = rolling_mean(arr, window)
+    std = rolling_std(arr, window)
+    return np.where((std == 0) | np.isnan(std), np.nan, (arr - mean) / std)
+
+
+def sharpe_ratio(returns, periods_per_year=252, risk_free=0.0):
+    """Annualized Sharpe on a 1D return series. Excess return over risk_free per period."""
+    arr = _as_1d(returns)
+    arr = arr[np.isfinite(arr)]
+    if arr.size < 2:
+        return np.nan
+    excess = arr - risk_free
+    vol = np.std(excess, ddof=1)
+    if vol == 0:
+        return np.nan
+    return (np.mean(excess) / vol) * np.sqrt(periods_per_year)
+
+
+def max_drawdown(equity):
+    """Max peak-to-trough decline of an equity curve (negative number)."""
+    arr = _as_1d(equity)
+    if arr.size == 0:
+        return np.nan
+    peaks = np.maximum.accumulate(arr)
+    dd = np.where(peaks == 0, np.nan, arr / peaks - 1.0)
+    return float(np.nanmin(dd))
+
+
+def ols_beta(dependent, independent):
+    """Simple OLS slope of dependent on independent (with intercept)."""
+    y = _as_1d(dependent)
+    x = _as_1d(independent)
+    mask = np.isfinite(y) & np.isfinite(x)
+    y, x = y[mask], x[mask]
+    if y.size < 2:
+        raise ValueError("Need at least two finite paired observations for OLS beta.")
+    x_mean = np.mean(x)
+    y_mean = np.mean(y)
+    var_x = np.sum((x - x_mean) ** 2)
+    if var_x == 0:
+        raise ValueError("Independent series has zero variance.")
+    return float(np.sum((x - x_mean) * (y - y_mean)) / var_x)
+
+
+def kelly_fraction(win_prob, win_loss_ratio):
+    """
+    Educational Kelly fraction f* = p - (1-p)/b.
+
+    This is a probability identity, not a betting or position-sizing system
+    for live markets. Negative results are clipped to 0 in this helper.
+    """
+    p = float(win_prob)
+    b = float(win_loss_ratio)
+    if not (0 < p < 1):
+        raise ValueError("win_prob must be strictly between 0 and 1.")
+    if b <= 0:
+        raise ValueError("win_loss_ratio must be positive.")
+    return max(0.0, p - (1.0 - p) / b)
+
+
+def apply_costs(returns, position, cost_bps):
+    """
+    Subtract round-trip-ish costs when the position changes.
+    cost_bps is basis points charged on |delta position|.
+    """
+    ret = _as_1d(returns)
+    pos = _as_1d(position)
+    if ret.shape != pos.shape:
+        raise ValueError("returns and position must have the same length.")
+    delta = np.diff(pos, prepend=0.0)
+    cost = np.abs(delta) * (cost_bps / 10000.0)
+    return ret * pos - cost
+
 
 if __name__ == "__main__":
     print("--- ML Math Toolkit Examples ---")
 
-    # Vector examples
     v1 = np.array([1, 2, 3])
     v2 = np.array([4, 5, 6])
-    v_row_test = np.array([[1,2,3]]) # To test 1D check in dot product
-    v_col_test = np.array([[1],[2],[3]]) # To test 1D check
-
     print(f"\nVector v1: {v1}")
     print(f"Vector v2: {v2}")
+    print(f"Dot product of v1 and v2: {vector_dot_product(v1, v2)}")
+    print(f"Element-wise addition of v1 and v2: {vector_elementwise_add(v1, v2)}")
 
-    dot_prod = vector_dot_product(v1, v2)
-    if dot_prod is not None:
-        print(f"Dot product of v1 and v2: {dot_prod}")
-    
-    elem_add = vector_elementwise_add(v1, v2)
-    if elem_add is not None:
-        print(f"Element-wise addition of v1 and v2: {elem_add}")
-
-    # Matrix examples
     m1 = np.array([[1, 2], [3, 4]])
     m2 = np.array([[5, 6], [7, 8]])
-    print(f"\nMatrix m1:\n{m1}")
-    print(f"Matrix m2:\n{m2}")
+    print(f"\nMatrix multiplication of m1 and m2:\n{matrix_multiply(m1, m2)}")
 
-    mat_prod = matrix_multiply(m1, m2)
-    if mat_prod is not None:
-        print(f"Matrix multiplication of m1 and m2:\n{mat_prod}")
-
-    # Activation function examples
     scalar_val = 0.5
-    list_vals = [-10.0, -0.5, 0.0, 0.5, 10.0] # Use floats in list for consistency
+    list_vals = [-10.0, -0.5, 0.0, 0.5, 10.0]
     array_vals = np.array([-2.0, -1.0, 0.0, 1.0, 2.0])
-
     print(f"\nSigmoid of scalar {scalar_val}: {sigmoid(scalar_val)}")
     print(f"ReLU of scalar {scalar_val}: {relu(scalar_val)}")
-    
-    print(f"\nSigmoid of list {list_vals}: {sigmoid(list_vals)}")
-    print(f"ReLU of list {list_vals}: {relu(list_vals)}")
-
-    print(f"\nSigmoid of array {array_vals}: {sigmoid(array_vals)}")
+    print(f"Sigmoid of list {list_vals}: {sigmoid(list_vals)}")
     print(f"ReLU of array {array_vals}: {relu(array_vals)}")
+    print(f"Sigmoid of large negative (stability): {sigmoid(-1000)}")
+
+    prices = np.array([100.0, 101.0, 99.0, 102.0, 103.0])
+    rets = pct_change(prices)
+    print(f"\nSimple returns: {rets}")
+    print(f"Z-score: {zscore(prices)}")
+    equity = np.cumprod(1 + np.nan_to_num(rets, nan=0.0))
+    print(f"Sharpe (toy, 5 obs): {sharpe_ratio(rets)}")
+    print(f"Max drawdown: {max_drawdown(equity)}")
+    print(f"OLS beta of prices vs arange: {ols_beta(prices, np.arange(len(prices)))}")
+    print(f"Kelly fraction p=0.55, b=1: {kelly_fraction(0.55, 1.0)}")
 
     print("\n--- Error Handling Examples ---")
-    # Vector errors
-    v_bad_shape_dot = np.array([1,2]) # Different number of elements than v1
-    print(f"\nAttempting dot product with v1: {v1} and v_bad_shape_dot: {v_bad_shape_dot}")
-    vector_dot_product(v1, v_bad_shape_dot)
-
-    print(f"\nAttempting dot product with v1: {v1} and a 2D row array v_row_test: {v_row_test}")
-    vector_dot_product(v1, v_row_test) 
-    
-    print(f"\nAttempting dot product with v1: {v1} and a 2D col array v_col_test: {v_col_test}")
-    vector_dot_product(v1, v_col_test) 
-
-    v_bad_shape_add = np.array([10, 20]) # Different shape from v1 for addition
-    print(f"\nAttempting element-wise add with v1: {v1} and v_bad_shape_add: {v_bad_shape_add}")
-    vector_elementwise_add(v1, v_bad_shape_add)
-
-    # Matrix errors
-    m_bad_shape_mult = np.array([[1,2,3],[4,5,6]]) # 2x3, m1 is 2x2, incompatible for m1 @ m_bad_shape_mult
-    print(f"\nAttempting matrix multiplication with m1 (2x2):\n{m1}\nand m_bad_shape_mult (2x3):\n{m_bad_shape_mult}")
-    matrix_multiply(m1, m_bad_shape_mult) # m1.shape[1] (2) == m_bad_shape_mult.shape[0] (2) -> this should actually work! Let's test m_bad_shape_mult @ m1
-    
-    print(f"\nAttempting matrix multiplication with m_bad_shape_mult (2x3) and m1 (2x2):") # This should fail
-    matrix_multiply(m_bad_shape_mult, m1)
-
-
-    print(f"\nAttempting matrix multiplication with m1 (2x2):\n{m1}\nand a 1D array v1: {v1}")
-    matrix_multiply(m1, v1) 
-
-    # Activation function errors
-    print("\nAttempting sigmoid with incompatible type (string):")
-    sigmoid("test_string")
-
-    print("\nAttempting relu with incompatible type (complex number):")
-    relu(1+2j) 
-    
-    print("\n--- Testing with various valid inputs for activation functions ---")
-    print(f"Sigmoid of -1 (int): {sigmoid(-1)}")
-    print(f"ReLU of -3.5 (float): {relu(-3.5)}")
-    print(f"Sigmoid of [1, 2, 3] (list of ints): {sigmoid([1, 2, 3])}")
-    print(f"ReLU of [-1.0, 0.0, 1.5] (list of floats): {relu([-1.0, 0.0, 1.5])}")
-    print(f"Sigmoid of np.array([0]): {sigmoid(np.array([0]))}")
-    print(f"ReLU of np.array([-5, 5]): {relu(np.array([-5, 5]))}")
+    try:
+        vector_dot_product(v1, np.array([1, 2]))
+    except ValueError as exc:
+        print(f"Expected error: {exc}")
+    try:
+        matrix_multiply(np.array([[1, 2, 3], [4, 5, 6]]), m1)
+    except ValueError as exc:
+        print(f"Expected error: {exc}")
+    try:
+        sigmoid("test_string")
+    except ValueError as exc:
+        print(f"Expected error: {exc}")
