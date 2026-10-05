@@ -1,0 +1,62 @@
+[
+  {
+    "id": "graph-dfs",
+    "front": "In the room graph, what does FRIEND-BOT try first?",
+    "back": "The most expensive unused door (highest liters). Backtracking does not add fuel.",
+    "deck": "Graph"
+  },
+  {
+    "id": "graph-matrix",
+    "front": "How are doors stored in Room.java?",
+    "back": "An adjacency matrix. adj[i][j] is liters to walk from room i to room j, or 0 for no door.",
+    "deck": "Graph"
+  },
+  {
+    "id": "hash-probe",
+    "front": "Hash_M uses which collision strategy?",
+    "back": "Linear probing. A deleted slot is marked DEFUNCT so the probe walk can continue.",
+    "deck": "HashMap"
+  },
+  {
+    "id": "hash-load",
+    "front": "When does Hash_M resize?",
+    "back": "When n would pass capacity/2. New capacity is 2*capacity - 1.",
+    "deck": "HashMap"
+  },
+  {
+    "id": "tcp-json",
+    "front": "What does the TCP research sidecar return for context score_features?",
+    "back": "A dummy mean of the feature array, plus request_id and schema_version 1. Not a live model.",
+    "deck": "TCP"
+  },
+  {
+    "id": "tcp-risk",
+    "front": "What does context risk_check mean on the C++ server?",
+    "back": "1.0 if the absolute value of the dummy mean exceeds 1.0, else 0.0. Still a mock.",
+    "deck": "TCP"
+  },
+  {
+    "id": "sql-user",
+    "front": "What is the primary key on mydb.User in FinalProject.sql?",
+    "back": "Username, with unique Email and idLibrary. Library is a separate table keyed by idLibrary.",
+    "deck": "SQL"
+  },
+  {
+    "id": "sql-views",
+    "front": "Name three reporting views in the game-store schema.",
+    "back": "GameDetailsView, UserLibrarySummaryView, and SalesConcentrationView (region share of unit sales).",
+    "deck": "SQL"
+  },
+  {
+    "id": "list-contains",
+    "front": "How does Traverse / IntChain.contains find a value?",
+    "back": "Walk temp = temp.next until null. True if temp.num equals the target. O(n).",
+    "deck": "Lists"
+  },
+  {
+    "id": "knn-time",
+    "front": "Why does SimpleKNNClassifier split train/query by time instead of shuffling?",
+    "back": "Shuffling a time series leaks future rows into the past. Chronological split is the honest test.",
+    "deck": "ML"
+  }
+]

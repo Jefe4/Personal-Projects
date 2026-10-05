@@ -11,7 +11,9 @@
 #include <iomanip>    // For std::put_time
 #include <chrono>     // For std::chrono
 #include <ctime>      // For std::time_t, std::localtime
-#include <algorithm>  // For std::remove
+#include <algorithm>
+#include <cctype>
+#include <cmath>      // For std::fabs
 
 // LogLevel Enum
 enum LogLevel { INFO, WARNING, ERROR };
@@ -40,33 +42,78 @@ void log_message(LogLevel level, const std::string& message) {
 // Function to show how to use this program
 static void usage();
 
-// Helper to extract JSON string value for a given key
+std::string jsonEscape(const std::string& value) {
+    std::string out;
+    out.reserve(value.size());
+    for (char c : value) {
+        switch (c) {
+            case '"': out += "\\\""; break;
+            case '\\': out += "\\\\"; break;
+            case '\n': out += "\\n"; break;
+            case '\r': out += "\\r"; break;
+            default: out += c; break;
+        }
+    }
+    return out;
+}
+
+size_t skipWs(const std::string& json, size_t pos) {
+    while (pos < json.size() && isspace(static_cast<unsigned char>(json[pos]))) {
+        pos++;
+    }
+    return pos;
+}
+
+// Helper to extract JSON string value for a given key (spacing-tolerant).
 std::string extractJsonStringValue(const std::string& json, const std::string& key) {
-    std::string search_key = "\"" + key + "\": \"";
+    std::string search_key = "\"" + key + "\"";
     size_t start_pos = json.find(search_key);
     if (start_pos == std::string::npos) {
         return "";
     }
-    start_pos += search_key.length();
-    size_t end_pos = json.find("\"", start_pos);
-    if (end_pos == std::string::npos) {
+    start_pos = skipWs(json, start_pos + search_key.length());
+    if (start_pos >= json.size() || json[start_pos] != ':') {
         return "";
     }
-    return json.substr(start_pos, end_pos - start_pos);
+    start_pos = skipWs(json, start_pos + 1);
+    if (start_pos >= json.size() || json[start_pos] != '"') {
+        return "";
+    }
+    start_pos++;
+    std::string out;
+    while (start_pos < json.size()) {
+        char c = json[start_pos++];
+        if (c == '\\' && start_pos < json.size()) {
+            out += json[start_pos++];
+        } else if (c == '"') {
+            break;
+        } else {
+            out += c;
+        }
+    }
+    return out;
 }
 
 // Helper to extract JSON array (of doubles) for a given key
 std::vector<double> extractJsonDoubleArray(const std::string& json, const std::string& key) {
     std::vector<double> result;
-    std::string search_key = "\"" + key + "\": [";
+    std::string search_key = "\"" + key + "\"";
     size_t start_pos = json.find(search_key);
     if (start_pos == std::string::npos) {
-        return result; // Empty vector if key not found
+        return result;
     }
-    start_pos += search_key.length();
+    start_pos = skipWs(json, start_pos + search_key.length());
+    if (start_pos >= json.size() || json[start_pos] != ':') {
+        return result;
+    }
+    start_pos = skipWs(json, start_pos + 1);
+    if (start_pos >= json.size() || json[start_pos] != '[') {
+        return result;
+    }
+    start_pos++;
     size_t end_pos = json.find("]", start_pos);
     if (end_pos == std::string::npos) {
-        return result; // Empty vector if closing bracket not found
+        return result;
     }
     std::string arr_str = json.substr(start_pos, end_pos - start_pos);
     
@@ -226,26 +273,32 @@ int main(int argc, char* argv[])
 
         log_message(INFO, "Parsed from JSON: id='" + req_id + "', context='" + req_context + "', " + std::to_string(features.size()) + " features.");
 
-        // Mock ML prediction
-        double prediction = 0.0;
+        // Mock research sidecar. Schema version is stable; formulas stay dummy.
+        // score_features: mean of features
+        // risk_check: 1.0 if |mean| exceeds 1.0, else 0.0
+        double mean = 0.0;
         if (!features.empty()) {
             for (double f : features) {
-                prediction += f;
+                mean += f;
             }
-            prediction /= features.size();
+            mean /= features.size();
         } else {
             log_message(WARNING, "Features array is empty for request_id: " + req_id + ". Prediction will be 0.");
         }
+        std::string context = req_context.empty() ? "score_features" : req_context;
+        double prediction = mean;
+        if (context == "risk_check") {
+            prediction = (std::fabs(mean) > 1.0) ? 1.0 : 0.0;
+        }
         
-        log_message(INFO, "Mock prediction for id '" + req_id + "': " + std::to_string(prediction));
+        log_message(INFO, "Mock prediction for id '" + req_id + "' context '" + context + "': " + std::to_string(prediction));
 
-        // Construct JSON response
         std::stringstream json_response_ss;
-        json_response_ss << std::fixed << std::setprecision(4); // For formatting double
-        json_response_ss << "{\"request_id\": \"" << (req_id.empty() ? "unknown" : req_id) << "\", ";
-        json_response_ss << "\"prediction\": " << prediction << ", ";
-        json_response_ss << "\"model_context\": \"" << (req_context.empty() ? "unknown" : req_context) << "\", ";
-        json_response_ss << "\"server_model_version\": \"dummy_avg_v1.0\"}";
+        json_response_ss << std::fixed << std::setprecision(4);
+        json_response_ss << "{\"schema_version\":\"1\",\"request_id\":\"" << jsonEscape(req_id.empty() ? "unknown" : req_id) << "\",";
+        json_response_ss << "\"prediction\":" << prediction << ",";
+        json_response_ss << "\"model_context\":\"" << jsonEscape(context) << "\",";
+        json_response_ss << "\"server_model_version\":\"dummy_avg_v1.1\"}";
         std::string response_body = json_response_ss.str();
 
         // Construct HTTP response
@@ -285,8 +338,8 @@ static void usage() {
 	std::cout << "A simple Internet server application with mock ML prediction.\n"
 		<< "It listens to the port written in command line (default 1234).\n"
 		<< "Accepts multiple connections sequentially.\n"
-        << "Expects a JSON payload with 'id', 'features' (array of numbers), and 'context'.\n"
-        << "Returns a JSON response with a mock prediction (average of features).\n\n"
+        << "Expects compact or spaced JSON with 'id', 'features', and 'context'.\n"
+        << "context score_features: dummy mean. context risk_check: 1 if |mean|>1 else 0.\n\n"
 		<< "Usage:\n"
 		<< "     server [port_to_listen]\n"
 		<< "Default is the port 1234.\n";

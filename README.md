@@ -1,34 +1,32 @@
 # Personal Projects Showcase
 
-This repository contains a collection of personal projects, primarily in Java, Python, and C++. Recently, several projects have been enhanced to incorporate elements of Artificial Intelligence (AI) and Machine Learning (ML), or to demonstrate concepts relevant to these fields.
+Java, Python, C++, SQL, and a small flashcard app. This is a **coursework and learning** repo. It is **not** a trading platform, broker integration, or source of investment advice.
 
-The goal of these enhancements is to:
-*   Illustrate how AI/ML techniques can be applied even in smaller, foundational projects.
-*   Provide practical examples of AI/ML-related code and documentation.
-*   Improve the overall structure, documentation, and usability of these projects.
+## Quant literacy path (paper research)
 
-## Enhanced Projects
+Synthetic bars only. No live orders.
 
-Below is a list of projects that have received recent AI/ML-focused updates. Each project has its own detailed `README.md` with specific information on the enhancements, setup, and usage.
+1. [Python/ml_math_toolkit.py](Python/ml_math_toolkit.py) — returns, z-score, Sharpe, drawdown, costs, educational Kelly.
+2. [Python/paper_research_demo.py](Python/paper_research_demo.py) — always-long vs a toy rule, with costs and walk-forward.
+3. [Java/ArrayList/src/SimpleKNNClassifier.java](Java/ArrayList/src/SimpleKNNClassifier.java) — chronological k-NN on [knn_regime.csv](Java/ArrayList/src/knn_regime.csv) (train-only z-score).
+4. [TCP/Chat/Chat/](TCP/Chat/Chat/) — mock `score_features` / `risk_check` sidecar with a stable JSON schema.
+5. [sql_project_web_ui/](sql_project_web_ui/) — sales reports and concentration views (same grouping idea as a P&L book). SQLite demo: `python seed_sqlite.py` then `flask --app app run`.
+6. [Flashcard_App/](Flashcard_App/) — Leitner SRS. CS cards plus a Markets education deck (vocabulary, not signals).
 
-*   **C++ TCP Client/Server (`TCP/Chat/Chat/`)**:
-    *   Simulates a basic ML prediction service where the client sends a feature vector and the server returns a mock prediction.
-    *   See `TCP/Chat/Chat/README.md` for more details.
+## Other projects
 
-*   **Python ML Math Toolkit (`Python/ml_math_toolkit.py`)**:
-    *   Formerly a simple calculator, this script now provides basic vector and matrix operations using NumPy, commonly used in ML.
-    *   See `Python/README.md` for usage and examples.
+| Path | Status |
+| --- | --- |
+| `Graph/` | Partial DFS / friend-bot lab |
+| `HashMap/` | Incomplete custom hash map |
+| `Library_Books/` | Console book list |
+| `Java/Lab2`–`Lab5`, `Linked_List` | Course labs |
+| `FinalProject.sql` | Game-library schema + views |
 
-*   **Java k-Nearest Neighbors (k-NN) Classifier (`Java/ArrayList/`)**:
-    *   The `printNames.java` (now potentially `SimpleKNNClassifier.java`) has been refactored to implement a basic k-NN algorithm using sample data.
-    *   See `Java/ArrayList/README.md` for an explanation of the k-NN implementation.
+## Disclaimer
 
-*   **Other Python Scripts (`Python/`)**:
-    *   `string_slicing.py` and `Calculate_area.py` now include comments on their relevance to NLP and ML feature engineering, respectively.
+Software in this repository cannot make you money in markets. Beginner backtests are usually overfit, ignore costs, or leak the future. Use these files to learn measurement and programming, not to trade.
 
-## General Guidelines
-*   **Dependencies**: Specific dependencies (like NumPy for Python) are listed in the respective project READMEs.
-*   **Running the Code**: Instructions for compiling and running each project are provided in their specific READMEs.
-*   **Licensing**: This collection of personal projects is provided as-is. You are free to use, modify, and distribute the code. If you adapt any of this code for your own projects, an acknowledgment is appreciated but not required. For any specific third-party libraries used within these projects, please refer to their respective licenses. Consider adding a standard open-source license (e.g., MIT, Apache 2.0) to your own repository if you build upon this work and intend to share it more broadly.
+## License
 
-We encourage you to explore these projects and their AI/ML enhancements!
+Provided as-is. Third-party libraries keep their own licenses.

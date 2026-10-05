@@ -8,22 +8,17 @@ public class TwoInput {
 	public static void main(String[] args) {
 		
 		try {
-			File file = new File("C:\\Users\\Jefe\\Documents\\GitHub\\Personal-Projects\\Java\\ArrayList\\src\\word.txt" );
+			File file = resolveWordFile();
 			Scanner fileReader = new Scanner(file);
 			Scanner input = new Scanner(System.in);
 			String data = fileReader.nextLine();
 			
-//			Populate an array list with all the words from the sentence
 			ArrayList<String> words = new ArrayList<>();
-			for(int i = 0; i < data.split(" ").length; i++) {
-				String[] splitWords = data.split(" "); 
-				String word = splitWords[i].replaceAll(",", ""); //Removes all commas
-				word = word.replace('.', (char) 0); 
-				
-				if(word.charAt(word.length() - 1) == (char) 0) {
-					words.add(word.substring(0, word.length() - 1)); //Removes the empty space from the period
-				} else {
-					words.add(word); //Adds the words
+			String[] splitWords = data.split(" ");
+			for (int i = 0; i < splitWords.length; i++) {
+				String word = splitWords[i].replace(",", "").replace(".", "");
+				if (!word.isEmpty()) {
+					words.add(word);
 				}
 			}
 			
@@ -54,6 +49,20 @@ public class TwoInput {
 			e.printStackTrace();
 		}
 
+	}
+
+	private static File resolveWordFile() {
+		File[] candidates = new File[] {
+			new File("word.txt"),
+			new File("src/word.txt"),
+			new File("Java/ArrayList/src/word.txt")
+		};
+		for (File f : candidates) {
+			if (f.exists()) {
+				return f;
+			}
+		}
+		return candidates[0];
 	}
 
 	private static int getIndex(ArrayList<String> list, String word) {

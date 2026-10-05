@@ -68,22 +68,23 @@ g++ -o Client Client.cpp -std=c++11
 ### Client Request JSON:
 ```json
 {
-  "id": "user123",
+  "id": "research-1",
   "features": [0.1, 0.5, 0.2, 0.8],
-  "context": "predict_churn"
+  "context": "score_features"
 }
 ```
-*   `id`: A unique identifier for the request or user.
-*   `features`: An array of numerical features for the ML model.
-*   `context`: A string indicating the purpose or type of prediction.
+*   `id`: A unique identifier for the request.
+*   `features`: An array of numerical features.
+*   `context`: `score_features` (dummy mean) or `risk_check` (1 if |mean| > 1, else 0). Compact JSON is accepted; spacing is not required.
 
 ### Server Response JSON:
 ```json
 {
-  "request_id": "user123",
+  "schema_version": "1",
+  "request_id": "research-1",
   "prediction": 0.4,
-  "model_context": "predict_churn",
-  "server_model_version": "dummy_avg_v1.0"
+  "model_context": "score_features",
+  "server_model_version": "dummy_avg_v1.1"
 }
 ```
 *   `request_id`: The `id` from the client's request.

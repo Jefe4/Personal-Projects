@@ -621,3 +621,17 @@ SELECT
     l.Number_Games
 FROM `mydb`.`User` u
 JOIN `mydb`.`Library` l ON u.idLibrary = l.idLibrary;
+
+-- -----------------------------------------------------
+-- View: SalesConcentrationView
+-- Description: Region share of total unit sales (same grouping idea as a P&L book).
+-- -----------------------------------------------------
+DROP VIEW IF EXISTS `mydb`.`SalesConcentrationView`;
+CREATE VIEW `mydb`.`SalesConcentrationView` AS
+SELECT
+    r.Region_name,
+    SUM(rs.Num_Sales) AS TotalSales,
+    ROUND(100.0 * SUM(rs.Num_Sales) / (SELECT SUM(Num_Sales) FROM `mydb`.`Region_Sale`), 2) AS PctOfBook
+FROM `mydb`.`Region_Sale` rs
+JOIN `mydb`.`Region` r ON rs.idRegion = r.idRegion
+GROUP BY r.Region_name;

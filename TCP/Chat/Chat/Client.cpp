@@ -13,7 +13,7 @@
 #include <sys/time.h> // For struct timeval, fd_set, select
 #include <chrono>     // For std::chrono
 #include <iomanip>    // For std::put_time
-#include <ctime>      // For std::time_t, std::localtime
+#include <cctype>
 
 // LogLevel Enum
 enum LogLevel { INFO, WARNING, ERROR };
@@ -49,6 +49,60 @@ const int RECV_TIMEOUT_SECONDS = 10;
 
 // Function to show how to use this program
 static void usage();
+
+size_t skipWs(const std::string& json, size_t pos) {
+	while (pos < json.size() && isspace(static_cast<unsigned char>(json[pos]))) {
+		pos++;
+	}
+	return pos;
+}
+
+std::string extractJsonStringValue(const std::string& json, const std::string& key) {
+	std::string search_key = "\"" + key + "\"";
+	size_t start_pos = json.find(search_key);
+	if (start_pos == std::string::npos) {
+		return "";
+	}
+	start_pos = skipWs(json, start_pos + search_key.length());
+	if (start_pos >= json.size() || json[start_pos] != ':') {
+		return "";
+	}
+	start_pos = skipWs(json, start_pos + 1);
+	if (start_pos >= json.size() || json[start_pos] != '"') {
+		return "";
+	}
+	start_pos++;
+	std::string out;
+	while (start_pos < json.size()) {
+		char c = json[start_pos++];
+		if (c == '\\' && start_pos < json.size()) {
+			out += json[start_pos++];
+		} else if (c == '"') {
+			break;
+		} else {
+			out += c;
+		}
+	}
+	return out;
+}
+
+std::string extractJsonNumberValue(const std::string& json, const std::string& key) {
+	std::string search_key = "\"" + key + "\"";
+	size_t start_pos = json.find(search_key);
+	if (start_pos == std::string::npos) {
+		return "";
+	}
+	start_pos = skipWs(json, start_pos + search_key.length());
+	if (start_pos >= json.size() || json[start_pos] != ':') {
+		return "";
+	}
+	start_pos = skipWs(json, start_pos + 1);
+	size_t end = start_pos;
+	while (end < json.size() && (isdigit(static_cast<unsigned char>(json[end])) || json[end] == '.' || json[end] == '-' )) {
+		end++;
+	}
+	return json.substr(start_pos, end - start_pos);
+}
 
 // Function to send an HTTP-like POST request
 std::string sendHttpRequest(int socket_fd, const std::string& host_str, int port, const std::string& data)
@@ -263,23 +317,23 @@ int main(int argc, char* argv[])
 	
 	log_message(INFO, "Preparing to send HTTP request.");
 	// Define a new JSON string payload representing a feature vector
-	std::string jsonData = "{\"id\": \"user123\", \"features\": [0.1, 0.5, 0.2, 0.8], \"context\": \"predict_churn\"}";
+	std::string jsonData = "{\"schema_version\":\"1\",\"id\":\"research-1\",\"features\":[0.1,0.5,0.2,0.8],\"context\":\"score_features\"}";
 
 	// Call the sendHttpRequest function
 	std::string httpResponse = sendHttpRequest(s0, peerHost, peerPort, jsonData);
 
 	log_message(INFO, "Raw server response: " + httpResponse);
 
-	// Basic check for JSON response indicators
-	log_message(INFO, "--- Assuming JSON Response ---");
-	if (httpResponse.find("\"status\"") != std::string::npos) {
-		log_message(INFO, "Response appears to contain a 'status' field.");
-	} else if (httpResponse.find("\"echo\"") != std::string::npos) { 
-		log_message(INFO, "Response appears to contain an 'echo' field.");
-	} else if (httpResponse.find(jsonData.substr(0, 15)) != std::string::npos) { 
-		 log_message(INFO, "Response seems to echo parts of the sent data.");
+	size_t body_start = httpResponse.find("{");
+	size_t body_end = httpResponse.rfind("}");
+	if (body_start != std::string::npos && body_end != std::string::npos && body_start < body_end) {
+		std::string body = httpResponse.substr(body_start, body_end - body_start + 1);
+		std::string request_id = extractJsonStringValue(body, "request_id");
+		std::string prediction = extractJsonNumberValue(body, "prediction");
+		std::string context = extractJsonStringValue(body, "model_context");
+		log_message(INFO, "Parsed request_id='" + request_id + "', prediction=" + prediction + ", model_context='" + context + "'");
 	} else {
-		log_message(INFO, "No specific JSON markers detected in response.");
+		log_message(WARNING, "No JSON body found in server response.");
 	}
 
 	log_message(INFO, "Closing socket.");
@@ -298,6 +352,6 @@ static void usage()
 		<< "     where IP_address_of_server is either IP number of server\n"
 		<< "     or a symbolic Internet name, default is \"localhost\";\n"
 		<< "     port_of_server is a port number, default is 1234.\n"
-		<< "The client connects to a server, sends an HTTP-like POST request,\n"
-		<< "prints the server's response, and terminates.\n";
+		<< "sends a compact JSON research payload (score_features),\n"
+		<< "parses request_id and prediction from the server, and terminates.\n";
 }
