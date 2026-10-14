@@ -56,6 +56,36 @@ const pulls = [
     start: "def add_edge",
     maxLines: 28,
   },
+  {
+    slug: "esp32-serial-log",
+    file: "tools/esp32-serial-log/lib.mjs",
+    start: "export function parseEsp32Log",
+    maxLines: 36,
+  },
+  {
+    slug: "rack-label-check",
+    file: "tools/rack-label-check/lib.mjs",
+    start: "export function checkLabels",
+    maxLines: 34,
+  },
+  {
+    slug: "resume-json-check",
+    file: "tools/resume-json-check/lib.mjs",
+    start: "export function checkResume",
+    maxLines: 32,
+  },
+  {
+    slug: "gym-maint",
+    file: "tools/gym-maint/lib.mjs",
+    start: "export function dueOn",
+    maxLines: 22,
+  },
+  {
+    slug: "port-label-check",
+    file: "tools/port-label-check/lib.mjs",
+    start: "export function checkPorts",
+    maxLines: 32,
+  },
 ];
 
 function extract(abs, start, maxLines) {

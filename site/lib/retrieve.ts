@@ -63,10 +63,22 @@ export function retrieveFacts(query: string): string[] {
     }
   }
 
-  if (mentions(q, ["project", "github", "code", "graph", "hash", "tcp", "sql", "flash", "repo", "built", "java", "python", "c++"])) {
+  if (mentions(q, ["project", "github", "code", "graph", "hash", "tcp", "sql", "flash", "repo", "built", "java", "python", "c++", "tool", "esp32", "novum", "firmware"])) {
     for (const p of profile.projects.filter((p) => p.flagship || p.path)) {
       facts.push(`${p.name}${p.path ? " (" + p.path + ")" : ""}: ${p.summary}`);
     }
+  }
+
+  if (mentions(q, ["esp32", "dispenser", "firmware", "husky", "serial log", "serial-monitor"])) {
+    facts.push("The ESP32 dispenser firmware is the private repo Jefe4/husky-watchdog-firmware, branch firmware/dispense-fsm. It was not readable from this checkout, so the site shows a placeholder and does not quote firmware source. tools/esp32-serial-log is a separate log parser, not that firmware.");
+  }
+
+  if (mentions(q, ["novum", "local model", "coding agent", "harness"])) {
+    facts.push("Novum is a work in progress: a local-first Mac AI harness, a Cursor-style coding agent plus local model training. The source is not in this repository. Do not describe it as shipped.");
+  }
+
+  if (mentions(q, ["rack label", "asset label", "port label", "maintenance", "resume json", "private repo", "drop label"])) {
+    facts.push("Private-repo tools in this checkout, under tools/: esp32-serial-log, rack-label-check, resume-json-check, gym-maint, and port-label-check. A private GitHub repo could not be created from the environment that added them, so they are in this pull request and labeled private repo. They were not published as public repos.");
   }
 
   if (mentions(q, ["wip", "gymmaster", "digital twin", "trading", "polymarket", "event tracker"])) {
@@ -181,10 +193,22 @@ export function answerFromRetrieval(query: string): { answer: string; facts: str
   return { answer, facts, highlights };
 }
 
+export const HARD_FACTS = [
+  "I am a Datacenter Technician at Akkodis, on a Google data center assignment in Leesburg, VA, from September 2025 to present. I am a contractor. I am not a Google employee.",
+  "I am a Team Member and Systems Administrator at DMV Iron Gym in Falls Church, from July 2024 to present. I am staff. I am not the owner. The owner is Leo Torres Williams.",
+  "I was a Technical Data Entry Clerk at Westat in Rockville from June 2023 to October 2023.",
+  "I study computer science at Frostburg State University, expected June 2027. I am still a student. I have not graduated.",
+  "I graduated from Rockville High School in 2019. That is a high school diploma, not a college degree.",
+  "I live in Arlington, VA. I am bilingual in English and Spanish. My GitHub is Jefe4.",
+];
+
 export function systemPrompt(facts: string[]) {
   return [
     "You are Jeffrey Gomez speaking in first person to a recruiter.",
-    "Use ONLY the facts below. If asked for something missing, say it is not in your materials.",
+    "Answer ONLY from the hard facts and the retrieved resume lines below. If a question is not covered, say exactly: That is not covered in the resume materials.",
+    "Never say you are a Google employee, that you have graduated from Frostburg, or that you own or founded DMV Iron Gym.",
+    "Hard facts:",
+    ...HARD_FACTS.map((fact) => "- " + fact),
     "You are NOT the owner/founder/CEO of DMV Iron Gym. You are Team Member & Systems Administrator. Owner is Leo Torres Williams.",
     "You are NOT a Google FTE. Akkodis contractor on assignment at a Google data center, Leesburg VA.",
     "You have NOT graduated. CS at Frostburg, expected June 2027.",

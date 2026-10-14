@@ -19,6 +19,8 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
   const study = studyFor(project.slug);
   const excerpt = "excerptFile" in project && project.excerptFile ? project.excerptFile : null;
   const wip = "wip" in project && project.wip;
+  const privateRepo = "privateRepo" in project && Boolean(project.privateRepo);
+  const placeholder = "placeholder" in project && Boolean(project.placeholder);
   const sitePath = "sitePath" in project && project.sitePath ? project.sitePath : null;
 
   const chapters: { id: string; title: string; body: ReactNode }[] = [
@@ -75,7 +77,7 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
     chapters.push({
       id: "code",
       title: "Live code",
-      body: <CodeExhibit slug={project.slug} label={excerpt} />,
+      body: <CodeExhibit slug={project.slug} label={excerpt} privateRepo={privateRepo} />,
     });
   }
 
@@ -146,7 +148,8 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
     <main id="main" className={`wrap case case-${ui}`}>
       <header className="case-hero">
         <p className="kicker">
-          {wip ? "Work in progress" : "Case study"} · {(project.stack || []).join(" · ") || "notes"}
+          {placeholder ? "Placeholder" : wip ? "Work in progress" : "Case study"}
+          {privateRepo ? " · private repo" : ""} · {(project.stack || []).join(" · ") || "notes"}
         </p>
         <h1>{project.name}</h1>
         <p className="lede">{project.summary}</p>

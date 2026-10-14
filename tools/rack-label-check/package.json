@@ -1,0 +1,10 @@
+{
+  "name": "rack-label-check",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Check datacenter rack and asset labels for format, U range, and duplicates.",
+  "scripts": {
+    "test": "node --test"
+  }
+}

@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import type { Profile } from "@/lib/profile";
-import { ProjectCard } from "@/components/projects/ProjectCard";
-import { ContactBlock, EducationBlocks, JobPanels, SkillRow } from "./bits";
+import { ContactBlock, EducationBlocks, SkillRow } from "./bits";
+import { ScrollReel } from "./ScrollReel";
 
 export function StudioHome({
   profile,
@@ -31,9 +31,9 @@ export function StudioHome({
         <p className="hero-line">{id.headline}</p>
         <p className="lede">{id.summary}</p>
         <div className="cta">
-          <a href="#work">Work</a>
-          <a className="ghost" href="#projects">
-            Projects
+          <a href="#work">Scroll the work</a>
+          <a className="ghost" href="#education">
+            Education
           </a>
           <Link className="ghost" href="/gym">
             Gym scan
@@ -44,52 +44,13 @@ export function StudioHome({
         </div>
       </section>
 
-      <section className="studio-story" id="about">
-        <div className="story-pin">
-          <p className="eyebrow">01 — About</p>
-          <h2>Datacenter floor, CS coursework, gym systems.</h2>
-        </div>
-        <div className="story-copy">
-          <p>
-            I rack hardware and pull fiber in Leesburg as a Datacenter Technician for Akkodis, on assignment at a Google data center. That is a contractor seat, not a Google FTE.
-          </p>
-          <p>I study computer science at Frostburg State University. The degree is expected June 2027. I am still enrolled.</p>
-          <p>
-            I also do gym-floor systems work at DMV Iron Gym in Falls Church: memberships, payments, Excel, and a Swift + Firestore app that is still in progress. I am staff. I am not the owner, founder, or CEO.
-          </p>
-          <SkillRow skills={profile.skills} />
-        </div>
-      </section>
-
-      <section className="studio-story" id="work">
-        <div className="story-pin">
-          <p className="eyebrow">02 — Work</p>
-          <h2>The roles on the Aug 27 resume.</h2>
-          <p className="muted">Earlier retail and warehouse jobs stay on the one-pager.</p>
-          <p>
-            <Link href="/resume">Open the one-pager</Link>
-          </p>
-        </div>
-        <div className="story-stack">
-          <JobPanels jobs={jobs} />
-        </div>
-      </section>
-
-      <section className="studio-band" id="projects">
-        <div className="band-head">
-          <p className="eyebrow">03 — Projects</p>
-          <h2>Open a case study.</h2>
-          <p className="muted">Hover lifts the card. The page after it is the code, the run steps, and a small interactive model where the repo supports one.</p>
-        </div>
-        <div className="project-grid">
-          {projects.map((project, i) => (
-            <ProjectCard key={project.slug} project={project} index={i} />
-          ))}
-        </div>
-        <p>
-          <Link href="/projects">All projects, including WIP</Link>
-        </p>
-      </section>
+      <ScrollReel />
+      <p className="muted scroll-follow">
+        {jobs.length} roles from the Aug 27 resume are in the scroll, including Westat. {projects.length} projects are linked from it.{" "}
+        <Link href="/resume">One-pager</Link>
+        {" · "}
+        <Link href="/projects">All projects</Link>
+      </p>
 
       <section className="studio-story" id="education">
         <div className="story-pin">
@@ -98,6 +59,7 @@ export function StudioHome({
         </div>
         <div className="story-stack">
           <EducationBlocks education={profile.education} />
+          <SkillRow skills={profile.skills} />
         </div>
       </section>
 

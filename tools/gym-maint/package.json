@@ -1,0 +1,10 @@
+{
+  "name": "gym-maint",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Track gym equipment maintenance intervals in a local JSON file.",
+  "scripts": {
+    "test": "node --test"
+  }
+}

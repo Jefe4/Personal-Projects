@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { guardRecruiterAnswer } from "@/lib/answer-guard";
 import { answerFromRetrieval, maybeOpenAI, type ChatTurn } from "@/lib/retrieve";
 
 export async function POST(req: NextRequest) {
@@ -8,8 +9,10 @@ export async function POST(req: NextRequest) {
   const query = last?.content || "";
   const { answer, facts, highlights } = answerFromRetrieval(query);
   const llm = await maybeOpenAI(query, messages, facts);
+  const guarded = guardRecruiterAnswer(llm || answer);
   return NextResponse.json({
-    reply: llm || answer,
+    reply: guarded.text,
+    flags: guarded.flags,
     highlights,
     usedOpenAI: Boolean(llm),
   });

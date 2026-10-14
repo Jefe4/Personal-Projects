@@ -195,6 +195,88 @@ const STUDIES: Record<string, StudyCopy> = {
     demo: null,
     demoNote: "",
   },
+  "esp32-firmware": {
+    problem:
+      "Dispenser firmware for an ESP32 lives in Jefe4/husky-watchdog-firmware on branch firmware/dispense-fsm. This checkout could not read that repository.",
+    built: [
+      "Placeholder. GitHub returned 404, which is also what a private repository looks like when this credential cannot see it.",
+      "No firmware source is quoted on this page. Nothing was copied from the internet to fill the gap.",
+      "The separate tool at tools/esp32-serial-log parses serial-monitor captures. It is not the firmware.",
+    ],
+    probe: ["Private repo: Jefe4/husky-watchdog-firmware, branch firmware/dispense-fsm.", "Do not treat this page as a firmware listing."],
+    demo: null,
+    demoNote: "",
+  },
+  novum: {
+    problem:
+      "A local-first Mac AI harness: a coding agent in the style of Cursor, plus training a model on the machine. It is work in progress.",
+    built: [
+      "Work in progress. The source is not in this repository, so this page does not show a code excerpt and does not invent one.",
+      "Not a shipped product. No public URL.",
+    ],
+    probe: ["No run steps. The source is not in this checkout."],
+    demo: null,
+    demoNote: "",
+  },
+  "esp32-serial-log": {
+    problem: "A serial-monitor capture is a long text file. Restarts, state changes, and faults should be listed without reading every line by hand.",
+    built: [
+      "parseEsp32Log reads ROM reset lines (rst:0x1 (POWERON_RESET)), ESP-IDF log lines, state FROM -> TO messages, errors, and Guru Meditation panics.",
+      "summarizeEsp32Log counts resets and faults and keeps the last state.",
+      "Labeled private repo. The code is in this checkout under tools/esp32-serial-log because a private GitHub repository could not be created here.",
+    ],
+    probe: ["cd tools/esp32-serial-log && npm test", "node cli.mjs capture.txt"],
+    demo: null,
+    demoNote: "",
+  },
+  "rack-label-check": {
+    problem: "A floor checklist of rack positions is only useful if a bad label or a repeated asset tag is caught before it is applied.",
+    built: [
+      "One line is SITE-HALL-ROW-RACK-U## plus an AST-######## tag. Example: IAD-H1-A-12-U24 AST-00018421.",
+      "U must be 1 through 42. Duplicate slots and duplicate asset tags are errors.",
+      "This is a personal checklist format, not an employer or Google asset schema. Labeled private repo.",
+    ],
+    probe: ["cd tools/rack-label-check && npm test", "node cli.mjs labels.txt"],
+    demo: null,
+    demoNote: "",
+  },
+  "resume-json-check": {
+    problem: "The recruiter site reads a JSON resume. That file should fail a check if it starts calling me a Google employee, a graduate, or the gym owner.",
+    built: [
+      "checkResume requires Akkodis, Datacenter Technician, Leesburg, Sep 2025 to present, and a contractor note that says not a Google employee.",
+      "It requires DMV Iron Gym staff, Leo Torres Williams as owner, Westat Jun–Oct 2023, Frostburg enrolled and expected 2027, Rockville High School 2019, Arlington, English and Spanish, and GitHub Jefe4.",
+      "Labeled private repo. tools/resume-json-check.",
+    ],
+    probe: ["cd tools/resume-json-check && npm test", "node cli.mjs ../../site/content/jeffrey.json"],
+    demo: null,
+    demoNote: "",
+  },
+  "gym-maint": {
+    problem: "Gym equipment needs a due date, not a memory. I am staff at the gym, so this is a checklist, not an ownership claim.",
+    built: [
+      "Each machine has an id, a name, and how many days between service.",
+      "dueOn lists machines that were never serviced, or whose last service plus the interval is on or before the day you ask about.",
+      "Labeled private repo. tools/gym-maint.",
+    ],
+    probe: [
+      "cd tools/gym-maint && npm test",
+      "node cli.mjs add --file maint.json --id TM-01 --name \"Treadmill 1\" --every 30",
+      "node cli.mjs due --file maint.json --on 2026-10-14",
+    ],
+    demo: null,
+    demoNote: "",
+  },
+  "port-label-check": {
+    problem: "A copper or fiber drop needs one switch port and one far end. A duplicated port is a mislabel.",
+    built: [
+      "One line: SW-A12:24 copper RK-03-U40-NIC1. Medium is copper or fiber. Ports are 1 through 48.",
+      "Duplicate switch ports and duplicate far ends are errors. countByMedium totals each kind of cable.",
+      "Labeled private repo. tools/port-label-check.",
+    ],
+    probe: ["cd tools/port-label-check && npm test", "node cli.mjs drops.txt"],
+    demo: null,
+    demoNote: "",
+  },
 };
 
 export function studyFor(slug: string): StudyCopy {

@@ -9,6 +9,8 @@ type Project = Profile["projects"][number];
 export function ProjectCard({ project, index = 0 }: { project: Project; index?: number }) {
   const reduce = useReducedMotion();
   const wip = "wip" in project && project.wip;
+  const privateRepo = "privateRepo" in project && project.privateRepo;
+  const placeholder = "placeholder" in project && project.placeholder;
   return (
     <motion.article
       className="project-card"
@@ -22,6 +24,8 @@ export function ProjectCard({ project, index = 0 }: { project: Project; index?: 
         <p className="mono card-index">
           {String(index + 1).padStart(2, "0")}
           {wip ? " · WIP" : ""}
+          {privateRepo ? " · private repo" : ""}
+          {placeholder ? " · placeholder" : ""}
           {project.flagship ? "" : " · note"}
         </p>
         <h3>{project.name}</h3>

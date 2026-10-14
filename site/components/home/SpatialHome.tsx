@@ -3,10 +3,10 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "framer-motion";
 import type { Profile } from "@/lib/profile";
-import { ProjectCard } from "@/components/projects/ProjectCard";
-import { ContactBlock, EducationBlocks, JobPanels, SkillRow } from "./bits";
+import { ContactBlock, EducationBlocks, SkillRow } from "./bits";
+import { ScrollReel } from "./ScrollReel";
 
 const GymScanViewer = dynamic(() => import("@/components/GymScanViewer").then((m) => m.GymScanViewer), {
   ssr: false,
@@ -52,8 +52,8 @@ export function SpatialHome({
             <p className="lede">{id.summary}</p>
             <div className="cta">
               <Link href="/gym">Open the full scan</Link>
-              <a className="ghost" href="#shelf">
-                Project shelf
+              <a className="ghost" href="#work">
+                Scroll the work
               </a>
               <Link className="ghost" href="/fit">
                 Paste a JD
@@ -67,57 +67,17 @@ export function SpatialHome({
         </div>
       </section>
 
-      <section className="spatial-block" id="about">
-        <h2>About</h2>
-        <div className="glass-grid">
-          {[
-            ["Akkodis", "Datacenter Technician in Leesburg, on assignment at a Google data center. Contractor via Akkodis, not a Google FTE. Racks, fiber, ethernet, floor cleanliness."],
-            ["Frostburg", "B.S. Computer Science, expected June 2027. Still enrolled. Not a completed degree."],
-            ["DMV Iron Gym", "Team Member and Systems Administrator in Falls Church. Leo Torres Williams is founder/CEO. I am staff, not an owner, and not a documented veteran. The scan is the room I work in."],
-          ].map(([title, copy], i) => (
-            <motion.article
-              key={title}
-              className="glass"
-              initial={reduce ? false : { opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-10% 0px" }}
-              transition={{ type: "spring", stiffness: 320, damping: 28, delay: reduce ? 0 : i * 0.06 }}
-            >
-              <h3>{title}</h3>
-              <p>{copy}</p>
-            </motion.article>
-          ))}
-        </div>
-        <SkillRow skills={profile.skills} />
-      </section>
-
-      <section className="spatial-block" id="work">
-        <h2>Work</h2>
-        <div className="glass-stack">
-          <JobPanels jobs={jobs} />
-        </div>
-        <p>
-          <Link href="/resume">Earlier roles on the one-pager</Link>
-        </p>
-      </section>
-
-      <section className="spatial-block" id="shelf">
-        <h2>Apps on the shelf</h2>
-        <p className="muted">Each tile opens a case study. WIP stays labeled. The gym tile is the photogrammetry scan, not a product launch.</p>
-        <div className="app-shelf">
-          {projects.map((project, i) => (
-            <ProjectCard key={project.slug} project={project} index={i} />
-          ))}
-        </div>
-        <p>
-          <Link href="/projects">Every project</Link>
-        </p>
-      </section>
+      <ScrollReel />
+      <p className="muted scroll-follow">
+        {jobs.length} resume roles and {projects.length} projects are in the scroll.{" "}
+        <Link href="/projects">Every project</Link>
+      </p>
 
       <section className="spatial-block" id="education">
         <h2>Education</h2>
         <div className="glass-stack">
           <EducationBlocks education={profile.education} />
+          <SkillRow skills={profile.skills} />
         </div>
       </section>
 
