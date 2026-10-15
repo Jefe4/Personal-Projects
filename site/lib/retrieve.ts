@@ -122,12 +122,31 @@ export function retrieveFacts(query: string): string[] {
   return facts;
 }
 
+export const DECLINE = "That is not covered in the resume materials.";
+
+const INJECTION = /\b(ignore|disregard|forget|override)\b[^.]{0,40}\b(instruction|rule|prompt|previous|above|prior)s?\b|\bsystem prompt\b|\byou are now\b|\bpretend (to be|you)\b|\bjailbreak\b|\bdeveloper mode\b/i;
+
+export function isInjectionAttempt(query: string): boolean {
+  return INJECTION.test(query);
+}
+
+const BASE_FACT_COUNT = 4; // identity, contact, languages, never-claim
+const SMALL_TALK = ["who", "about", "tell me", "hi", "hello", "hey", "jeffrey", "yourself", "introduce", "contact", "email", "phone", "linkedin", "hire", "experience", "work", "background", "summary"];
+
+export function isOffTopic(query: string, facts: string[]): boolean {
+  return facts.length <= BASE_FACT_COUNT && !mentions(query, SMALL_TALK);
+}
+
 function stitch(query: string, facts: string[]): string {
   const q = norm(query);
   const id = profile.identity;
   const lines: string[] = [];
 
-  if (mentions(q, ["owner", "founder", "ceo"]) && mentions(q, ["gym", "iron", "dmv"])) {
+  if (isInjectionAttempt(query)) {
+    return DECLINE + " I can only answer questions about my resume, and I won't change those rules.";
+  }
+
+  if (/\b(own|owns|owned|owner|founder|founded|ceo)\b/.test(q) && mentions(q, ["gym", "iron", "dmv"])) {
     lines.push("I'm a Team Member and Systems Administrator at DMV Iron Gym in Falls Church — not the owner, founder, or CEO. Leo Torres Williams is the founder/CEO. The gym is veteran-owned; I'm staff.");
   }
 
@@ -145,6 +164,10 @@ function stitch(query: string, facts: string[]): string {
 
   if (mentions(q, ["coast guard", "served", "veteran"]) && !mentions(q, ["gym is veteran", "veteran-owned"])) {
     lines.push("I am not documenting military or Coast Guard service. A US Coast Guard seal appears as wall decor in the gym scan. The gym is veteran-owned; I am staff.");
+  }
+
+  if (!lines.length && isOffTopic(query, facts)) {
+    return DECLINE + " Ask me about my work, school, projects, or skills.";
   }
 
   if (!lines.length) {

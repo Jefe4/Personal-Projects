@@ -29,6 +29,9 @@ export function affirmsGoogleEmployment(sentence: string): boolean {
   if (/\b(employed by google|google hired me|i am employed at google)\b/.test(n)) return true;
   if (/\bi (work|worked) (at|for) google\b/.test(n) && !/\b(not|n't|assignment|contractor|akkodis|data center|datacenter)\b/.test(n)) return true;
   if (/\b(i am|i'm|i’m)\s+(a\s+)?googler\b/.test(n)) return true;
+  // Third person or "full-time" phrasing: "He works for Google as a full-time engineer."
+  if (/\b(he|jeffrey|i)\s+(works|worked|work)\s+(at|for)\s+google\b/.test(n) && !/\b(not|n't|never|assignment|contractor|akkodis|data center|datacenter)\b/.test(n)) return true;
+  if (/\b(he|jeffrey) is (a|an)\s+(google employee|googler|google fte)\b/.test(n)) return true;
   return false;
 }
 
@@ -52,6 +55,8 @@ export function affirmsGymOwner(sentence: string): boolean {
   if (/\b(not the|not an|am not|n't the|is not)\b[^.]{0,40}\b(owner|founder|ceo)\b/.test(n)) return false;
   if (/\b(i am|i'm|i’m)\s+(the\s+)?(owner|founder|ceo)\b/.test(n)) return true;
   if (/\b(i own|i founded)\b/.test(n) && /\bgym\b/.test(n)) return true;
+  if (/\b(he|jeffrey)\s+(owns|founded|co-owns|runs his own)\b/.test(n) && /\b(gym|iron|dmv)\b/.test(n)) return true;
+  if (/\b(he|jeffrey) is the\s+(owner|founder|ceo|co-owner)\b/.test(n) && /\b(gym|iron|dmv)\b/.test(n)) return true;
   if (/\bmy (gym|company)\b/.test(n) && /\b(iron gym|dmv)\b/.test(n)) return true;
   return false;
 }
