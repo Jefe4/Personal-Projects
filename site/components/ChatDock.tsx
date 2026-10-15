@@ -38,7 +38,7 @@ async function webGpuAvailable() {
 }
 
 export function ChatDock() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const [webgpu, setWebgpu] = useState<boolean | null>(null);

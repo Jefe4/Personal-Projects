@@ -121,6 +121,36 @@ export const SCROLL_CHAPTERS: ScrollChapter[] = [
     plain: "Novum is my local-first Mac AI harness, and it is work in progress. The idea is a coding agent in the style of Cursor, plus training a model on the machine instead of sending the work out. There is no public product page and no source in this checkout.",
   },
   {
+    id: "kicad-board",
+    kicker: "Engineering",
+    title: "A KiCad board. Source coming.",
+    href: "/projects/kicad-board",
+    badge: "In progress, source coming",
+    placeholder:
+      "In progress, source coming. No KiCad schematic or board file was in the Jefe4 repositories this site can read. No drawing, part, or net is shown.",
+    plain: "Engineering work in progress: a circuit board drawn in KiCad. The files are not in the repositories this site can read, so this chapter does not pretend to show a schematic.",
+  },
+  {
+    id: "tinyml",
+    kicker: "Engineering",
+    title: "TinyML. Source coming.",
+    href: "/projects/tinyml",
+    badge: "In progress, source coming",
+    placeholder:
+      "In progress, source coming. No TinyML training code or model file was in the Jefe4 repositories this site can read. No model, dataset, or chip is named.",
+    plain: "Engineering work in progress: small machine learning meant to run on a device. Without the source, this chapter does not describe a model or a result.",
+  },
+  {
+    id: "mcp-servers",
+    kicker: "Engineering",
+    title: "MCP servers. Source coming.",
+    href: "/projects/mcp-servers",
+    badge: "In progress, source coming",
+    placeholder:
+      "In progress, source coming. No Model Context Protocol server source was in the Jefe4 repositories this site can read. No tool list is invented.",
+    plain: "Engineering work in progress: MCP servers, the small programs a coding agent can call. The server code is not in the repositories this site can read, so nothing here is quoted from a server.",
+  },
+  {
     id: "esp32-serial-log",
     kicker: "Private repo",
     title: "Read an ESP32 log without scrolling the raw capture.",

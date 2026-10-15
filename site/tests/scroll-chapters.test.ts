@@ -16,4 +16,15 @@ describe("scroll chapters", () => {
     const tools = SCROLL_CHAPTERS.filter((chapter) => chapter.badge === "private repo");
     expect(tools.length).toBe(5);
   });
+
+  it("keeps KiCad, TinyML, and MCP honest when the source is missing", () => {
+    for (const id of ["kicad-board", "tinyml", "mcp-servers"]) {
+      const chapter = SCROLL_CHAPTERS.find((item) => item.id === id);
+      expect(chapter?.badge).toBe("In progress, source coming");
+      expect(chapter?.slug).toBeUndefined();
+      const copy = `${chapter?.plain} ${chapter?.placeholder}`.toLowerCase();
+      expect(copy).toContain("source coming");
+      expect(copy).not.toMatch(/#include|kicad_pcb|def train|@modelcontextprotocol|gpio_set/);
+    }
+  });
 });

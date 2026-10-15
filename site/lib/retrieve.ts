@@ -77,6 +77,10 @@ export function retrieveFacts(query: string): string[] {
     facts.push("Novum is a work in progress: a local-first Mac AI harness, a Cursor-style coding agent plus local model training. The source is not in this repository. Do not describe it as shipped.");
   }
 
+  if (mentions(q, ["kicad", "schematic", "pcb", "circuit board", "tinyml", "tiny ml", "mcp", "model context"])) {
+    facts.push("KiCad board, TinyML, and MCP servers are in progress, source coming. They were not found in the public Jefe4 repositories this site can read. Do not invent a schematic, a part, a model, a dataset, a chip, or a list of server tools.");
+  }
+
   if (mentions(q, ["rack label", "asset label", "port label", "maintenance", "resume json", "private repo", "drop label"])) {
     facts.push("Private-repo tools in this checkout, under tools/: esp32-serial-log, rack-label-check, resume-json-check, gym-maint, and port-label-check. A private GitHub repo could not be created from the environment that added them, so they are in this pull request and labeled private repo. They were not published as public repos.");
   }

@@ -11,6 +11,7 @@ export function ProjectCard({ project, index = 0 }: { project: Project; index?: 
   const wip = "wip" in project && project.wip;
   const privateRepo = "privateRepo" in project && project.privateRepo;
   const placeholder = "placeholder" in project && project.placeholder;
+  const sourceComing = "sourceComing" in project && project.sourceComing;
   return (
     <motion.article
       className="project-card"
@@ -23,9 +24,9 @@ export function ProjectCard({ project, index = 0 }: { project: Project; index?: 
       <Link href={`/projects/${project.slug}`}>
         <p className="mono card-index">
           {String(index + 1).padStart(2, "0")}
-          {wip ? " · WIP" : ""}
+          {sourceComing ? " · source coming" : wip ? " · WIP" : ""}
           {privateRepo ? " · private repo" : ""}
-          {placeholder ? " · placeholder" : ""}
+          {!sourceComing && placeholder ? " · placeholder" : ""}
           {project.flagship ? "" : " · note"}
         </p>
         <h3>{project.name}</h3>

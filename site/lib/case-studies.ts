@@ -218,6 +218,33 @@ const STUDIES: Record<string, StudyCopy> = {
     demo: null,
     demoNote: "",
   },
+  "kicad-board": {
+    problem:
+      "In progress, source coming. A KiCad board. The schematic and the board file were not in the Jefe4 repositories this site can read.",
+    built: [
+      "No excerpt. This page does not draw a schematic, name a part, or quote a net.",
+      "Searched the public Jefe4 repositories this checkout can read. No .kicad_pcb or .kicad_sch file was there.",
+    ],
+    probe: ["No board file in this checkout.", "Do not treat this page as a schematic."],
+    demo: null,
+    demoNote: "",
+  },
+  tinyml: {
+    problem:
+      "In progress, source coming. TinyML means small machine learning on a device. No training code or model file was in the Jefe4 repositories this site can read.",
+    built: ["No excerpt. This page does not name a model, a dataset, a framework, or a chip."],
+    probe: ["No TinyML source in this checkout."],
+    demo: null,
+    demoNote: "",
+  },
+  "mcp-servers": {
+    problem:
+      "In progress, source coming. MCP servers let a coding agent call tools. No server source was in the Jefe4 repositories this site can read.",
+    built: ["No excerpt. This page does not list tools or quote a server file."],
+    probe: ["No MCP server source in this checkout."],
+    demo: null,
+    demoNote: "",
+  },
   "esp32-serial-log": {
     problem: "A serial-monitor capture is a long text file. Restarts, state changes, and faults should be listed without reading every line by hand.",
     built: [

@@ -376,6 +376,48 @@
       "summary": "Work in progress. A local-first Mac AI harness: a Cursor-style coding agent plus local model training. The source is not in this repository, so this page does not show a code excerpt."
     },
     {
+      "slug": "kicad-board",
+      "name": "KiCad board",
+      "path": null,
+      "github": null,
+      "stack": ["KiCad"],
+      "visibility": "wip",
+      "flagship": true,
+      "wip": true,
+      "placeholder": true,
+      "sourceComing": true,
+      "provenance": "not-in-accessible-repos",
+      "summary": "In progress, source coming. A KiCad board. No schematic or board file was in the Jefe4 repositories this site can read, so this page does not show a drawing, a part, or a net."
+    },
+    {
+      "slug": "tinyml",
+      "name": "TinyML",
+      "path": null,
+      "github": null,
+      "stack": ["TinyML"],
+      "visibility": "wip",
+      "flagship": true,
+      "wip": true,
+      "placeholder": true,
+      "sourceComing": true,
+      "provenance": "not-in-accessible-repos",
+      "summary": "In progress, source coming. Small on-device machine learning. No training code or model file was in the Jefe4 repositories this site can read, so this page does not name a model, a dataset, or a chip."
+    },
+    {
+      "slug": "mcp-servers",
+      "name": "MCP servers",
+      "path": null,
+      "github": null,
+      "stack": ["MCP"],
+      "visibility": "wip",
+      "flagship": true,
+      "wip": true,
+      "placeholder": true,
+      "sourceComing": true,
+      "provenance": "not-in-accessible-repos",
+      "summary": "In progress, source coming. Model Context Protocol servers for a coding agent. No server source was in the Jefe4 repositories this site can read, so this page does not list tools or quote a server."
+    },
+    {
       "slug": "esp32-serial-log",
       "name": "ESP32 serial log parser",
       "path": "tools/esp32-serial-log/",

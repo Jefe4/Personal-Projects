@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useReducedMotion, useScroll, useMotionValueEvent } from "framer-motion";
 import { excerptFor } from "@/lib/excerpts";
 import { SCROLL_CHAPTERS } from "@/lib/scroll-chapters";
@@ -11,9 +11,20 @@ export function ScrollReel() {
   const root = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: root, offset: ["start start", "end end"] });
   const [active, setActive] = useState(0);
+  const [narrow, setNarrow] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 800px)");
+    const apply = () => setNarrow(query.matches);
+    apply();
+    query.addEventListener("change", apply);
+    return () => query.removeEventListener("change", apply);
+  }, []);
+
+  const stack = Boolean(reduce) || narrow;
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
-    if (reduce) return;
+    if (stack) return;
     const next = Math.min(SCROLL_CHAPTERS.length - 1, Math.max(0, Math.floor(value * SCROLL_CHAPTERS.length)));
     setActive((current) => (current === next ? current : next));
   });
@@ -25,9 +36,13 @@ export function ScrollReel() {
       ref={root}
       style={{ ["--chapters" as string]: SCROLL_CHAPTERS.length }}
       aria-label="Scroll through the work"
+      data-stacked={stack ? "true" : "false"}
     >
+      <p className="visually-hidden" aria-live="polite">
+        {stack ? "All chapters are on the page." : `Chapter ${active + 1} of ${SCROLL_CHAPTERS.length}. ${SCROLL_CHAPTERS[active]?.title ?? ""}`}
+      </p>
       <div className="scroll-sticky">
-        <ol className="scroll-dots" aria-hidden={reduce ? true : undefined}>
+        <ol className="scroll-dots" aria-label="Chapters">
           {SCROLL_CHAPTERS.map((chapter, index) => (
             <li key={chapter.id}>
               <button
@@ -37,7 +52,7 @@ export function ScrollReel() {
                 aria-label={chapter.title}
                 onClick={() => {
                   const node = root.current;
-                  if (!node || reduce) return;
+                  if (!node || stack) return;
                   const top = node.getBoundingClientRect().top + window.scrollY;
                   const span = node.offsetHeight - window.innerHeight;
                   const target = top + (span * index) / SCROLL_CHAPTERS.length;
@@ -52,7 +67,12 @@ export function ScrollReel() {
             const excerpt = chapter.slug ? excerptFor(chapter.slug) : null;
             const on = index === active;
             return (
-              <article key={chapter.id} className={on ? "scroll-chapter on" : "scroll-chapter"} aria-hidden={reduce ? undefined : !on}>
+              <article
+                key={chapter.id}
+                id={`chapter-${chapter.id}`}
+                className={on || stack ? "scroll-chapter on" : "scroll-chapter"}
+                aria-hidden={stack ? undefined : !on}
+              >
                 <div className="scroll-copy">
                   <p className="kicker">
                     {String(index + 1).padStart(2, "0")} — {chapter.kicker}
@@ -73,7 +93,7 @@ export function ScrollReel() {
                         {excerpt.path} · lines {excerpt.startLine}–{excerpt.endLine}
                         {chapter.badge === "private repo" ? " · private repo" : ""}
                       </figcaption>
-                      <pre>
+                      <pre tabIndex={0} aria-label={`Code from ${excerpt.path}`}>
                         <code>{excerpt.code}</code>
                       </pre>
                     </figure>

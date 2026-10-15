@@ -21,6 +21,7 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
   const wip = "wip" in project && project.wip;
   const privateRepo = "privateRepo" in project && Boolean(project.privateRepo);
   const placeholder = "placeholder" in project && Boolean(project.placeholder);
+  const sourceComing = "sourceComing" in project && Boolean(project.sourceComing);
   const sitePath = "sitePath" in project && project.sitePath ? project.sitePath : null;
 
   const chapters: { id: string; title: string; body: ReactNode }[] = [
@@ -148,7 +149,7 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
     <main id="main" className={`wrap case case-${ui}`}>
       <header className="case-hero">
         <p className="kicker">
-          {placeholder ? "Placeholder" : wip ? "Work in progress" : "Case study"}
+          {sourceComing ? "In progress, source coming" : placeholder ? "Placeholder" : wip ? "Work in progress" : "Case study"}
           {privateRepo ? " · private repo" : ""} · {(project.stack || []).join(" · ") || "notes"}
         </p>
         <h1>{project.name}</h1>

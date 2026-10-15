@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { motion, useReducedMotion, useScroll, useSpring } from "framer-motion";
 import { ChatDock } from "./ChatDock";
 import { DirectionPicker } from "./DirectionPicker";
@@ -21,7 +21,19 @@ const links = [
 
 export function Shell({ children }: { children: ReactNode }) {
   const path = usePathname();
+  const headerRef = useRef<HTMLElement>(null);
   const { ui, setUi, scheme, setScheme } = useUi();
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const apply = () => {
+      document.documentElement.style.setProperty("--header", `${el.offsetHeight}px`);
+    };
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [ui]);
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 140, damping: 28, restDelta: 0.001 });
@@ -29,7 +41,7 @@ export function Shell({ children }: { children: ReactNode }) {
   return (
     <>
       <motion.div className="scroll-progress" style={{ scaleX: reduce ? scrollYProgress : scaleX }} aria-hidden="true" />
-      <header className="site-header">
+      <header className="site-header" ref={headerRef}>
         <div className="header-top">
           <Link className="brand" href="/">
             Jeffrey Gomez
