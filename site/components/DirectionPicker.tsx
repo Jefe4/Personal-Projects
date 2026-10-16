@@ -30,10 +30,10 @@ export function DirectionPicker() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
       >
-        <p className="kicker">Three directions, equal weight</p>
+        <p className="kicker">Four directions, equal weight</p>
         <h2 id="direction-title">Same resume. Pick how you want to move through it.</h2>
         <p className="muted">
-          Studio, Spatial, and Editorial stay in the header. None of them is the only site. Your choice is saved in this browser, and the URL can be shared.
+          Studio, Spatial, Editorial, and Showcase stay available. None of them is the only site. Your choice is saved in this browser, and the URL can be shared.
         </p>
         <div className="direction-grid">
           {UI_DIRECTIONS.map((id, i) => (

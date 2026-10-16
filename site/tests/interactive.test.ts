@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { allStudyText } from "../lib/case-studies";
 import { cheapestPath, friendBot, nextInterval, ProbeTable } from "../lib/interactive";
-import { shouldOfferDirectionPicker } from "../lib/ui";
+import { parseUi, shouldOfferDirectionPicker, UI_BLURB, UI_DIRECTIONS, UI_LABEL } from "../lib/ui";
 
 describe("FRIEND-BOT matches Room.java rules", () => {
   it("hunts room 11 by the expensive door and charges 66 L", () => {
@@ -58,6 +58,17 @@ describe("direction picker stays equal", () => {
     expect(shouldOfferDirectionPicker({ query: null, saved: "editorial", legacyEditorial: false, deferred: false })).toBe(false);
     expect(shouldOfferDirectionPicker({ query: null, saved: null, legacyEditorial: true, deferred: false })).toBe(false);
     expect(shouldOfferDirectionPicker({ query: null, saved: null, legacyEditorial: false, deferred: true })).toBe(false);
+  });
+
+  it("keeps four named directions and does not treat Showcase as a default", () => {
+    expect([...UI_DIRECTIONS]).toEqual(["studio", "spatial", "editorial", "showcase"]);
+    for (const id of UI_DIRECTIONS) {
+      expect(UI_LABEL[id].length).toBeGreaterThan(0);
+      expect(UI_BLURB[id].length).toBeGreaterThan(0);
+    }
+    expect(parseUi("showcase")).toBe("showcase");
+    expect(parseUi(null)).toBe(null);
+    expect(parseUi("tesla")).toBe(null);
   });
 });
 

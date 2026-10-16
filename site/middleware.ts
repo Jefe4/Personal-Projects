@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { UI_DIRECTIONS } from "@/lib/ui";
 
-const UI = new Set(["studio", "spatial", "editorial"]);
+const UI = new Set<string>(UI_DIRECTIONS);
 
 export function middleware(req: NextRequest) {
   const q = req.nextUrl.searchParams.get("ui");

@@ -8,6 +8,7 @@ import { studyFor } from "@/lib/case-studies";
 import { CodeExhibit } from "@/components/CodeExhibit";
 import { useUi } from "@/components/UiProvider";
 import { DemoSlot } from "@/components/demos/DemoSlot";
+import { excerptFor } from "@/lib/excerpts";
 import { ProjectCard } from "./ProjectCard";
 
 type Project = Profile["projects"][number];
@@ -143,7 +144,57 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
       ? { opacity: 0, y: 18 }
       : ui === "spatial"
         ? { opacity: 0, y: 28, scale: 0.985 }
-        : { opacity: 0, y: 22 };
+        : ui === "showcase"
+          ? { opacity: 0 }
+          : { opacity: 0, y: 22 };
+
+  if (ui === "showcase") {
+    const bundled = excerpt ? excerptFor(project.slug) : null;
+    const showCode = Boolean(bundled && bundled.code && !bundled.code.startsWith("// source not"));
+    return (
+      <main id="main" className={reduce ? "home-showcase case-showcase reduce" : "home-showcase case-showcase"}>
+        <section className="showcase-screen" aria-labelledby="showcase-project">
+          {study.demo ? (
+            <div className="showcase-visual showcase-visual-live">
+              <DemoSlot kind={study.demo} />
+            </div>
+          ) : showCode ? (
+            <div className="showcase-visual showcase-visual-code" aria-hidden="true">
+              <CodeExhibit slug={project.slug} label={excerpt || undefined} privateRepo={privateRepo} />
+            </div>
+          ) : (
+            <div className="showcase-visual showcase-field" aria-hidden="true" />
+          )}
+          <div className="showcase-copy">
+            <p className="kicker">
+              {sourceComing ? "In progress, source coming" : placeholder ? "Placeholder" : wip ? "Work in progress" : "Project"}
+              {privateRepo ? " · private repo" : ""}
+            </p>
+            <h1 id="showcase-project">{project.name}</h1>
+            <p className="sub">{project.summary}</p>
+          </div>
+          <div className="showcase-actions">
+            <a className="pill solid" href="#problem">
+              View project
+            </a>
+            {showCode ? (
+              <a className="pill ghost" href="#code">
+                See code
+              </a>
+            ) : null}
+          </div>
+        </section>
+        {chapters.map((c) => (
+          <section key={c.id} id={c.id} className="showcase-screen showcase-chapter">
+            <div className="showcase-copy">
+              <h2>{c.title}</h2>
+            </div>
+            <div className="showcase-body">{c.body}</div>
+          </section>
+        ))}
+      </main>
+    );
+  }
 
   return (
     <main id="main" className={`wrap case case-${ui}`}>

@@ -50,15 +50,17 @@ Next.js 15 App Router, React 19. Package name `jefe-site` in `site/package.json`
 | `site/lib/retrieve.ts` | Rule-based answers and `HARD_FACTS`. |
 | `site/lib/answer-guard.ts` | Post-answer fact guard. |
 | `site/lib/webllm.ts` | On-device model id. |
-| `site/lib/ui.ts` | `studio` / `spatial` / `editorial`. No ranking. |
-| `site/components/Shell.tsx` | Header. Three equal direction buttons. |
+| `site/app/icon.svg` | App icon. Stops `/favicon` 404s. Initials only. |
+| `site/lib/ui.ts` | `studio` / `spatial` / `editorial` / `showcase`. No ranking. |
+| `site/components/Shell.tsx` | Header. Four equal direction buttons. Showcase uses a transparent nav and a slide-out menu. |
 | `site/components/UiProvider.tsx` | Saves the direction. Opens the picker on a first visit. |
-| `site/components/DirectionPicker.tsx` | Three equal cards. |
-| `site/components/home/HomeExperience.tsx` | Picks `StudioHome`, `SpatialHome`, or `EditorialHome`. |
-| `site/components/home/ScrollReel.tsx` | Scroll chapters. Used by all three homes. |
+| `site/components/DirectionPicker.tsx` | Four equal cards. |
+| `site/components/home/HomeExperience.tsx` | Picks `StudioHome`, `SpatialHome`, `EditorialHome`, or `ShowcaseHome`. |
+| `site/components/home/ScrollReel.tsx` | Scroll chapters. Used by Studio, Spatial, and Editorial. |
 | `site/components/home/StudioHome.tsx` | Studio frame around the reel. |
 | `site/components/home/SpatialHome.tsx` | Spatial frame. Gym preview. |
 | `site/components/home/EditorialHome.tsx` | Editorial frame. |
+| `site/components/home/ShowcaseHome.tsx` | Full-screen chapters. One chapter per viewport. |
 | `site/components/ChatDock.tsx` | Browser chat. |
 | `site/components/projects/CaseStudy.tsx` | Project page body. |
 | `site/components/projects/ProjectCard.tsx` | Card on `/projects`. |
@@ -234,6 +236,14 @@ On-device path (only after the user clicks the load button):
 
 The dock starts closed (`useState(false)` in `ChatDock.tsx`). The button label is "Ask about Jeffrey".
 
+Before the rule-based answer is written, `stitch` in `site/lib/retrieve.ts` does two extra checks:
+
+- `isInjectionAttempt` matches phrases like "ignore previous instructions", "system prompt", "you are now", "pretend you", "jailbreak", and "developer mode". The answer starts with `DECLINE` (`"That is not covered in the resume materials."`) and says the rules will not change.
+- `isOffTopic` is true when retrieval only has the base facts (identity, contact, languages, never-claim) and the question is not small talk (`who`, `about`, `hi`, `work`, and the other words in `SMALL_TALK`). Off-topic answers also start with `DECLINE`. "Tell me about Jeffrey" still introduces him.
+- A gym question that uses `own`, `owns`, `owned`, `owner`, `founder`, `founded`, or `ceo` gets the staff answer. "Does he own DMV Iron Gym?" is included.
+
+The guard also flags third person. `affirmsGoogleEmployment` catches "He works for Google" and "Jeffrey is a Google employee" unless the sentence has contractor, Akkodis, assignment, or a denial. `affirmsGymOwner` catches "He owns DMV Iron Gym" and "Jeffrey is the owner". Tests: `site/tests/qa-fix-pass.test.ts`. Keep those tests.
+
 Guard flags, and the sentence that replaces a bad claim:
 
 | Flag | Caught claim | Replacement starts with |
@@ -261,15 +271,20 @@ If a question is not in the facts, the prompt tells the model to say: "That is n
 
 ## 5. UI directions stay equal
 
-The only directions are `studio`, `spatial`, and `editorial`, declared in `site/lib/ui.ts` as `UI_DIRECTIONS`. Do not add a fourth direction. Do not make one the default preference.
+The directions are `studio`, `spatial`, `editorial`, and `showcase`, declared in `site/lib/ui.ts` as `UI_DIRECTIONS`. They stay equal. Do not add a fifth direction. Do not remove Showcase. Do not make one the default preference.
 
-- `site/components/Shell.tsx` renders the three buttons in one `role="group"` with equal grid columns (`.ui-switch.directions` in `site/app/globals.css` is `repeat(3, minmax(4.7rem, 1fr))`).
-- `HomeExperience` shows `SpatialHome`, `EditorialHome`, or `StudioHome`. Each one renders the same `ScrollReel`.
-- A first visit with no `?ui=`, no `localStorage` key `jefe-ui`, no legacy `jefe-theme=editorial`, and no session key `jefe-ui-defer` shows `DirectionPicker`. "Look around first" sets `jefe-ui-defer` and saves nothing.
+`showcase` is the full-screen layout Jeffrey asked for, in the spirit of a product site. The button label is "Showcase", not a car brand. Do not put that brand's name, logo, or photos on the site.
+
+- `site/components/Shell.tsx` renders the four buttons in one `role="group"` with equal grid columns (`.ui-switch.directions` in `site/app/globals.css` is `repeat(4, minmax(0, 1fr))`).
+- On Showcase the header is a transparent bar: name on the left, links centered, a Menu button on the right. Menu opens `#showcase-drawer`, which lists the links, the four direction buttons, and Light / Dark. Escape closes it. Below 800px the centered links hide and Menu keeps them.
+- `HomeExperience` shows `SpatialHome`, `EditorialHome`, `ShowcaseHome`, or `StudioHome`. The first three reel homes still share `ScrollReel`. Showcase does not. It renders `site/components/home/ShowcaseHome.tsx`: each `SCROLL_CHAPTERS` item is one `100dvh` screen with `scroll-snap`. The visual is the gym scan, `GraphDemo`, `KnowledgeGraphView`, or a real `CodeExhibit`. If there is no source, the screen is a plain field. No invented drawing.
+- A project screen has two pills: "View project" (solid `#171a20`) and, only when an excerpt exists, "See code" (translucent white). Work screens that have no project URL link to the one-pager instead. Do not add "See code" when there is no excerpt.
+- Project pages use the same screens when `ui === "showcase"` inside `site/components/projects/CaseStudy.tsx`. The hero pills are "View project" (`#problem`) and "See code" (`#code`) when the excerpt is real.
+- Type is Manrope (`--font-manrope` in `site/app/layout.tsx`), used only while Showcase is active. Light is near-white (`#f4f4f4`). Dark is black. Spatial still forces dark. Showcase does not.
+- A first visit with no `?ui=`, no `localStorage` key `jefe-ui`, no legacy `jefe-theme=editorial`, and no session key `jefe-ui-defer` shows `DirectionPicker` with four cards. "Look around first" sets `jefe-ui-defer` and saves nothing.
 - Until a choice is saved, `UiProvider` paints Studio behind the picker. That is a starting surface, not a chosen default. Do not skip the picker or write `jefe-ui` on load.
-- `?ui=studio`, `?ui=spatial`, or `?ui=editorial` selects that direction and saves it (`middleware.ts` plus `writePref` in `UiProvider.tsx`).
-- Spatial forces the dark scheme. Studio and Editorial use Light / Dark (`jefe-scheme`).
-- Below 800px, and when `prefers-reduced-motion` is set, `ScrollReel` stacks every chapter instead of pinning one. Do not remove that. The class hook is `data-stacked` and the CSS is in `site/app/globals.css`.
+- `?ui=studio`, `?ui=spatial`, `?ui=editorial`, or `?ui=showcase` selects that direction and saves it (`middleware.ts` reads `UI_DIRECTIONS`, plus `writePref` in `UiProvider.tsx`). The boot script in `site/app/layout.tsx` must list every id in `UI_DIRECTIONS`.
+- Below 800px, and when `prefers-reduced-motion` is set, `ScrollReel` stacks every chapter instead of pinning one. Do not remove that. Showcase sections stay at least one viewport tall on a phone (`min-height: 100dvh`, `height: auto`) so text is not clipped. `prefers-reduced-motion` turns Showcase scroll-snap off.
 
 ## 6. Backlog
 
@@ -296,7 +311,8 @@ Do these one at a time. After each, run the site test, typecheck, and build from
 - Do not merge the pull request. Do not deploy. Do not run a production host setup.
 - Do not create a GitHub repo. If a later task says to try a private repo and the command fails, stop. Do not create a public repo.
 - Do not move or rename `tools/`.
-- Do not add a fourth UI direction or preselect Studio, Spatial, or Editorial.
+- Do not add a fifth UI direction. Do not remove Showcase. Do not preselect Studio, Spatial, Editorial, or Showcase.
+- Do not put a car-company logo, wordmark, or photo on the site. Showcase is an original layout. The public name stays "Showcase".
 - Do not edit `site/content/excerpts.json` by hand. Run `node scripts/extract-excerpts.mjs`.
 - Do not paste code from the internet into a chapter, a case study, or an excerpt.
 - Do not mention interview overlays, screen or audio capture, or JefeAi on the site.
