@@ -70,15 +70,27 @@ export function retrieveFacts(query: string): string[] {
   }
 
   if (mentions(q, ["esp32", "dispenser", "firmware", "husky", "serial log", "serial-monitor"])) {
-    facts.push("The ESP32 dispenser firmware is the private repo Jefe4/husky-watchdog-firmware, branch firmware/dispense-fsm. It was not readable from this checkout, so the site shows a placeholder and does not quote firmware source. tools/esp32-serial-log is a separate log parser, not that firmware.");
+    facts.push("The ESP32 dispenser firmware page for branch firmware/dispense-fsm is still a placeholder. That GitHub tree was not readable from this checkout, so no firmware source is quoted from it. A different local branch, firmware/estop-nc at 91af525, has 186 host checks and is not compiled or tested on hardware. tools/esp32-serial-log is a separate log parser, not that firmware.");
   }
 
   if (mentions(q, ["novum", "local model", "coding agent", "harness"])) {
-    facts.push("Novum is a work in progress: a local-first Mac AI harness, a Cursor-style coding agent plus local model training. The source is not in this repository. Do not describe it as shipped.");
+    facts.push("Novum is work in progress. The Oct 15, 2026 verify report and the installed app call it 0.9.0. Do not take that version from package.json. Runner: 9/10 real-gemma tasks after fixes, 6/10 on the first run. Retrieval: 11 correct / 7 partial / 2 wrong, versus base alone at 0 / 7 / 13. Cold start 2.0 s at about 300 MB. The 18/18 tab pass is from the 0.8.4 verify. Older 0.3.7 QA verdict was Not done (repeated line 0/40, but the action line doubled in 3/9 lessons and the 40-token cap cut off 34/35 desk and unlock replies).");
   }
 
-  if (mentions(q, ["kicad", "schematic", "pcb", "circuit board", "tinyml", "tiny ml", "mcp", "model context"])) {
-    facts.push("KiCad board, TinyML, and MCP servers are in progress, source coming. They were not found in the public Jefe4 repositories this site can read. Do not invent a schematic, a part, a model, a dataset, a chip, or a list of server tools.");
+  if (mentions(q, ["kicad", "schematic", "pcb", "circuit board", "dispenser board"])) {
+    facts.push("KiCad dispenser carrier v2 is work in progress: 100×72 mm, 2 layers, ERC 0 and DRC 0 on 2026-10-16. Not fabricated. Pin order is assumed. Fuse and reverse-polarity protection are not on the board yet. The e-stop is not purchased. PIR is not in the firmware yet.");
+  }
+
+  if (mentions(q, ["tinyml", "tiny ml", "motion classifier", "synthetic"])) {
+    facts.push("TinyML motion classifier is work in progress. 584 host checks passed, and C++ agrees with Python on 24/24. Accuracy 1.0 is on synthetic data, not real dogs. Not compiled for the ESP32. No real IMU data. The old esp32_dispense copy is marked DO NOT FLASH.");
+  }
+
+  if (mentions(q, ["mcp", "model context"])) {
+    facts.push("MCP servers are work in progress, read-only, written in JavaScript. 14 tests passed, 1 skipped (Iron Desk was not running). Not published. They do not write.");
+  }
+
+  if (mentions(q, ["e-stop", "estop", "normally-closed", "normally closed"])) {
+    facts.push("E-stop dispense firmware on branch firmware/estop-nc at 91af525: 186 host checks passed. Not compiled for the ESP32 and not tested on hardware. The NC button has not been bought. It boots stopped. A remote enable cannot override the button.");
   }
 
   if (mentions(q, ["rack label", "asset label", "port label", "maintenance", "resume json", "private repo", "drop label"])) {

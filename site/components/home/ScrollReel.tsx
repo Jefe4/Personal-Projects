@@ -87,6 +87,7 @@ export function ScrollReel() {
                   ) : null}
                 </div>
                 <div className="scroll-proof">
+                  {chapter.caveat ? <p className="scroll-placeholder caveat-callout">{chapter.caveat}</p> : null}
                   {excerpt && excerpt.code && !excerpt.code.startsWith("// source not") ? (
                     <figure>
                       <figcaption className="mono">
@@ -96,6 +97,14 @@ export function ScrollReel() {
                       <pre tabIndex={0} aria-label={`Code from ${excerpt.path}`}>
                         <code>{excerpt.code}</code>
                       </pre>
+                    </figure>
+                  ) : chapter.quote ? (
+                    <figure>
+                      <figcaption className="mono">{chapter.quote.caption}</figcaption>
+                      <pre tabIndex={0}>
+                        <code>{chapter.quote.code}</code>
+                      </pre>
+                      {chapter.placeholder ? <p className="scroll-placeholder">{chapter.placeholder}</p> : null}
                     </figure>
                   ) : chapter.placeholder ? (
                     <p className="scroll-placeholder">{chapter.placeholder}</p>

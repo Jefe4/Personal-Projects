@@ -13,6 +13,20 @@ import { ProjectCard } from "./ProjectCard";
 
 type Project = Profile["projects"][number];
 
+function CaveatList({ lines }: { lines?: string[] }) {
+  if (!lines?.length) return null;
+  return (
+    <aside className="caveat-callout">
+      <strong>Keep these limits in view</strong>
+      <ul>
+        {lines.map((line) => (
+          <li key={line}>{line}</li>
+        ))}
+      </ul>
+    </aside>
+  );
+}
+
 export function CaseStudy({ project, related }: { project: Project; related: Project[] }) {
   const { ui } = useUi();
   const reduce = useReducedMotion();
@@ -31,9 +45,25 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
       title: "Problem",
       body: <p>{study.problem}</p>,
     },
-    {
+  ];
+
+  if (study.constraints?.length) {
+    chapters.push({
+      id: "constraints",
+      title: "Constraints",
+      body: (
+        <ul>
+          {study.constraints.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
+      ),
+    });
+  }
+
+  chapters.push({
       id: "built",
-      title: "What I built",
+      title: study.decisions ? "Decisions" : "What I built",
       body: (
         <ul>
           {study.built.map((line) => (
@@ -41,7 +71,56 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
           ))}
         </ul>
       ),
-    },
+    });
+
+  if (study.result?.length) {
+    chapters.push({
+      id: "result",
+      title: "Measured result",
+      body: (
+        <ul>
+          {study.result.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
+      ),
+    });
+  }
+
+  if (study.history?.length) {
+    chapters.push({
+      id: "history",
+      title: "Older QA, kept as history",
+      body: (
+        <ul>
+          {study.history.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
+      ),
+    });
+  }
+
+  if (study.quotes?.length) {
+    chapters.push({
+      id: "excerpt",
+      title: "Excerpt",
+      body: (
+        <>
+          {study.quotes.map((quote) => (
+            <figure key={quote.caption}>
+              <figcaption className="mono">{quote.caption}</figcaption>
+              <pre tabIndex={0}>
+                <code>{quote.code}</code>
+              </pre>
+            </figure>
+          ))}
+        </>
+      ),
+    });
+  }
+
+  chapters.push(
     {
       id: "stack",
       title: "Stack",
@@ -73,7 +152,7 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
         </>
       ),
     },
-  ];
+  );
 
   if (excerpt) {
     chapters.push({
@@ -162,6 +241,12 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
             <div className="showcase-visual showcase-visual-code" aria-hidden="true">
               <CodeExhibit slug={project.slug} label={excerpt || undefined} privateRepo={privateRepo} />
             </div>
+          ) : study.quotes?.[0] ? (
+            <div className="showcase-visual showcase-visual-code" aria-hidden="true">
+              <pre>
+                <code>{study.quotes[0].code}</code>
+              </pre>
+            </div>
           ) : (
             <div className="showcase-visual showcase-field" aria-hidden="true" />
           )}
@@ -172,6 +257,7 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
             </p>
             <h1 id="showcase-project">{project.name}</h1>
             <p className="sub">{project.summary}</p>
+            <CaveatList lines={study.caveats} />
           </div>
           <div className="showcase-actions">
             <a className="pill solid" href="#problem">
@@ -179,6 +265,10 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
             </a>
             {showCode ? (
               <a className="pill ghost" href="#code">
+                See code
+              </a>
+            ) : study.quotes?.length ? (
+              <a className="pill ghost" href="#excerpt">
                 See code
               </a>
             ) : null}
@@ -205,6 +295,7 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
         </p>
         <h1>{project.name}</h1>
         <p className="lede">{project.summary}</p>
+        <CaveatList lines={study.caveats} />
         <p>
           <Link href="/projects">All projects</Link>
           {" · "}

@@ -7,6 +7,9 @@ export type ScrollChapter = {
   href?: string;
   badge?: string;
   placeholder?: string;
+  /** Short limit that stays visible under the title in Showcase. */
+  caveat?: string;
+  quote?: { caption: string; code: string };
 };
 
 export const SCROLL_CHAPTERS: ScrollChapter[] = [
@@ -21,6 +24,14 @@ export const SCROLL_CHAPTERS: ScrollChapter[] = [
     kicker: "Work",
     title: "Gym systems, as staff.",
     plain: "At DMV Iron Gym in Falls Church I am a Team Member and Systems Administrator, from July 2024 to now. I set up member accounts, take payments, and keep the membership software and the spreadsheets moving. The owner is Leo Torres Williams. I am not the owner, and I am not the founder.",
+  },
+  {
+    id: "recruiter-chat",
+    kicker: "Demo",
+    title: "The chat on this page is a working demo.",
+    href: "/",
+    badge: "Working demo",
+    plain: "Ask about Jeffrey answers from the resume file. It declines off-topic questions and prompt-injection attempts. A guard rewrites a claim that I am a Google employee, that I graduated from Frostburg, or that I own the gym. The checks are 6 tests in answer-guard.test.ts, 9 in retrieve.test.ts, and 10 in qa-fix-pass.test.ts. An on-device model loads only if you opt in. Until then the answer is the rule-based one.",
   },
   {
     id: "school",
@@ -114,41 +125,69 @@ export const SCROLL_CHAPTERS: ScrollChapter[] = [
   {
     id: "novum",
     kicker: "Project",
-    title: "Novum is still being built.",
+    title: "Novum is a local app, still in progress.",
     href: "/projects/novum",
     badge: "Work in progress",
-    placeholder: "No code excerpt. The Novum source is not in this repository, and this page does not invent one.",
-    plain: "Novum is my local-first Mac AI harness, and it is work in progress. The idea is a coding agent in the style of Cursor, plus training a model on the machine instead of sending the work out. There is no public product page and no source in this checkout.",
+    caveat:
+      "Called 0.9.0 in the Oct 15, 2026 verify report and on the installed app. Runner 9/10 after fixes (6/10 on the first run). Retrieval 11 correct / 7 partial / 2 wrong, against base alone at 0 / 7 / 13. Cold start 2.0 s at about 300 MB. The 18/18 tab pass is from the 0.8.4 verify. Older 0.3.7 QA was Not done.",
+    placeholder: "The two router.cjs quotes are on the project page. The file is not in this website repo. Commit 29bde88.",
+    plain: "Novum is work in progress. It is a local-first Electron app: lessons that unlock features, plus a coding harness. Model calls stay on the machine by default. The 0.9.0 label is the verify report and the installed app, not a package.json version.",
+    quote: {
+      caption: "electron/router.cjs @ 29bde88",
+      code: "function applyPerfMode(settings, body) {\n  if (!settings || settings.perfMode !== 'lite') return body;\n  // Lite: gemma4:e4b, ctx 2048, cap 768\n}",
+    },
   },
   {
     id: "kicad-board",
     kicker: "Engineering",
-    title: "A KiCad board. Source coming.",
+    title: "Dispenser carrier board, v2.",
     href: "/projects/kicad-board",
-    badge: "In progress, source coming",
-    placeholder:
-      "In progress, source coming. No KiCad schematic or board file was in the Jefe4 repositories this site can read. No drawing, part, or net is shown.",
-    plain: "Engineering work in progress: a circuit board drawn in KiCad. The files are not in the repositories this site can read, so this chapter does not pretend to show a schematic.",
+    badge: "Work in progress",
+    caveat: "Not fabricated. Pin order is assumed. Fuse and reverse-polarity protection are not on the board yet.",
+    placeholder: "ERC 0 and DRC 0 on 2026-10-16. 100 × 72 mm, 2 layers. The render files are not in this website repo.",
+    plain: "KiCad 10 carrier for an ESP32 DevKit, an SG90 servo, an IMU, a PIR, a treat beam-break, and a hardware e-stop. Dispensing is supervised only. Branch pcb/layout-v2 at 3168a08.",
   },
   {
     id: "tinyml",
     kicker: "Engineering",
-    title: "TinyML. Source coming.",
+    title: "A motion classifier, checked on the host.",
     href: "/projects/tinyml",
-    badge: "In progress, source coming",
-    placeholder:
-      "In progress, source coming. No TinyML training code or model file was in the Jefe4 repositories this site can read. No model, dataset, or chip is named.",
-    plain: "Engineering work in progress: small machine learning meant to run on a device. Without the source, this chapter does not describe a model or a result.",
+    badge: "Work in progress",
+    caveat: "Accuracy 1.0 is on synthetic data, not real dogs. Not compiled for the ESP32.",
+    placeholder: "584 host checks passed. C++ and Python agree on 24/24. No real IMU recording.",
+    plain: "A numpy MLP classifies a motion window as rest, walk, play, or shake. The intended board is an ESP32 and a GY-6500. The branch is tinyml/motion-classifier at 108a13e.",
+    quote: {
+      caption: "motion_core.cpp @ f2b0923",
+      code: "if (!isfinite(window[i])) return kInvalidInput;  // e.g. I2C read glitch",
+    },
   },
   {
     id: "mcp-servers",
     kicker: "Engineering",
-    title: "MCP servers. Source coming.",
+    title: "Read-only MCP servers.",
     href: "/projects/mcp-servers",
-    badge: "In progress, source coming",
-    placeholder:
-      "In progress, source coming. No Model Context Protocol server source was in the Jefe4 repositories this site can read. No tool list is invented.",
-    plain: "Engineering work in progress: MCP servers, the small programs a coding agent can call. The server code is not in the repositories this site can read, so nothing here is quoted from a server.",
+    badge: "Work in progress",
+    caveat: "Read-only JavaScript. 14 tests passed, 1 skipped. Not published.",
+    placeholder: "The skipped test is the Iron Desk live smoke test. Iron Desk was not running on 127.0.0.1:4000.",
+    plain: "Three local MCP servers give an assistant read-only access to Iron Desk, Novum, and a trading desk. Branch mcp/read-only at 6af55de.",
+    quote: {
+      caption: "lib/files.js @ 8ce1abe",
+      code: "if (real !== base && !real.startsWith(base + path.sep)) throw new Error('path escapes root (symlink)');",
+    },
+  },
+  {
+    id: "estop-firmware",
+    kicker: "Engineering",
+    title: "E-stop firmware, host checks only.",
+    href: "/projects/estop-firmware",
+    badge: "Work in progress",
+    caveat: "186 host checks passed. Not compiled for the ESP32 and not tested on hardware.",
+    placeholder: "The NC e-stop button has not been bought. This is branch firmware/estop-nc at 91af525, not the unread dispense-fsm placeholder.",
+    plain: "A dispense state machine with a normally-closed e-stop. It boots stopped, a broken wire means stop, and a remote enable cannot override the button. Supervised dispense only.",
+    quote: {
+      caption: "dispense_core.h — EstopGuard",
+      code: "bool remoteEnable();\n// Returns false (and changes nothing) if the hardware switch is stopping.",
+    },
   },
   {
     id: "esp32-serial-log",
@@ -157,7 +196,7 @@ export const SCROLL_CHAPTERS: ScrollChapter[] = [
     slug: "esp32-serial-log",
     href: "/projects/esp32-serial-log",
     badge: "private repo",
-    plain: "Paste or point this tool at a serial-monitor capture. It lists restarts and the reason, lines where a state changes (IDLE to ARM, for example), and faults such as a panic. Useful next to the dispenser, and it is not a substitute for the firmware source.",
+    plain: "Paste or point this tool at a serial-monitor capture. It lists restarts and the reason, lines where a state changes (IDLE to ARM, for example), and faults such as a panic. Useful next to the dispenser, and it is not a substitute for the firmware source. test.mjs has 3 tests.",
   },
   {
     id: "rack-label-check",
@@ -166,7 +205,7 @@ export const SCROLL_CHAPTERS: ScrollChapter[] = [
     slug: "rack-label-check",
     href: "/projects/rack-label-check",
     badge: "private repo",
-    plain: "Each line is one position on a data-center floor: site, hall, row, rack, U slot, and an asset tag. The checker flags a label that does not match that pattern, a U number above 42, or the same asset tag used twice. It is my own checklist format, not an employer schema.",
+    plain: "Each line is one position on a data-center floor: site, hall, row, rack, U slot, and an asset tag. The checker flags a label that does not match that pattern, a U number above 42, or the same asset tag used twice. It is my own checklist format, not an employer schema. test.mjs has 3 tests.",
   },
   {
     id: "resume-json-check",
@@ -175,7 +214,7 @@ export const SCROLL_CHAPTERS: ScrollChapter[] = [
     slug: "resume-json-check",
     href: "/projects/resume-json-check",
     badge: "private repo",
-    plain: "This checks the JSON the site reads. It fails if the file calls me a Google employee, says I already graduated from Frostburg, or gives me the gym as owner. It also checks Westat, Rockville High School in 2019, Arlington, English and Spanish, and GitHub Jefe4.",
+    plain: "This checks the JSON the site reads. It fails if the file calls me a Google employee, says I already graduated from Frostburg, or gives me the gym as owner. It also checks Westat, Rockville High School in 2019, Arlington, English and Spanish, and GitHub Jefe4. test.mjs has 2 tests.",
   },
   {
     id: "gym-maint",
@@ -184,7 +223,7 @@ export const SCROLL_CHAPTERS: ScrollChapter[] = [
     slug: "gym-maint",
     href: "/projects/gym-maint",
     badge: "private repo",
-    plain: "A command-line list of gym equipment. Each machine has a name and how many days should pass between service. Ask it which machines are due on a date. A machine that has never been serviced is due. This is a staff checklist. It does not say I own the gym.",
+    plain: "A command-line list of gym equipment. Each machine has a name and how many days should pass between service. Ask it which machines are due on a date. A machine that has never been serviced is due. This is a staff checklist. It does not say I own the gym. test.mjs has 3 tests.",
   },
   {
     id: "port-label-check",
@@ -193,6 +232,6 @@ export const SCROLL_CHAPTERS: ScrollChapter[] = [
     slug: "port-label-check",
     href: "/projects/port-label-check",
     badge: "private repo",
-    plain: "Each line names a switch port, says whether the cable is copper or fiber, and names the other end. The checker rejects a port number that cannot exist on a 48-port switch, a port labeled twice, and a far end labeled twice.",
+    plain: "Each line names a switch port, says whether the cable is copper or fiber, and names the other end. The checker rejects a port number that cannot exist on a 48-port switch, a port labeled twice, and a far end labeled twice. test.mjs has 3 tests.",
   },
 ];

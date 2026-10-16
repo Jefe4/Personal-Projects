@@ -161,8 +161,9 @@ npm run build
 Quote only code that is already in this repository and that Jeffrey wrote. The excerpt script reads a file path relative to the repo root. It does not download anything.
 
 - If the file is not on disk, do not add a `pulls` entry. Do not paste code from the internet, from memory, or from another person's gist.
-- Set `sourceComing: true` and `placeholder: true` on the JSON record. Leave `excerptFile` off. Leave `slug` off the scroll chapter so `ScrollReel` does not look up an excerpt.
-- Say "In progress, source coming." Name no part, net, model, dataset, chip, or server tool that you did not read in a file.
+- A quote that comes from a verified note may be stored in `quotes` on the case study, with the path and commit in the caption, and with a sentence that the file is not in this website repo. Do not invent a source file to feed `extract-excerpts.mjs`.
+- Leave `slug` off a scroll chapter that has no excerpt in `excerpts.json`. Use `quote` for a short verified snippet instead.
+- If a limit is in the source note (not fabricated, synthetic data, not compiled, not tested on hardware, a skipped test), put it in `caveats` and in the scroll chapter `caveat`. Do not drop it to make the card sound finished.
 - `CodeExhibit` hides the GitHub link when `privateRepo` is true. Tools under `tools/` use that flag.
 - Missing files become the comment `// source not available in this build` in `excerpts.json`. Do not ship that string as if it were source. Fix the path or remove the pull.
 
@@ -210,9 +211,17 @@ Test already in `site/tests/scroll-chapters.test.ts`: the id is in the required 
 
 Page URL after `npm run build`: `/projects/rack-label-check`.
 
-### When there is no source yet
+### Verified notes that are not files in this repo
 
-Follow `kicad-board` in the same files. JSON has `sourceComing: true`, `placeholder: true`, `wip: true`, `path: null`, `github: null`, and no `excerptFile`. The scroll chapter has `badge: "In progress, source coming"`, a `placeholder` string, and no `slug`. `site/tests/scroll-chapters.test.ts` checks that those three chapters (`kicad-board`, `tinyml`, `mcp-servers`) have no `slug` and do not contain `#include`, `kicad_pcb`, `def train`, `@modelcontextprotocol`, or `gpio_set`.
+`kicad-board`, `tinyml`, `mcp-servers`, `estop-firmware`, and `novum` are work in progress. Their facts live in `site/lib/case-studies.ts` and `site/content/jeffrey.json`. They do not use `sourceComing`. `site/tests/engineering-facts.test.ts` locks the limits:
+
+- Novum is called 0.9.0 from the Oct 15, 2026 verify report and the installed app. Do not read that version out of package.json. The runner result is 9/10 after fixes and 6/10 on the first run. Retrieval is 11 correct / 7 partial / 2 wrong against a base of 0 / 7 / 13. Cold start is 2.0 s at about 300 MB. The 18/18 tab pass is the 0.8.4 verify. The 0.3.7 QA stays as history, verdict Not done. The two quotes are `applyPerfMode` and `trimAtCap` from `electron/router.cjs` at `29bde88`.
+- KiCad dispenser board v2: 100×72 mm, 2 layers, ERC and DRC 0. Not fabricated. Pin order is assumed. Fuse and reverse-polarity protection are not on the board.
+- TinyML: 584 host checks, C++ and Python agree on 24/24. Accuracy 1.0 is synthetic. Not compiled for the ESP32.
+- MCP servers: read-only JavaScript, 14 tests passed, 1 skipped, not published.
+- E-stop firmware: 186 host checks. Not compiled and not tested on hardware. This is branch `firmware/estop-nc`, not the unread `firmware/dispense-fsm` placeholder.
+
+`site/tests/scroll-chapters.test.ts` checks that those caveats are on the scroll chapter, not only on the project page. The five private tools state their `test.mjs` counts (3, 3, 2, 3, 3). The chapter `recruiter-chat` is the working chat demo: 6 + 9 + 10 fact tests. Do not call that chat deployed.
 
 ## 4. Recruiter chat and fact guardrails
 
@@ -290,15 +299,15 @@ The directions are `studio`, `spatial`, `editorial`, and `showcase`, declared in
 
 Do these one at a time. After each, run the site test, typecheck, and build from section 2. Leave the pull request as a draft.
 
-1. KiCad board, source coming. Files: `kicad-board` in `site/content/jeffrey.json`, `site/lib/scroll-chapters.ts`, and `site/lib/case-studies.ts`. Acceptance: when a `.kicad_sch` or `.kicad_pcb` file exists in this repo or in a Jefe4 repo you can actually read, add an excerpt pull whose `file` path exists on disk, show that excerpt, and change the scroll test so this id is no longer a "source coming" chapter with no slug. Until that file exists, keep the current card. Do not draw a schematic.
+1. KiCad dispenser board v2. Id `kicad-board`. The page already records 100×72 mm, 2 layers, ERC 0, DRC 0, and the three limits: not fabricated, pin order assumed, no fuse or reverse-polarity protection. Acceptance: if a `.kicad_pcb` file is actually in this checkout, you may add an excerpt pull. Until then, do not draw a board and do not say it was fabricated.
 
-2. TinyML, source coming. Same three files, id `tinyml`. Acceptance: an excerpt only from training or inference code you opened in this checkout. The page must not name a model, dataset, or chip that is not in that file. Until then, keep "In progress, source coming."
+2. TinyML motion classifier. Id `tinyml`. 584 host checks and 24/24 C++ versus Python are already on the page. Acceptance: keep the sentence that accuracy 1.0 is synthetic. Do not say it was compiled for the ESP32 unless you ran that build in this checkout.
 
-3. MCP servers, source coming. Same three files, id `mcp-servers`. Acceptance: an excerpt only from server source you opened. Do not list tools that are not in that file. Until then, keep the current card.
+3. MCP servers. Id `mcp-servers`. Read-only, 14 passed, 1 skipped. Acceptance: do not add a tool that is not in `site/lib/case-studies.ts` already. If you publish the repo, remove "Not published" in the same commit.
 
-4. ESP32 dispenser firmware placeholder. Id `esp32-firmware`. The unread repo is `Jefe4/husky-watchdog-firmware`, branch `firmware/dispense-fsm`. Acceptance: if you can read that branch, quote a real function in an excerpt pull and delete the placeholder wording. If GitHub still returns 404, leave the placeholder. Do not treat `tools/esp32-serial-log` as the firmware.
+4. ESP32 dispenser firmware placeholder. Id `esp32-firmware`. The unread GitHub branch is `firmware/dispense-fsm`. Leave that placeholder. The measured e-stop work is a different card, id `estop-firmware`, branch `firmware/estop-nc` at `91af525`: 186 host checks, not compiled, not tested on hardware. Do not merge those two cards. Do not treat `tools/esp32-serial-log` as the firmware.
 
-5. Novum. Id `novum` in the same three files. It is a local-first Mac AI harness (a coding agent plus local model training) and it is work in progress. Acceptance: quote Novum source only after the files are in the checkout. No public URL. No claim that it has shipped.
+5. Novum. Id `novum`. Work in progress. Call it 0.9.0 only as the Oct 15, 2026 verify report and the installed app. Do not cite package.json for that version. Keep the 0.3.7 QA as history with verdict Not done. The quotes stay `applyPerfMode` and `trimAtCap` from commit `29bde88`. No public URL. No claim that it has shipped.
 
 6. Move the five `tools/` folders to private GitHub repos later. Acceptance: `gh repo create Jefe4/<folder> --private` succeeds for each name (`esp32-serial-log`, `rack-label-check`, `resume-json-check`, `gym-maint`, `port-label-check`), the tool files are pushed there, and the site still says "private repo". If create fails, leave the folders in this repo. Never pass `--public`. Never use `npm publish`.
 

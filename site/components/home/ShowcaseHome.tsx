@@ -56,6 +56,15 @@ function Backdrop({ chapter }: { chapter: ScrollChapter }) {
       </div>
     );
   }
+  if (chapter.quote) {
+    return (
+      <div className="showcase-visual showcase-visual-code" aria-hidden="true">
+        <pre>
+          <code>{chapter.quote.code}</code>
+        </pre>
+      </div>
+    );
+  }
   return <div className="showcase-visual showcase-field" data-kicker={chapter.kicker} aria-hidden="true" />;
 }
 
@@ -68,6 +77,7 @@ function ChapterScreen({ chapter }: { chapter: ScrollChapter }) {
         <p className="kicker">{chapter.kicker}</p>
         <h2 id={`showcase-${chapter.id}`}>{chapter.title}</h2>
         <p className="sub">{firstSentence(chapter.plain)}</p>
+        {chapter.caveat ? <p className="sub caveat">{chapter.caveat}</p> : null}
       </div>
       <div className="showcase-actions">
         {chapter.href ? (
@@ -81,6 +91,10 @@ function ChapterScreen({ chapter }: { chapter: ScrollChapter }) {
         )}
         {code && chapter.slug ? (
           <Link className="pill ghost" href={`/projects/${chapter.slug}#code`}>
+            See code
+          </Link>
+        ) : chapter.quote && chapter.href?.startsWith("/projects/") ? (
+          <Link className="pill ghost" href={`${chapter.href}#excerpt`}>
             See code
           </Link>
         ) : null}
