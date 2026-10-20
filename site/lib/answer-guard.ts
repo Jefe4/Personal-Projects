@@ -32,6 +32,7 @@ export function affirmsGoogleEmployment(sentence: string): boolean {
   // Third person or "full-time" phrasing: "He works for Google as a full-time engineer."
   if (/\b(he|jeffrey|i)\s+(works|worked|work)\s+(at|for)\s+google\b/.test(n) && !/\b(not|n't|never|assignment|contractor|akkodis|data center|datacenter)\b/.test(n)) return true;
   if (/\b(he|jeffrey) is (a|an)\s+(google employee|googler|google fte)\b/.test(n)) return true;
+  if (/\b(he|jeffrey) is (a|an)\s+[^.]{0,30}\bengineer (at|for) google\b/.test(n) && !/\b(not|n't|contractor|akkodis|data center|datacenter)\b/.test(n)) return true;
   return false;
 }
 
@@ -44,7 +45,8 @@ export function affirmsGraduated(sentence: string): boolean {
   if (/\bstill (a )?student\b/.test(n) && !/\bgraduated\b/.test(n)) return false;
   if (/\b(i graduated|i have graduated|i've graduated|i already graduated)\b/.test(n)) return true;
   if (/\bgraduated\b/.test(n) && /\b(frostburg|college|university|bachelor|computer science)\b/.test(n)) return true;
-  if (/\b(degree in hand|conferred degree|completed my (bachelor|degree)|alumni of frostburg|alumnus of frostburg)\b/.test(n)) return true;
+  if (/\b(degree in hand|conferred degree|completed my (bachelor|degree)|alumni of frostburg|alumnus of frostburg)\b/.test(n) && !/\b(expected|if|requires?)\b/.test(n)) return true;
+  if (/\b(he|jeffrey) (has|holds|earned)\s+(a\s+)?(bachelor|b\.s|degree)/.test(n) && !/\b(expected|not|n't|working toward|pursuing)\b/.test(n)) return true;
   if (/\b(hold|have|earned)\s+(a\s+)?(bachelor|b\.s\.|bs degree)\b/.test(n) && !/\bexpected\b/.test(n)) return true;
   return false;
 }
@@ -55,8 +57,9 @@ export function affirmsGymOwner(sentence: string): boolean {
   if (/\b(not the|not an|am not|n't the|is not)\b[^.]{0,40}\b(owner|founder|ceo)\b/.test(n)) return false;
   if (/\b(i am|i'm|i’m)\s+(the\s+)?(owner|founder|ceo)\b/.test(n)) return true;
   if (/\b(i own|i founded)\b/.test(n) && /\bgym\b/.test(n)) return true;
-  if (/\b(he|jeffrey)\s+(owns|founded|co-owns|runs his own)\b/.test(n) && /\b(gym|iron|dmv)\b/.test(n)) return true;
-  if (/\b(he|jeffrey) is the\s+(owner|founder|ceo|co-owner)\b/.test(n) && /\b(gym|iron|dmv)\b/.test(n)) return true;
+  if (/\b(he|jeffrey)\s+(owns|founded|co-founded|cofounded|co-owns|runs his own|runs the gym)\b/.test(n) && /\b(gym|iron|dmv)\b/.test(n)) return true;
+  if (/\bhis gym\b/.test(n) && /\b(iron|dmv)\b/.test(n)) return true;
+  if (/\b(he|jeffrey) is (the\s+)?(owner|founder|ceo|co-owner|co-founder)\b/.test(n) && /\b(gym|iron|dmv)\b/.test(n)) return true;
   if (/\bmy (gym|company)\b/.test(n) && /\b(iron gym|dmv)\b/.test(n)) return true;
   return false;
 }

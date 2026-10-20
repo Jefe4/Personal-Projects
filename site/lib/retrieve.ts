@@ -136,17 +136,22 @@ export function retrieveFacts(query: string): string[] {
 
 export const DECLINE = "That is not covered in the resume materials.";
 
-const INJECTION = /\b(ignore|disregard|forget|override)\b[^.]{0,40}\b(instruction|rule|prompt|previous|above|prior)s?\b|\bsystem prompt\b|\byou are now\b|\bpretend (to be|you)\b|\bjailbreak\b|\bdeveloper mode\b/i;
+const INJECTION = /\b(ignore|disregard|forget|override)\b[^.]{0,40}\b(instruction|rule|prompt|previous|above|prior)s?\b|\bsystem prompt\b|\byou are now\b|\bpretend (to be|you)\b|\bjailbreak\b|\bdeveloper mode\b|(^|\n)\s*(\[system\]|system\s*:)|\[system\]|\bbase64\b|\bignora\b[^.]{0,40}\binstrucciones\b|\bignorez\b[^.]{0,40}\binstructions\b|\bvergiss\b[^.]{0,40}\banweisungen\b/i;
 
 export function isInjectionAttempt(query: string): boolean {
   return INJECTION.test(query);
 }
 
 const BASE_FACT_COUNT = 4; // identity, contact, languages, never-claim
-const SMALL_TALK = ["who", "about", "tell me", "hi", "hello", "hey", "jeffrey", "yourself", "introduce", "contact", "email", "phone", "linkedin", "hire", "experience", "work", "background", "summary"];
+const SMALL_TALK = ["who is", "who's", "about", "tell me", "hi", "hello", "hey", "looking for", "role", "jeffrey", "yourself", "introduce", "contact", "email", "phone", "linkedin", "hire", "experience", "work", "background", "summary"];
+
+function mentionsWord(q: string, words: string[]) {
+  const n = norm(q);
+  return words.some((w) => new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`).test(n));
+}
 
 export function isOffTopic(query: string, facts: string[]): boolean {
-  return facts.length <= BASE_FACT_COUNT && !mentions(query, SMALL_TALK);
+  return facts.length <= BASE_FACT_COUNT && !mentionsWord(query, SMALL_TALK);
 }
 
 function stitch(query: string, facts: string[]): string {
@@ -158,7 +163,7 @@ function stitch(query: string, facts: string[]): string {
     return DECLINE + " I can only answer questions about my resume, and I won't change those rules.";
   }
 
-  if (/\b(own|owns|owned|owner|founder|founded|ceo)\b/.test(q) && mentions(q, ["gym", "iron", "dmv"])) {
+  if ((/\b(own|owns|owned|owner|found|founder|founded|co-founded|ceo|run|runs)\b/.test(q) || /\bhis gym\b/.test(q)) && mentions(q, ["gym", "iron", "dmv"])) {
     lines.push("I'm a Team Member and Systems Administrator at DMV Iron Gym in Falls Church — not the owner, founder, or CEO. Leo Torres Williams is the founder/CEO. The gym is veteran-owned; I'm staff.");
   }
 
