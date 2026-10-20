@@ -1,11 +1,21 @@
 export type DemoKind = "graph" | "hash" | "flash" | "tcp" | "library" | "list" | "sql" | "kg" | "gym";
 
+export type StudyQuote = { caption: string; code: string };
+
 export type StudyCopy = {
   problem: string;
   built: string[];
   probe: string[];
   demo: DemoKind | null;
   demoNote: string;
+  /** Limits that must stay on the page. */
+  caveats?: string[];
+  constraints?: string[];
+  /** When set, the built list is titled Decisions. */
+  decisions?: boolean;
+  result?: string[];
+  history?: string[];
+  quotes?: StudyQuote[];
 };
 
 const STUDIES: Record<string, StudyCopy> = {
@@ -195,6 +205,342 @@ const STUDIES: Record<string, StudyCopy> = {
     demo: null,
     demoNote: "",
   },
+  "esp32-firmware": {
+    problem:
+      "Dispenser firmware for an ESP32 lives in Jefe4/husky-watchdog-firmware on branch firmware/dispense-fsm. This checkout could not read that repository.",
+    built: [
+      "Placeholder. GitHub returned 404, which is also what a private repository looks like when this credential cannot see it.",
+      "No firmware source is quoted on this page. Nothing was copied from the internet to fill the gap.",
+      "The separate tool at tools/esp32-serial-log parses serial-monitor captures. It is not the firmware.",
+    ],
+    probe: ["Private repo: Jefe4/husky-watchdog-firmware, branch firmware/dispense-fsm.", "Do not treat this page as a firmware listing."],
+    demo: null,
+    demoNote: "",
+  },
+  novum: {
+    problem:
+      "Novum is a local-first Electron desktop app. It teaches AI through lessons, and finishing a lesson unlocks a feature. It has also grown into a coding harness. Model calls run on the machine by default. This page is work in progress.",
+    caveats: [
+      "Work in progress. Nothing in the Oct 15, 2026 verify note was pushed or published.",
+      "The 0.9.0 name is from that verify report and the installed app. This page does not take the version from package.json.",
+      "The full tree is not in this website repo. The two code blocks are the quotes recorded from electron/router.cjs at commit 29bde88.",
+    ],
+    constraints: [
+      "Local by default: Ollama on port 11434 and MLX on port 8080. Secrets in the notes vault are never indexed.",
+      "The task runner runs one task at a time, each in its own git worktree on a runner/<id> branch. It never pushes. A merge is a local fast-forward and needs explicit approval.",
+      "Each command has a timeout, and a task has a 30-minute limit.",
+    ],
+    decisions: true,
+    built: [
+      "Electron ^33.2 with a Vite and React renderer. The main process is CommonJS: main.cjs, router.cjs, harness.cjs, runner.cjs, lenses.cjs, vaultIndex.cjs, lora.cjs, kgraph.cjs, engineering.cjs. The renderer is React, Vite, and TypeScript.",
+      "Ollama Dual route: gemma4:e4b (fast) hands off to gemma4:26b (preferred body). MLX serves a Qwen2.5-3B-Instruct-4bit LoRA adapter trained in the app.",
+      "Vault retrieval is BM25 plus nomic-embed-text vectors. Lite mode is e4b, 2048 context, and a 768-token cap. Performance mode is the default.",
+      "Lessons unlock features. Progress only merges forward and is never wiped.",
+      "Harness tab: repo tree, search, and index, then propose, diff, and apply a changeset with rollback, plus a local agent loop.",
+      "Self-QA and self-repair. Repair proposals run in git worktrees and wait for approval in a Builder view. A nightly run is optional.",
+      "MLX LoRA training uses its own process group, shows a live loss curve, and serves on port 8080.",
+      "Vault chat cites notes. A knowledge graph of notes, tags, and wikilinks is read-only.",
+      "Engineering tab: read-only discovery of KiCad, Unreal, and ESP32 projects, with a scoped index.",
+      "Local task runner, new in 0.9.0, is a CLI and a Runner tab.",
+      "Lens QA, new in 0.9.0, runs npm run gate first, then 3 of 10 rotating review lenses, starting with what changed. Each lens returns its top 3 issues by impact. Issues that are not quick wins become draft task specs.",
+      "The verify note also records LOCAL-HANDOFF.md and 20 task specs (3 P1, 8 P2, 9 P3). Each spec has an automated check, and all 20 checks fail on main as intended. Every spec prompt fits in gemma4:26b's 8192-token context.",
+    ],
+    result: [
+      "verify:all printed 56 ok lines. New suites include runner (11), lenses (5), and tasks. Typecheck passes. npm run gate passes: typecheck 1.5 s, verify:all 35 s, self-QA 49 s.",
+      "Cold start is 2.0 s, 4 processes, about 300 MB, and quit in 0.24 s.",
+      "Runner with real gemma: 10 distinct seeded tasks over 13 real runs. 6/10 were ready on the first run. 9/10 completed after spec and runner bugs were fixed. One example was a 3-line diff in 13 s on gemma4:26b. The one remaining failure is real: e4b's search text did not match in Lite mode. 4 runner bugs were found and fixed along the way.",
+      "Live lens pass: gemma4:26b at 8192 context, 3 lenses in 40.8 s, 9 issues (5 quick wins).",
+      "Vault retrieval, 20 questions, strict grading, correct / partial / wrong: base model alone 0 / 7 / 13. Base plus retrieval 11 / 7 / 2. QA LoRA plus retrieval 5 / 10 / 5. Retrieval, not fine-tuning, is what made the model answer from the notes.",
+      "Full-tab QA from the 0.8.4 verify, not a new 0.9.0 UI pass: 18/18 tabs passed in both Performance and Lite, with 0 problems. Chat took 16.1 s in Performance (Dual) and 6.5 s in Lite.",
+    ],
+    history: [
+      "Older live-coach QA, Novum 0.3.7, Oct 7 2026, gemma4:e4b on Ollama 0.34.4. Verdict: Not done. The repeated app line was fixed (0/40). Two blockers were still open: the action line doubled in 3/9 lessons, and the 40-token cap cut off 34/35 desk and unlock replies. That run is history. It is not the 0.9.0 result.",
+    ],
+    quotes: [
+      {
+        caption: "electron/router.cjs at commit 29bde88 — Lite mode routing. Quoted from the Oct 15, 2026 verify note. The file is not in this website repo.",
+        code: `const LITE = { model: 'gemma4:e4b', numCtx: 2048, maxTokens: 768 };
+const LITE_HINT = 'Lite mode: answer in under 300 words. Lead with the answer; skip preamble.';
+function applyPerfMode(settings, body) {
+  if (!settings || settings.perfMode !== 'lite') return body;
+  const out = { ...body };
+  if (out.provider !== 'mlx') { out.model = settings.liteModel || LITE.model; out.provider = 'ollama'; if (out.role === 'cloud') out.role = 'body'; }
+  out.num_ctx = Math.min(Number(out.num_ctx) || LITE.numCtx, LITE.numCtx);
+  out.max_tokens = Math.min(Number(out.max_tokens) || LITE.maxTokens, LITE.maxTokens);
+  // ...injects LITE_HINT into the system prompt
+  out.lite = true;
+  return out;
+}`,
+      },
+      {
+        caption: "electron/router.cjs at commit 29bde88 — trim a Lite reply at the token cap. Quoted from the same verify note.",
+        code: `/** A Lite reply cut off by the token cap ends at its last full sentence (or list item), with a short note. */
+function trimAtCap(text, cap) {
+  const t = String(text || '').replace(/\\s+$/, '');
+  const cut = Math.max(t.lastIndexOf('. '), t.lastIndexOf('.\\n'), t.lastIndexOf('\\n\\n'), t.lastIndexOf('\\n- '), t.lastIndexOf('\\n* '), t.lastIndexOf('\`\`\`\\n'));
+  const fenceOpen = (t.slice(0, cut > 0 ? cut : t.length).match(/\`\`\`/g) || []).length % 2 === 1;
+  let body = cut > t.length * 0.5 ? t.slice(0, cut + 1).replace(/\\s+$/, '') : t;
+  if (fenceOpen || (body.match(/\`\`\`/g) || []).length % 2 === 1) body += '\\n\`\`\`';
+  return \`\${body}\\n\\n_(Trimmed at the Lite limit of \${cap} tokens. Say "continue" for more, or switch to Performance.)_\`;
+}`,
+      },
+    ],
+    probe: [
+      "Read the Oct 15, 2026 verify note. The label 0.9.0 is that report and the installed app.",
+      "Do not treat 0.3.7 as the current result. Its verdict was Not done.",
+    ],
+    demo: null,
+    demoNote: "",
+  },
+  "kicad-board": {
+    problem:
+      "A carrier PCB for an ESP32 DevKit that drives an SG90 servo treat dispenser, with an IMU, a PIR, a treat beam-break, and a hardware e-stop. It is part of a supervised Husky companion (watch the dog, interpret behavior, dispense a treat). Dispensing is supervised only (unsupervised_dispense is false). Work in progress.",
+    caveats: [
+      "Not fabricated or ordered.",
+      "DevKit pin order is assumed (DevKitC order). The 25.4 mm row spacing is assumed and still needs measuring on the ELEGOO board.",
+      "A fuse and reverse-polarity protection on the power input are not on the v2 board. They are queued QA findings.",
+      "The NC mushroom e-stop is not purchased. PIR on GPIO34 is proposed and is not in the firmware yet.",
+    ],
+    constraints: [
+      "Local repo only: ~/Documents/Projects/husky-dispenser-hw, branch pcb/layout-v2 at 3168a08. The v2 layout commit is 9435cf7. Nothing was pushed, and nothing was bought.",
+      "KiCad 10 (kicad-cli). A script generated and routed the board (tools/gen_pcb.py).",
+      "The servo has an external 5 V rail. The ESP32 5V/VIN pin is not tied to that rail. The board has a common ground.",
+    ],
+    decisions: true,
+    built: [
+      "Board outline on Edge.Cuts is 100 × 72 mm. Two copper layers (F.Cu and B.Cu). 55 track segments, 2 vias, 14 footprints.",
+      "v1 was an 80 × 55 mm board with 469 track pieces and a generic 1x8 header. The schematic starter on main is 6033362. The v1 layout is 2ba1a3c.",
+      "Pinout checked against the firmware: servo GPIO18, I2C SDA 21 and SCL 22 at 400 kHz, e-stop GPIO26 as INPUT_PULLUP (an open or broken wire means stop), treat beam GPIO27.",
+      "Parts from docs/bom.csv at 3168a08: J1 and J8 are two 1x19 2.54 mm sockets for a 38-pin ESP32 DevKit. J2 is a 5 V 3 A screw terminal. J3 is the SG90 header. J4 is the GY-6500 I2C header. J5 is the PIR HC-SR501 header. J6 is the IR beam-break header. J7 is a header for the NC mushroom e-stop. C1 is 470 µF 16 V. C2 is 100 nF.",
+    ],
+    result: [
+      "bash tools/verify.sh on 2026-10-16: ERC found 0 violations. DRC found 0 violations, 0 unconnected items, and 0 schematic parity issues. VERIFY OK.",
+      "Gerbers and a drill file are in outputs/gerbers/, with outputs/pcb_render_top.png and top and bottom SVGs. Those files are not in this website repo, so this page does not show a picture of the board.",
+    ],
+    quotes: [
+      {
+        caption: "docs/bom.csv at 3168a08. Two rows from the verified note.",
+        code: `J7,1,2-pin header + NC mushroom e-stop,"22mm panel e-stop, red mushroom, latching ...",PinHeader_1x02,"NOT PURCHASED - to buy. Wire NC contact J7-1 to J7-2 (GND). Kit tactile buttons are NO: bench-only via ESTOP_UNSAFE_NO_BENCH_BUTTON (unsafe, broken wire does not stop)..."
+C1,1,Electrolytic cap,470uF 16V,CP_Radial_D10.0mm_P5.00mm,Bulk across servo rail; observe polarity`,
+      },
+    ],
+    probe: [
+      "The checks were ERC and DRC on 2026-10-16, not a fabricated board.",
+      "Do not describe a purpose beyond the carrier listed above, and do not say it was fabricated.",
+    ],
+    demo: null,
+    demoNote: "",
+  },
+  tinyml: {
+    problem:
+      "Classify dog motion from a collar or IMU window into four classes: rest, walk, play, and shake. The intended board is an ESP32 plus a GY-6500 (MPU-6500) IMU on I2C pins 21 and 22. Work in progress.",
+    caveats: [
+      "Held-out accuracy of 1.0 is on synthetic data (data/synthetic.npz, n_test = 320, diagonal confusion matrix). It is not real-dog accuracy. No real IMU data has been recorded.",
+      "Not compiled for the ESP32. PlatformIO is not installed.",
+      "The branch's old esp32_dispense copy is marked DO NOT FLASH (commit 19132de).",
+    ],
+    constraints: [
+      "Local branch tinyml/motion-classifier at 108a13e in ~/Documents/Projects/husky-watchdog-firmware. The initial classifier is eaac87b. The NaN/Inf guard is f2b0923.",
+      "Host tests only: C++17 with -Wall -Wextra -Werror, ASan, and UBSan.",
+    ],
+    decisions: true,
+    built: [
+      "A small MLP trained in numpy: 15 features, 16 hidden units, 4 classes. tools/train.py exports the weights to lib/motion_core/src/model_weights.h.",
+      "classify_window refuses a window that is not finite, then extracts features and classifies. The comment in the quote says an I2C read glitch is an example.",
+      "The weight header says it was generated by tools/train.py and records held_out_acc=1.000 on data/synthetic.npz.",
+    ],
+    result: [
+      "make test on 2026-10-16: features worst absolute error 7.63e-06. C++ and Python predictions agree on 24/24. 584 checks, 0 failed.",
+    ],
+    quotes: [
+      {
+        caption: "firmware/motion_classifier/lib/motion_core/src/motion_core.cpp at f2b0923.",
+        code: `int classify_window(const float* window, float* probs) {
+  for (int i = 0; i < kWindow * kAxes; ++i)
+    if (!isfinite(window[i])) return kInvalidInput;  // e.g. I2C read glitch
+  float f[kFeatures];
+  extract_features(window, f);
+  return classify_features(f, probs);
+}`,
+      },
+      {
+        caption: "lib/motion_core/src/model_weights.h header lines. The accuracy note is in the file.",
+        code: `// GENERATED by tools/train.py -- do not edit.
+#pragma once
+#include "motion_core.h"
+// data=data/synthetic.npz held_out_acc=1.000 (synthetic data unless noted)
+namespace motion {
+static const float kFeatMean[kFeatures] = { ... };`,
+      },
+    ],
+    probe: [
+      "Host make test: 584 checks, and C++ agrees with Python on 24/24.",
+      "Do not quote 1.0 as accuracy on real dogs.",
+    ],
+    demo: null,
+    demoNote: "",
+  },
+  "mcp-servers": {
+    problem:
+      "Give an assistant read-only access to three of my own apps: Iron Desk (the gym and 3D app API), Novum, and a trading desk. Work in progress. Not published.",
+    caveats: [
+      "Read-only. Written in JavaScript (TypeScript sources) on Node 22, stdio, with zod schemas.",
+      "npm test on 2026-10-16: 15 tests, 14 passed, 0 failed, 1 skipped. The skip is the Iron Desk live smoke test, because Iron Desk was not running on 127.0.0.1:4000.",
+      "Local branch only: ~/Documents/Projects/app-mcp-servers, branch mcp/read-only at 6af55de. Not published.",
+    ],
+    constraints: [
+      "Iron Desk sends only GET requests, with an 8 second timeout, and refuses any base URL that is not localhost.",
+      "Files go through a root allowlist. .. escapes are rejected. Symlinks whose real path leaves the root are rejected. A denylist blocks secrets and cache paths.",
+      "Only text, json, jsonl, md, txt, log, and csv files can be read. JSON keys matching api_key, secret, token, password, and similar names are redacted. Files over 8 MB are refused. Output is truncated at about 64 KB.",
+    ],
+    decisions: true,
+    built: [
+      "get_strategies is commit 39466d5. The symlink escape fix is 8ce1abe. List and search skip symlinks at 5576956. The localhost-only test is 2dd1338. The 8 MB cap is 2a413a0.",
+      "strategiesView, the function behind get_strategies, read trading-platform-electron/src/data/strategies.json and returned 65 nodes and 74 edges in the summary view.",
+    ],
+    result: [
+      "14 tests passed and 1 was skipped. 0 failed.",
+    ],
+    quotes: [
+      {
+        caption: "lib/files.js at 8ce1abe — symlink escape guard.",
+        code: `const full = path.resolve(base, rel);
+if (full !== base && !full.startsWith(base + path.sep)) throw new Error('path escapes root');
+if (fs.existsSync(full)) {  // follow symlinks: the real target must stay inside the root too
+  const real = fs.realpathSync(full);
+  if (real !== base && !real.startsWith(base + path.sep)) throw new Error('path escapes root (symlink)');
+}
+if (DENY.some((d) => d.test(path.relative(base, full)))) throw new Error('path denied (secrets/cache)');`,
+      },
+      {
+        caption: "servers/iron-desk.js — localhost-only GET.",
+        code: `const BASE = process.env.GYM3D_URL || 'http://127.0.0.1:4000';
+if (!/^http:\\/\\/(127\\.0\\.0\\.1|localhost)(:\\d+)?$/.test(BASE)) throw new Error('GYM3D_URL must be localhost');
+const r = await fetch(u, { method: 'GET', signal: AbortSignal.timeout(8000) });`,
+      },
+      {
+        caption: "lib/files.js — redaction.",
+        code: `const SECRET_KEYS = /(api[_-]?key|secret|token|password|passphrase|private|credential|auth)/i;
+export function redact(v) {
+  if (Array.isArray(v)) return v.map(redact);
+  if (v && typeof v === 'object') return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, SECRET_KEYS.test(k) ? '[redacted]' : redact(x)]));
+  return v;
+}`,
+      },
+    ],
+    probe: [
+      "14 passed, 1 skipped, on 2026-10-16. The skip needs Iron Desk on 127.0.0.1:4000.",
+      "Do not list tools that are not in this note.",
+    ],
+    demo: null,
+    demoNote: "",
+  },
+  "estop-firmware": {
+    problem:
+      "Dispense firmware with a fail-safe, normally-closed e-stop, for the same supervised treat dispenser. unsupervised_dispense is false. Work in progress.",
+    caveats: [
+      "186 host checks passed and 0 failed (make test on 2026-10-16).",
+      "Not compiled for the ESP32 and not tested on hardware.",
+      "The NC e-stop button has not been bought.",
+    ],
+    constraints: [
+      "Local branch firmware/estop-nc at 91af525 in husky-watchdog-firmware. This is not the unread firmware/dispense-fsm placeholder elsewhere on this site.",
+      "EstopGuard boots stopped. A broken wire means stop. A remote enable cannot override a pressed button.",
+    ],
+    decisions: true,
+    built: [
+      "A hardware-independent dispense state machine with limits and jam detection.",
+      "The servo is detached while Disabled or Jammed, to stop creep (84de5b3).",
+      "A task watchdog (esp_task_wdt, 2 s) is fed only if the e-stop was polled within 500 ms (16771ae).",
+      "Wi-Fi reconnects without blocking, with a 1–60 s exponential backoff (073e29f).",
+    ],
+    result: [
+      "Host make test on 2026-10-16: 186 checks, 0 failed. That is not an on-device test.",
+    ],
+    quotes: [
+      {
+        caption: "firmware/esp32_dispense/lib/dispense_core/src/dispense_core.h — EstopGuard.",
+        code: `class EstopGuard {
+ public:
+  explicit EstopGuard(EstopWiring w, uint32_t releaseMs = 50)
+      : wiring_(w), releaseMs_(releaseMs) {}
+  // Feed the raw pin level every loop. Returns enabled().
+  bool update(bool pinHigh, uint32_t nowMs);
+  void remoteDisable() { remoteOk_ = false; }
+  // Returns false (and changes nothing) if the hardware switch is stopping.
+  bool remoteEnable();`,
+      },
+    ],
+    probe: [
+      "186 host checks. Do not say it was flashed or tried on a board.",
+    ],
+    demo: null,
+    demoNote: "",
+  },
+  "esp32-serial-log": {
+    problem: "A serial-monitor capture is a long text file. Restarts, state changes, and faults should be listed without reading every line by hand.",
+    built: [
+      "parseEsp32Log reads ROM reset lines (rst:0x1 (POWERON_RESET)), ESP-IDF log lines, state FROM -> TO messages, errors, and Guru Meditation panics.",
+      "summarizeEsp32Log counts resets and faults and keeps the last state.",
+      "Labeled private repo. The code is in this checkout under tools/esp32-serial-log because a private GitHub repository could not be created here.",
+      "test.mjs has 3 tests (node --test).",
+    ],
+    probe: ["cd tools/esp32-serial-log && npm test", "node cli.mjs capture.txt"],
+    demo: null,
+    demoNote: "",
+  },
+  "rack-label-check": {
+    problem: "A floor checklist of rack positions is only useful if a bad label or a repeated asset tag is caught before it is applied.",
+    built: [
+      "One line is SITE-HALL-ROW-RACK-U## plus an AST-######## tag. Example: IAD-H1-A-12-U24 AST-00018421.",
+      "U must be 1 through 42. Duplicate slots and duplicate asset tags are errors.",
+      "This is a personal checklist format, not an employer or Google asset schema. Labeled private repo.",
+      "test.mjs has 3 tests (node --test).",
+    ],
+    probe: ["cd tools/rack-label-check && npm test", "node cli.mjs labels.txt"],
+    demo: null,
+    demoNote: "",
+  },
+  "resume-json-check": {
+    problem: "The recruiter site reads a JSON resume. That file should fail a check if it starts calling me a Google employee, a graduate, or the gym owner.",
+    built: [
+      "checkResume requires Akkodis, Datacenter Technician, Leesburg, Sep 2025 to present, and a contractor note that says not a Google employee.",
+      "It requires DMV Iron Gym staff, Leo Torres Williams as owner, Westat Jun–Oct 2023, Frostburg enrolled and expected 2027, Rockville High School 2019, Arlington, English and Spanish, and GitHub Jefe4.",
+      "Labeled private repo. tools/resume-json-check.",
+      "test.mjs has 2 tests (node --test).",
+    ],
+    probe: ["cd tools/resume-json-check && npm test", "node cli.mjs ../../site/content/jeffrey.json"],
+    demo: null,
+    demoNote: "",
+  },
+  "gym-maint": {
+    problem: "Gym equipment needs a due date, not a memory. I am staff at the gym, so this is a checklist, not an ownership claim.",
+    built: [
+      "Each machine has an id, a name, and how many days between service.",
+      "dueOn lists machines that were never serviced, or whose last service plus the interval is on or before the day you ask about.",
+      "Labeled private repo. tools/gym-maint.",
+      "test.mjs has 3 tests (node --test).",
+    ],
+    probe: [
+      "cd tools/gym-maint && npm test",
+      "node cli.mjs add --file maint.json --id TM-01 --name \"Treadmill 1\" --every 30",
+      "node cli.mjs due --file maint.json --on 2026-10-14",
+    ],
+    demo: null,
+    demoNote: "",
+  },
+  "port-label-check": {
+    problem: "A copper or fiber drop needs one switch port and one far end. A duplicated port is a mislabel.",
+    built: [
+      "One line: SW-A12:24 copper RK-03-U40-NIC1. Medium is copper or fiber. Ports are 1 through 48.",
+      "Duplicate switch ports and duplicate far ends are errors. countByMedium totals each kind of cable.",
+      "Labeled private repo. tools/port-label-check.",
+      "test.mjs has 3 tests (node --test).",
+    ],
+    probe: ["cd tools/port-label-check && npm test", "node cli.mjs drops.txt"],
+    demo: null,
+    demoNote: "",
+  },
 };
 
 export function studyFor(slug: string): StudyCopy {
@@ -211,6 +557,16 @@ export function studyFor(slug: string): StudyCopy {
 
 export function allStudyText(): string {
   return Object.values(STUDIES)
-    .flatMap((s) => [s.problem, s.demoNote, ...s.built, ...s.probe])
+    .flatMap((s) => [
+      s.problem,
+      s.demoNote,
+      ...(s.caveats || []),
+      ...(s.constraints || []),
+      ...s.built,
+      ...(s.result || []),
+      ...(s.history || []),
+      ...(s.quotes || []).flatMap((quote) => [quote.caption, quote.code]),
+      ...s.probe,
+    ])
     .join("\n");
 }

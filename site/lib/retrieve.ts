@@ -63,10 +63,38 @@ export function retrieveFacts(query: string): string[] {
     }
   }
 
-  if (mentions(q, ["project", "github", "code", "graph", "hash", "tcp", "sql", "flash", "repo", "built", "java", "python", "c++"])) {
+  if (mentions(q, ["project", "github", "code", "graph", "hash", "tcp", "sql", "flash", "repo", "built", "java", "python", "c++", "tool", "esp32", "novum", "firmware"])) {
     for (const p of profile.projects.filter((p) => p.flagship || p.path)) {
       facts.push(`${p.name}${p.path ? " (" + p.path + ")" : ""}: ${p.summary}`);
     }
+  }
+
+  if (mentions(q, ["esp32", "dispenser", "firmware", "husky", "serial log", "serial-monitor"])) {
+    facts.push("The ESP32 dispenser firmware page for branch firmware/dispense-fsm is still a placeholder. That GitHub tree was not readable from this checkout, so no firmware source is quoted from it. A different local branch, firmware/estop-nc at 91af525, has 186 host checks and is not compiled or tested on hardware. tools/esp32-serial-log is a separate log parser, not that firmware.");
+  }
+
+  if (mentions(q, ["novum", "local model", "coding agent", "harness"])) {
+    facts.push("Novum is work in progress. The Oct 15, 2026 verify report and the installed app call it 0.9.0. Do not take that version from package.json. Runner: 9/10 real-gemma tasks after fixes, 6/10 on the first run. Retrieval: 11 correct / 7 partial / 2 wrong, versus base alone at 0 / 7 / 13. Cold start 2.0 s at about 300 MB. The 18/18 tab pass is from the 0.8.4 verify. Older 0.3.7 QA verdict was Not done (repeated line 0/40, but the action line doubled in 3/9 lessons and the 40-token cap cut off 34/35 desk and unlock replies).");
+  }
+
+  if (mentions(q, ["kicad", "schematic", "pcb", "circuit board", "dispenser board"])) {
+    facts.push("KiCad dispenser carrier v2 is work in progress: 100×72 mm, 2 layers, ERC 0 and DRC 0 on 2026-10-16. Not fabricated. Pin order is assumed. Fuse and reverse-polarity protection are not on the board yet. The e-stop is not purchased. PIR is not in the firmware yet.");
+  }
+
+  if (mentions(q, ["tinyml", "tiny ml", "motion classifier", "synthetic"])) {
+    facts.push("TinyML motion classifier is work in progress. 584 host checks passed, and C++ agrees with Python on 24/24. Accuracy 1.0 is on synthetic data, not real dogs. Not compiled for the ESP32. No real IMU data. The old esp32_dispense copy is marked DO NOT FLASH.");
+  }
+
+  if (mentions(q, ["mcp", "model context"])) {
+    facts.push("MCP servers are work in progress, read-only, written in JavaScript. 14 tests passed, 1 skipped (Iron Desk was not running). Not published. They do not write.");
+  }
+
+  if (mentions(q, ["e-stop", "estop", "normally-closed", "normally closed"])) {
+    facts.push("E-stop dispense firmware on branch firmware/estop-nc at 91af525: 186 host checks passed. Not compiled for the ESP32 and not tested on hardware. The NC button has not been bought. It boots stopped. A remote enable cannot override the button.");
+  }
+
+  if (mentions(q, ["rack label", "asset label", "port label", "maintenance", "resume json", "private repo", "drop label"])) {
+    facts.push("Private-repo tools in this checkout, under tools/: esp32-serial-log, rack-label-check, resume-json-check, gym-maint, and port-label-check. A private GitHub repo could not be created from the environment that added them, so they are in this pull request and labeled private repo. They were not published as public repos.");
   }
 
   if (mentions(q, ["wip", "gymmaster", "digital twin", "trading", "polymarket", "event tracker"])) {
@@ -106,12 +134,36 @@ export function retrieveFacts(query: string): string[] {
   return facts;
 }
 
+export const DECLINE = "That is not covered in the resume materials.";
+
+const INJECTION = /\b(ignore|disregard|forget|override)\b[^.]{0,40}\b(instruction|rule|prompt|previous|above|prior)s?\b|\bsystem prompt\b|\byou are now\b|\bpretend (to be|you)\b|\bjailbreak\b|\bdeveloper mode\b|(^|\n)\s*(\[system\]|system\s*:)|\[system\]|\bbase64\b|\bignora\b[^.]{0,40}\binstrucciones\b|\bignorez\b[^.]{0,40}\binstructions\b|\bvergiss\b[^.]{0,40}\banweisungen\b/i;
+
+export function isInjectionAttempt(query: string): boolean {
+  return INJECTION.test(query);
+}
+
+const BASE_FACT_COUNT = 4; // identity, contact, languages, never-claim
+const SMALL_TALK = ["who is", "who's", "about", "tell me", "hi", "hello", "hey", "looking for", "role", "jeffrey", "yourself", "introduce", "contact", "email", "phone", "linkedin", "hire", "experience", "work", "background", "summary"];
+
+function mentionsWord(q: string, words: string[]) {
+  const n = norm(q);
+  return words.some((w) => new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`).test(n));
+}
+
+export function isOffTopic(query: string, facts: string[]): boolean {
+  return facts.length <= BASE_FACT_COUNT && !mentionsWord(query, SMALL_TALK);
+}
+
 function stitch(query: string, facts: string[]): string {
   const q = norm(query);
   const id = profile.identity;
   const lines: string[] = [];
 
-  if (mentions(q, ["owner", "founder", "ceo"]) && mentions(q, ["gym", "iron", "dmv"])) {
+  if (isInjectionAttempt(query)) {
+    return DECLINE + " I can only answer questions about my resume, and I won't change those rules.";
+  }
+
+  if ((/\b(own|owns|owned|owner|found|founder|founded|co-founded|ceo|run|runs)\b/.test(q) || /\bhis gym\b/.test(q)) && mentions(q, ["gym", "iron", "dmv"])) {
     lines.push("I'm a Team Member and Systems Administrator at DMV Iron Gym in Falls Church — not the owner, founder, or CEO. Leo Torres Williams is the founder/CEO. The gym is veteran-owned; I'm staff.");
   }
 
@@ -129,6 +181,10 @@ function stitch(query: string, facts: string[]): string {
 
   if (mentions(q, ["coast guard", "served", "veteran"]) && !mentions(q, ["gym is veteran", "veteran-owned"])) {
     lines.push("I am not documenting military or Coast Guard service. A US Coast Guard seal appears as wall decor in the gym scan. The gym is veteran-owned; I am staff.");
+  }
+
+  if (!lines.length && isOffTopic(query, facts)) {
+    return DECLINE + " Ask me about my work, school, projects, or skills.";
   }
 
   if (!lines.length) {
@@ -181,10 +237,22 @@ export function answerFromRetrieval(query: string): { answer: string; facts: str
   return { answer, facts, highlights };
 }
 
+export const HARD_FACTS = [
+  "I am a Datacenter Technician at Akkodis, on a Google data center assignment in Leesburg, VA, from September 2025 to present. I am a contractor. I am not a Google employee.",
+  "I am a Team Member and Systems Administrator at DMV Iron Gym in Falls Church, from July 2024 to present. I am staff. I am not the owner. The owner is Leo Torres Williams.",
+  "I was a Technical Data Entry Clerk at Westat in Rockville from June 2023 to October 2023.",
+  "I study computer science at Frostburg State University, expected June 2027. I am still a student. I have not graduated.",
+  "I graduated from Rockville High School in 2019. That is a high school diploma, not a college degree.",
+  "I live in Arlington, VA. I am bilingual in English and Spanish. My GitHub is Jefe4.",
+];
+
 export function systemPrompt(facts: string[]) {
   return [
     "You are Jeffrey Gomez speaking in first person to a recruiter.",
-    "Use ONLY the facts below. If asked for something missing, say it is not in your materials.",
+    "Answer ONLY from the hard facts and the retrieved resume lines below. If a question is not covered, say exactly: That is not covered in the resume materials.",
+    "Never say you are a Google employee, that you have graduated from Frostburg, or that you own or founded DMV Iron Gym.",
+    "Hard facts:",
+    ...HARD_FACTS.map((fact) => "- " + fact),
     "You are NOT the owner/founder/CEO of DMV Iron Gym. You are Team Member & Systems Administrator. Owner is Leo Torres Williams.",
     "You are NOT a Google FTE. Akkodis contractor on assignment at a Google data center, Leesburg VA.",
     "You have NOT graduated. CS at Frostburg, expected June 2027.",

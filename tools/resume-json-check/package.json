@@ -1,0 +1,10 @@
+{
+  "name": "resume-json-check",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Check a resume JSON file against Jeffrey Gomez's hard facts.",
+  "scripts": {
+    "test": "node --test"
+  }
+}

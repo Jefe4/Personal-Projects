@@ -1,0 +1,10 @@
+{
+  "name": "port-label-check",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Check copper and fiber port labels for duplicates and bad port numbers.",
+  "scripts": {
+    "test": "node --test"
+  }
+}

@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { cookies, headers } from "next/headers";
-import { Inter, Newsreader } from "next/font/google";
+import { Inter, Manrope, Newsreader } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { Shell } from "@/components/Shell";
 import { UiProvider } from "@/components/UiProvider";
-import { parseScheme, parseUi, type Scheme, type UiDirection } from "@/lib/ui";
+import { parseScheme, parseUi, UI_DIRECTIONS, type Scheme, type UiDirection } from "@/lib/ui";
 
 const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
+const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", display: "swap" });
 const serif = Newsreader({
   subsets: ["latin"],
   style: ["normal", "italic"],
@@ -16,7 +17,8 @@ const serif = Newsreader({
   display: "swap",
 });
 
-const boot = `(function(){try{var q=new URLSearchParams(location.search).get("ui");var u=q||localStorage.getItem("jefe-ui");if(u!=="studio"&&u!=="spatial"&&u!=="editorial"){var legacy=localStorage.getItem("jefe-theme");u=legacy==="editorial"?"editorial":"studio";}var s=localStorage.getItem("jefe-scheme");if(s!=="light"&&s!=="dark"){s=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}if(u==="spatial")s="dark";document.documentElement.setAttribute("data-ui",u);document.documentElement.setAttribute("data-scheme",s);}catch(e){}})();`;
+const knownUi = UI_DIRECTIONS.map((id) => `u!=="${id}"`).join("&&");
+const boot = `(function(){try{var q=new URLSearchParams(location.search).get("ui");var u=q||localStorage.getItem("jefe-ui");if(${knownUi}){var legacy=localStorage.getItem("jefe-theme");u=legacy==="editorial"?"editorial":"studio";}var s=localStorage.getItem("jefe-scheme");if(s!=="light"&&s!=="dark"){s=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}if(u==="spatial")s="dark";document.documentElement.setAttribute("data-ui",u);document.documentElement.setAttribute("data-scheme",s);}catch(e){}})();`;
 
 export const metadata: Metadata = {
   title: "Jeffrey Gomez — Datacenter technician & CS student",
@@ -31,7 +33,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const scheme: Scheme = ui === "spatial" ? "dark" : (parseScheme(jar.get("jefe-scheme")?.value) ?? "light");
 
   return (
-    <html lang="en" data-ui={ui} data-scheme={scheme} className={`${sans.variable} ${serif.variable}`} suppressHydrationWarning>
+    <html lang="en" data-ui={ui} data-scheme={scheme} className={`${sans.variable} ${serif.variable} ${manrope.variable}`} suppressHydrationWarning>
       <body>
         <Script id="ui-boot" strategy="beforeInteractive">
           {boot}

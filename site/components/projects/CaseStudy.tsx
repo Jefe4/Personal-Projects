@@ -8,9 +8,24 @@ import { studyFor } from "@/lib/case-studies";
 import { CodeExhibit } from "@/components/CodeExhibit";
 import { useUi } from "@/components/UiProvider";
 import { DemoSlot } from "@/components/demos/DemoSlot";
+import { excerptFor } from "@/lib/excerpts";
 import { ProjectCard } from "./ProjectCard";
 
 type Project = Profile["projects"][number];
+
+function CaveatList({ lines }: { lines?: string[] }) {
+  if (!lines?.length) return null;
+  return (
+    <aside className="caveat-callout">
+      <strong>Keep these limits in view</strong>
+      <ul>
+        {lines.map((line) => (
+          <li key={line}>{line}</li>
+        ))}
+      </ul>
+    </aside>
+  );
+}
 
 export function CaseStudy({ project, related }: { project: Project; related: Project[] }) {
   const { ui } = useUi();
@@ -19,6 +34,9 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
   const study = studyFor(project.slug);
   const excerpt = "excerptFile" in project && project.excerptFile ? project.excerptFile : null;
   const wip = "wip" in project && project.wip;
+  const privateRepo = "privateRepo" in project && Boolean(project.privateRepo);
+  const placeholder = "placeholder" in project && Boolean(project.placeholder);
+  const sourceComing = "sourceComing" in project && Boolean(project.sourceComing);
   const sitePath = "sitePath" in project && project.sitePath ? project.sitePath : null;
 
   const chapters: { id: string; title: string; body: ReactNode }[] = [
@@ -27,9 +45,25 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
       title: "Problem",
       body: <p>{study.problem}</p>,
     },
-    {
+  ];
+
+  if (study.constraints?.length) {
+    chapters.push({
+      id: "constraints",
+      title: "Constraints",
+      body: (
+        <ul>
+          {study.constraints.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
+      ),
+    });
+  }
+
+  chapters.push({
       id: "built",
-      title: "What I built",
+      title: study.decisions ? "Decisions" : "What I built",
       body: (
         <ul>
           {study.built.map((line) => (
@@ -37,7 +71,56 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
           ))}
         </ul>
       ),
-    },
+    });
+
+  if (study.result?.length) {
+    chapters.push({
+      id: "result",
+      title: "Measured result",
+      body: (
+        <ul>
+          {study.result.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
+      ),
+    });
+  }
+
+  if (study.history?.length) {
+    chapters.push({
+      id: "history",
+      title: "Older QA, kept as history",
+      body: (
+        <ul>
+          {study.history.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
+      ),
+    });
+  }
+
+  if (study.quotes?.length) {
+    chapters.push({
+      id: "excerpt",
+      title: "Excerpt",
+      body: (
+        <>
+          {study.quotes.map((quote) => (
+            <figure key={quote.caption}>
+              <figcaption className="mono">{quote.caption}</figcaption>
+              <pre tabIndex={0}>
+                <code>{quote.code}</code>
+              </pre>
+            </figure>
+          ))}
+        </>
+      ),
+    });
+  }
+
+  chapters.push(
     {
       id: "stack",
       title: "Stack",
@@ -69,13 +152,13 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
         </>
       ),
     },
-  ];
+  );
 
   if (excerpt) {
     chapters.push({
       id: "code",
       title: "Live code",
-      body: <CodeExhibit slug={project.slug} label={excerpt} />,
+      body: <CodeExhibit slug={project.slug} label={excerpt} privateRepo={privateRepo} />,
     });
   }
 
@@ -140,16 +223,79 @@ export function CaseStudy({ project, related }: { project: Project; related: Pro
       ? { opacity: 0, y: 18 }
       : ui === "spatial"
         ? { opacity: 0, y: 28, scale: 0.985 }
-        : { opacity: 0, y: 22 };
+        : ui === "showcase"
+          ? { opacity: 0 }
+          : { opacity: 0, y: 22 };
+
+  if (ui === "showcase") {
+    const bundled = excerpt ? excerptFor(project.slug) : null;
+    const showCode = Boolean(bundled && bundled.code && !bundled.code.startsWith("// source not"));
+    return (
+      <main id="main" className={reduce ? "home-showcase case-showcase reduce" : "home-showcase case-showcase"}>
+        <section className="showcase-screen" aria-labelledby="showcase-project">
+          {study.demo ? (
+            <div className="showcase-visual showcase-visual-live">
+              <DemoSlot kind={study.demo} />
+            </div>
+          ) : showCode ? (
+            <div className="showcase-visual showcase-visual-code" aria-hidden="true">
+              <CodeExhibit slug={project.slug} label={excerpt || undefined} privateRepo={privateRepo} />
+            </div>
+          ) : study.quotes?.[0] ? (
+            <div className="showcase-visual showcase-visual-code" aria-hidden="true">
+              <pre>
+                <code>{study.quotes[0].code}</code>
+              </pre>
+            </div>
+          ) : (
+            <div className="showcase-visual showcase-field" aria-hidden="true" />
+          )}
+          <div className="showcase-copy">
+            <p className="kicker">
+              {sourceComing ? "In progress, source coming" : placeholder ? "Placeholder" : wip ? "Work in progress" : "Project"}
+              {privateRepo ? " · private repo" : ""}
+            </p>
+            <h1 id="showcase-project">{project.name}</h1>
+            <p className="sub">{project.summary}</p>
+            <CaveatList lines={study.caveats} />
+          </div>
+          <div className="showcase-actions">
+            <a className="pill solid" href="#problem">
+              View project
+            </a>
+            {showCode ? (
+              <a className="pill ghost" href="#code">
+                See code
+              </a>
+            ) : study.quotes?.length ? (
+              <a className="pill ghost" href="#excerpt">
+                See code
+              </a>
+            ) : null}
+          </div>
+        </section>
+        {chapters.map((c) => (
+          <section key={c.id} id={c.id} className="showcase-screen showcase-chapter">
+            <div className="showcase-copy">
+              <h2>{c.title}</h2>
+            </div>
+            <div className="showcase-body">{c.body}</div>
+          </section>
+        ))}
+      </main>
+    );
+  }
 
   return (
     <main id="main" className={`wrap case case-${ui}`}>
       <header className="case-hero">
         <p className="kicker">
-          {wip ? "Work in progress" : "Case study"} · {(project.stack || []).join(" · ") || "notes"}
+          {sourceComing ? "In progress, source coming" : placeholder ? "Placeholder" : wip ? "Work in progress" : "Case study"}
+          {privateRepo ? " · private repo" : ""} · {(project.stack || []).join(" · ") || "notes"}
         </p>
         <h1>{project.name}</h1>
         <p className="lede">{project.summary}</p>
+        <CaveatList lines={study.caveats} />
         <p>
           <Link href="/projects">All projects</Link>
           {" · "}

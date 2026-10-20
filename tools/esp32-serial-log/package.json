@@ -1,0 +1,13 @@
+{
+  "name": "esp32-serial-log",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Parse ESP32 serial-monitor logs into resets, state transitions, and faults.",
+  "bin": {
+    "esp32-serial-log": "./cli.mjs"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}
