@@ -313,6 +313,14 @@ Do these one at a time. After each, run the site test, typecheck, and build from
 
 7. Keep the fact checks green when you edit copy. Acceptance: `cd tools/resume-json-check && node cli.mjs ../../site/content/jeffrey.json` prints `ok`, and `cd site && npm test` still passes `answer-guard.test.ts` and `retrieve.test.ts`.
 
+### 2026-10-20: chat decline/guard test expansion (branch `qa/tests-2026-10-20`)
+
+New file `site/tests/qa-tests-2026-10-20.test.ts` (70 cases) extends `tests/qa-fix-pass.test.ts`: injection variants (role-play, `system:`/`[system]` prefixes, base64 hints, Spanish/French/German, instructions hidden in a pasted job description), off-topic (recipes, politics, unrelated coding help) vs. allowed small talk ("tell me about him", "what's he looking for"), ownership phrasings in questions (own/owner/found/CEO/run the gym/his gym), third-person false claims through `guardRecruiterAnswer` (gym owner/co-founder/CEO, Google employee/FTE/engineer, graduated/has a degree), and negative controls that must stay unflagged (Akkodis contractor at a Google data center, staff at DMV Iron Gym, expected June 2027).
+
+The tests exposed real gaps, fixed minimally in `site/lib/retrieve.ts` (injection regex, word-boundary small-talk match so "think"/"who should I vote" no longer pass as small talk, broader ownership question match) and `site/lib/answer-guard.ts` (co-founded / "is CEO of" / "runs the gym" / "his gym", "engineer at Google", "has/holds a degree", and a false positive on the correct "if a JD requires a degree in hand" caveat).
+
+Run: `cd site && npx vitest run tests/qa-tests-2026-10-20.test.ts` (or `npm test` for all 109).
+
 ## 7. Do-not rules
 
 - Do not fabricate employers, dates, degrees, skills, schematics, models, datasets, or server tools.
